@@ -13,6 +13,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -73,6 +75,42 @@ class LoanServiceTest {
 
         //THEN
         assertThat(expected.getLoanId()).isGreaterThan(0);
+    }
+
+    @Test
+    void shouldFindLoanById() {
+        //GIVEN
+        LoanDTO loanDTO = LoanDTO.builder()
+                .customerId(savedCustomer.getCustomerId())
+                .loanType(LoanType.Gold.name())
+                .accountId(savedAccount.getAccountId())
+                .status(Status.Pending.code())
+                .build();
+        LoanDTO savedLoan = loanService.save(loanDTO);
+        //WHEN
+        LoanDTO expected = loanService.findLoanById(savedLoan.getLoanId());
+
+        //THEN
+        assertThat(expected.getStatus()).isEqualTo(Status.Pending.name());
+        assertThat(expected.getFirstName()).isEqualTo(savedCustomer.getFirstName());
+    }
+
+    @Test
+    void shouldALlLoanByCustomerIdentity() {
+        //GIVEN
+        LoanDTO loanDTO = LoanDTO.builder()
+                .customerId(savedCustomer.getCustomerId())
+                .loanType(LoanType.Gold.name())
+                .accountId(savedAccount.getAccountId())
+                .status(Status.Pending.code())
+                .build();
+        loanService.save(loanDTO);
+        //WHEN
+        List<LoanDTO> expected = loanService.findAllByCustomerIdentityNumber(savedCustomer.getIdentityNumber());
+
+        //THEN
+        assertThat(expected.size()).isEqualTo(1);
+        assertThat(expected.get(0).getFirstName()).isEqualTo(savedCustomer.getFirstName());
     }
 
 }

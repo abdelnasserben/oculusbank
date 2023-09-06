@@ -7,5 +7,6 @@ import java.util.Optional;
 
 public interface LoanViewRepository extends ReadOnlyRepository<LoanView, Integer> {
     List<LoanView> findAll();
-    Optional<LoanView> findById(int transactionId);
+    Optional<LoanView> findById(int loanId);
+    List<LoanView> findAllByIdentityNumber(String customerIdentityNumber);
 }

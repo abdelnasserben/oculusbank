@@ -13,6 +13,9 @@ import com.dabel.oculusbank.repository.LoanViewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class LoanService {
 
@@ -38,6 +41,16 @@ public class LoanService {
         LoanView loan = loanViewRepository.findById(loanId)
                 .orElseThrow(LoanNotFoundException::new);
 
+        return formatStatusToNameAndGetDTO(loan);
+    }
+
+    public List<LoanDTO> findAllByCustomerIdentityNumber(String customerIdentityNumber) {
+        return loanViewRepository.findAllByIdentityNumber(customerIdentityNumber).stream()
+                .map(LoanService::formatStatusToNameAndGetDTO)
+                .collect(Collectors.toList());
+    }
+
+    private static LoanDTO formatStatusToNameAndGetDTO(LoanView loan) {
         loan.setStatus(Status.nameOf(loan.getStatus()));
         return LoanMapper.viewToDTO(loan);
     }

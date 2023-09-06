@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class DatabaseSettingsForTests {
     @Autowired
+    LoanRepository loanRepository;
+    @Autowired
     PaymentRepository paymentRepository;
     @Autowired
     ExchangeRepository exchangeRepository;
@@ -24,6 +26,7 @@ public class DatabaseSettingsForTests {
     BranchRepository branchRepository;
 
     public void truncate() {
+        loanRepository.deleteAll();
         paymentRepository.deleteAll();
         exchangeRepository.deleteAll();
         transactionRepository.deleteAll();

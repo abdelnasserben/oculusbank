@@ -37,6 +37,11 @@ public class LoanService {
         return LoanMapper.toDTO(loan);
     }
 
+    public LoanDTO update(LoanDTO loanDTO) {
+        Loan loan = loanRepository.save(LoanMapper.toEntity(loanDTO));
+        return LoanMapper.toDTO(loan);
+    }
+
     public LoanDTO findLoanById(int loanId) {
         LoanView loan = loanViewRepository.findById(loanId)
                 .orElseThrow(LoanNotFoundException::new);

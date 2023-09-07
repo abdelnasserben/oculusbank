@@ -8,7 +8,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
-public class CurrencyExchanger {
+public final class CurrencyExchanger {
 
     public static double exchange(String receivedCurrency, String givenCurrency, double amount) {
 

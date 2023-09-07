@@ -93,10 +93,11 @@ class LoanServiceTest {
         //THEN
         assertThat(expected.getStatus()).isEqualTo(Status.Pending.name());
         assertThat(expected.getFirstName()).isEqualTo(savedCustomer.getFirstName());
+        assertThat(expected.getAccountNumber()).isEqualTo(savedAccount.getAccountNumber());
     }
 
     @Test
-    void shouldALlLoanByCustomerIdentity() {
+    void shouldRetrieveAllLoansByCustomerIdentityNumber() {
         //GIVEN
         LoanDTO loanDTO = LoanDTO.builder()
                 .customerId(savedCustomer.getCustomerId())

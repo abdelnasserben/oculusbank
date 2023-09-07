@@ -22,6 +22,7 @@ public class Loan {
     private double interestRate;
     private int duration;
     private double totalAmount;
+    private double perMonthAmount;
     private String reason;
     private String failureReason;
     private String status;

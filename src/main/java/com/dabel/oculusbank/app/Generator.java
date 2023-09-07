@@ -2,7 +2,7 @@ package com.dabel.oculusbank.app;
 
 import java.util.Random;
 
-public class Generator {
+public final class Generator {
 
     public static String generateAccountNumber() {
         Random random = new Random();

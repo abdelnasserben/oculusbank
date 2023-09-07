@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
-@Table(name = "v_borrowings")
+@Table(name = "v_loans")
 public class LoanView {
 
     @Id
@@ -22,6 +22,7 @@ public class LoanView {
     private double interestRate;
     private int duration;
     private double totalAmount;
+    private double perMonthAmount;
     private String reason;
     private String failureReason;
     private String status;
@@ -34,4 +35,6 @@ public class LoanView {
     private String firstName;
     private String lastName;
     private String identityNumber;
+    private String accountName;
+    private String accountNumber;
 }

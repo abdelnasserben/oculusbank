@@ -18,9 +18,6 @@ public class ExchangeOperationService implements OperationAcknowledgment<Exchang
 
     public ExchangeDTO exchange(String customerName, String customerIdentity, String buyCurrency, String saleCurrency, double amount, String reason) {
 
-        if(amount < 1)
-            throw new IllegalTransactionException("Amount must be positive");
-
         if(buyCurrency.equalsIgnoreCase(saleCurrency))
             throw new IllegalTransactionException("Currencies must be different");
 

@@ -24,9 +24,6 @@ public class PaymentOperationService implements OperationAcknowledgment<PaymentD
 
     public PaymentDTO pay(String debitAccountNumber, double amount, String creditAccountNumber, String reason) {
 
-        if(amount < 1)
-            throw new IllegalTransactionException("Amount must be positive");
-
         AccountDTO debitAccount = accountService.findByNumber(debitAccountNumber);
         AccountDTO creditAccount = accountService.findByNumber(creditAccountNumber);
 

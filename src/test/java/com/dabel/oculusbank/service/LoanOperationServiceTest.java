@@ -65,7 +65,7 @@ class LoanOperationServiceTest {
     }
 
     @Test
-    void shouldApproveALoan() {
+    void shouldApprovePendingSavedLoan() {
         //GIVEN
         String loanType = LoanType.Gold.name(),reason = "Sample reason";
         double issuedAmount = 15239, interestRate = 1.24;
@@ -81,7 +81,7 @@ class LoanOperationServiceTest {
     }
 
     @Test
-    void shouldRejectALoan() {
+    void shouldRejectPendingSavedLoan() {
         //GIVEN
         String loanType = LoanType.Gold.name(),reason = "Sample reason";
         double issuedAmount = 15239, interestRate = 1.24;

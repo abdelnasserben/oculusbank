@@ -2,8 +2,6 @@ package com.dabel.oculusbank.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 

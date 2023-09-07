@@ -27,9 +27,6 @@ public class TransactionOperationService implements OperationAcknowledgment<Tran
 
     public TransactionDTO deposit(String accountNumber, double amount, String currency, String sourceType, String sourceValue, String reason) {
 
-        if(amount < 1)
-            throw new IllegalTransactionException("Amount must be positive");
-
         AccountDTO account = accountService.findByNumber(accountNumber);
 
         TransactionDTO transaction = TransactionDTO.builder()
@@ -47,9 +44,6 @@ public class TransactionOperationService implements OperationAcknowledgment<Tran
     }
 
     public TransactionDTO withdraw(String accountNumber, double amount, String sourceType, String sourceValue, String reason) throws AccountNotFoundException, BalanceInsufficientException, IllegalTransactionException {
-
-        if(amount < 1)
-            throw new IllegalTransactionException("Amount must be positive");
 
         AccountDTO account = accountService.findByNumber(accountNumber);
         TransactionDTO transaction = TransactionDTO.builder()

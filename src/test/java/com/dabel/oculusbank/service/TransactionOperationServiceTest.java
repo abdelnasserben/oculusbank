@@ -56,7 +56,7 @@ class TransactionOperationServiceTest {
     }
 
     @Test
-    void shouldApproveDeposit() {
+    void shouldApprovePendingSavedDeposit() {
         //GIVEN
         DepositParams depositParams = getDepositParams();
         TransactionDTO savedTransaction = basicTransactionOperationService.deposit(depositParams.accountNumber(), depositParams.amount(), depositParams.currency(), depositParams.sourceType(), depositParams.sourceValue(), depositParams.reason());
@@ -72,7 +72,7 @@ class TransactionOperationServiceTest {
     }
 
     @Test
-    void shouldRejectDeposit() {
+    void shouldRejectPendingSavedDeposit() {
         //GIVEN
         DepositParams depositParams = getDepositParams();
         TransactionDTO savedTransaction = basicTransactionOperationService.deposit(depositParams.accountNumber(), depositParams.amount(), depositParams.currency(), depositParams.sourceType(), depositParams.sourceValue(), depositParams.reason());
@@ -102,7 +102,7 @@ class TransactionOperationServiceTest {
     }
 
     @Test
-    void shouldApproveWithdraw() {
+    void shouldApprovePendingSavedWithdraw() {
         //GIVEN
         WithdrawParams withdrawParams = getWithdrawParams();
         TransactionDTO savedTransaction = basicTransactionOperationService.withdraw(withdrawParams.accountNumber(), withdrawParams.amount(), withdrawParams.sourceType(), withdrawParams.sourceValue(), withdrawParams.reason());
@@ -118,7 +118,7 @@ class TransactionOperationServiceTest {
     }
 
     @Test
-    void shouldRejectWithdraw() {
+    void shouldRejectPendingSavedWithdraw() {
         //GIVEN
         WithdrawParams withdrawParams = getWithdrawParams();
         TransactionDTO savedTransaction = basicTransactionOperationService.withdraw(withdrawParams.accountNumber(), withdrawParams.amount(), withdrawParams.sourceType(), withdrawParams.sourceValue(), withdrawParams.reason());

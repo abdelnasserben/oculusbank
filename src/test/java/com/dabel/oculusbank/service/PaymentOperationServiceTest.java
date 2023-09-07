@@ -67,7 +67,7 @@ class PaymentOperationServiceTest {
     }
 
     @Test
-    void approve() {
+    void shouldApprovePendingSavedPayment() {
         //GIVEN
         String debitAccountNumber = savedAccount1.getAccountNumber();
         double amount = 50;
@@ -89,7 +89,7 @@ class PaymentOperationServiceTest {
     }
 
     @Test
-    void reject() {
+    void shouldRejectedPendingSavedPayment() {
         //GIVEN
         String debitAccountNumber = savedAccount1.getAccountNumber();
         double amount = 50;

@@ -59,7 +59,7 @@ class ExchangeOperationServiceTest {
     }
 
     @Test
-    void shouldApproveAnExchange() {
+    void shouldApprovePendingSavedExchange() {
         //GIVEN
         String customerName = "John Doe", customerIdentity = "NBE454532", buyCurrency = Currency.KMF.name(),
                 saleCurrency = Currency.USD.name(), reason = "Sample reason";
@@ -76,7 +76,7 @@ class ExchangeOperationServiceTest {
     }
 
     @Test
-    void shouldRejectAnExchange() {
+    void shouldRejectPendingSavedExchange() {
         //GIVEN
         String customerName = "John Doe", customerIdentity = "NBE454532", buyCurrency = Currency.KMF.name(),
                 saleCurrency = Currency.USD.name(), reason = "Sample reason";

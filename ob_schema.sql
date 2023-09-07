@@ -211,7 +211,7 @@ create table cards(
 create table cheques(
     cheque_id int not null auto_increment,
     account_id int not null,
-    customer_id int not null,
+    cheque_name varchar(255),
     cheque_number varchar(255),
     status int default 0,
     initiated_by varchar(50),
@@ -221,7 +221,6 @@ create table cheques(
 
     primary key(cheque_id),
     foreign key(account_id) references accounts(account_id),
-    foreign key(customer_id) references customers(customer_id),
     constraint c_cheque_number unique(cheque_number)
 );
 
@@ -396,19 +395,17 @@ as
 select
 c.cheque_id,
 c.account_id,
-c.customer_id,
+c.cheque_name,
 c.cheque_number,
 c.status,
+c.initiated_by,
+c.updated_by,
 c.created_at,
 c.updated_at,
 a.account_name,
-a.account_number,
-c2.first_name,
-c2.last_name,
-c2.identity_number
+a.account_number
 from
     cheques as c
 inner join accounts as a
     on a.account_id = c.account_id
-inner join customers as c2
-    on c2.customer_id = c.customer_id
+order by created_at desc;

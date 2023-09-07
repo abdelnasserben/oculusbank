@@ -1,6 +1,7 @@
 package com.dabel.oculusbank.service;
 
 import com.dabel.oculusbank.DatabaseSettingsForTests;
+import com.dabel.oculusbank.constant.Gender;
 import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.dto.BranchDTO;
 import com.dabel.oculusbank.dto.CustomerDTO;
@@ -46,6 +47,7 @@ public class CustomerServiceTest {
                 .branchId(savedBranch.getBranchId())
                 .firstName("John")
                 .lastName("Doe")
+                .gender(Gender.Male.name())
                 .identityNumber("NBE466754")
                 .status(Status.Pending.code())
                 .build();
@@ -65,6 +67,7 @@ public class CustomerServiceTest {
                 .branchId(savedBranch.getBranchId())
                 .firstName("John")
                 .lastName("Doe")
+                .gender(Gender.Female.name())
                 .identityNumber("NBE466754")
                 .status(Status.Pending.code())
                 .build());

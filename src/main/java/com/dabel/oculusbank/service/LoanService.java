@@ -49,6 +49,12 @@ public class LoanService {
         return formatStatusToNameAndGetDTO(loan);
     }
 
+    public List<LoanDTO> findAll() {
+        return loanViewRepository.findAll().stream()
+                .map(LoanService::formatStatusToNameAndGetDTO)
+                .collect(Collectors.toList());
+    }
+
     public List<LoanDTO> findAllByCustomerIdentityNumber(String customerIdentityNumber) {
         return loanViewRepository.findAllByIdentityNumber(customerIdentityNumber).stream()
                 .map(LoanService::formatStatusToNameAndGetDTO)

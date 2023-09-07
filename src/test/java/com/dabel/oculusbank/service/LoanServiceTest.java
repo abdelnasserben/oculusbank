@@ -97,6 +97,25 @@ class LoanServiceTest {
     }
 
     @Test
+    void shouldRetrieveListOfAllLoans() {
+        //GIVEN
+        LoanDTO loanDTO = LoanDTO.builder()
+                .customerId(savedCustomer.getCustomerId())
+                .loanType(LoanType.Gold.name())
+                .accountId(savedAccount.getAccountId())
+                .status(Status.Pending.code())
+                .build();
+        loanService.save(loanDTO);
+        //WHEN
+        List<LoanDTO> expected = loanService.findAll();
+
+        //THEN
+        assertThat(expected.size()).isEqualTo(1);
+        assertThat(expected.get(0).getStatus()).isEqualTo(Status.Pending.name());
+        assertThat(expected.get(0).getAccountNumber()).isEqualTo(savedAccount.getAccountNumber());
+    }
+
+    @Test
     void shouldRetrieveAllLoansByCustomerIdentityNumber() {
         //GIVEN
         LoanDTO loanDTO = LoanDTO.builder()

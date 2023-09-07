@@ -6,6 +6,7 @@ import com.dabel.oculusbank.constant.CardType;
 import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.dto.AccountDTO;
 import com.dabel.oculusbank.dto.CardDTO;
+import com.dabel.oculusbank.exception.CardNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 class CardServiceTest {
@@ -77,7 +79,19 @@ class CardServiceTest {
     }
 
     @Test
-    void findByNumber() {
+    void shouldThrowCardNotFoundExceptionWhenTryFindCardByANotExistsCardId() {
+        //GIVEN
+
+        //WHEN
+        Exception expected = assertThrows(CardNotFoundException.class,
+                () -> cardService.findById(-1));
+
+        //THEN
+        assertThat(expected.getMessage()).isEqualTo("Card not found");
+    }
+
+    @Test
+    void findByCardNumber() {
         //GIVEN
         CardDTO savedCard = cardService.save(
                 CardDTO.builder()
@@ -94,6 +108,18 @@ class CardServiceTest {
         //THEN
         assertThat(expected.getStatus()).isEqualTo(Status.Pending.name());
         assertThat(expected.getAccountNumber()).isEqualTo(savedAccount.getAccountNumber());
+    }
+
+    @Test
+    void shouldThrowCardNotFoundExceptionWhenTryFindCardByANotExistsCardNumber() {
+        //GIVEN
+
+        //WHEN
+        Exception expected = assertThrows(CardNotFoundException.class,
+                () -> cardService.findByCardNumber("fake"));
+
+        //THEN
+        assertThat(expected.getMessage()).isEqualTo("Card not found");
     }
 
     @Test

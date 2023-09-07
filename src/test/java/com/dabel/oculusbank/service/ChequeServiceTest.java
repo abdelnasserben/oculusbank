@@ -73,6 +73,7 @@ class ChequeServiceTest {
 
         //THEN
         assertThat(expected.getStatus()).isEqualTo(Status.Active.name());
+        assertThat(expected.getAccountNumber()).isEqualTo(savedAccount.getAccountNumber());
     }
 
     @Test

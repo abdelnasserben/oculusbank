@@ -8,6 +8,7 @@ import com.dabel.oculusbank.dto.AccountDTO;
 import com.dabel.oculusbank.dto.BranchDTO;
 import com.dabel.oculusbank.dto.CustomerDTO;
 import com.dabel.oculusbank.dto.LoanDTO;
+import com.dabel.oculusbank.exception.LoanNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 class LoanServiceTest {
@@ -94,6 +96,18 @@ class LoanServiceTest {
         assertThat(expected.getStatus()).isEqualTo(Status.Pending.name());
         assertThat(expected.getFirstName()).isEqualTo(savedCustomer.getFirstName());
         assertThat(expected.getAccountNumber()).isEqualTo(savedAccount.getAccountNumber());
+    }
+
+    @Test
+    void shouldThrowLoanNotFoundExceptionWhenTryFindLoanByANotExistsId() {
+        //GIVEN
+
+        //WHEN
+        Exception expected = assertThrows(LoanNotFoundException.class,
+                () -> loanService.findLoanById(-1));
+
+        //THEN
+        assertThat(expected.getMessage()).isEqualTo("Loan not found");
     }
 
     @Test

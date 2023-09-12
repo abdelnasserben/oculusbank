@@ -53,7 +53,7 @@ create table accounts(
     account_name varchar(255),
     account_number varchar(255),
     account_type varchar(50), -- saving/business
-    account_profile varchar(50), -- personal/joint/staff/system
+    account_profile varchar(50), -- personal/joint/associative/staff/system
     balance decimal(10,2) default 0.0,
     currency varchar(50),
     status int default 0,

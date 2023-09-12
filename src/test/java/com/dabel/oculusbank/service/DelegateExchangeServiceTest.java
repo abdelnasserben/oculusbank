@@ -4,7 +4,7 @@ import com.dabel.oculusbank.DatabaseSettingsForTests;
 import com.dabel.oculusbank.constant.Currency;
 import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.dto.ExchangeDTO;
-import com.dabel.oculusbank.exception.IllegalTransactionException;
+import com.dabel.oculusbank.exception.IllegalOperationException;
 import com.dabel.oculusbank.service.delegate.DelegateExchangeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -95,14 +95,14 @@ class DelegateExchangeServiceTest {
     }
 
     @Test
-    void shouldThrowAnIllegalTransactionExceptionWhenTryMakeAnExchangeWithSameCurrencies() {
+    void shouldThrowAnIllegalOperationExceptionWhenTryMakeAnExchangeWithSameCurrencies() {
         //GIVEN
         String customerName = "John Doe", customerIdentity = "NBE454532", buyCurrency = Currency.KMF.name(),
                 saleCurrency = Currency.KMF.name(), reason = "Sample reason";
         double amount = 20;
 
         //WHEN
-        Exception expected = assertThrows(IllegalTransactionException.class,
+        Exception expected = assertThrows(IllegalOperationException.class,
                 () -> delegateExchangeService.exchange(customerName, customerIdentity, buyCurrency, saleCurrency, amount, reason));
 
         //THEN

@@ -4,7 +4,7 @@ import com.dabel.oculusbank.app.CurrencyExchanger;
 import com.dabel.oculusbank.app.OperationAcknowledgment;
 import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.dto.ExchangeDTO;
-import com.dabel.oculusbank.exception.IllegalTransactionException;
+import com.dabel.oculusbank.exception.IllegalOperationException;
 import com.dabel.oculusbank.service.ExchangeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ public class DelegateExchangeService implements OperationAcknowledgment<Exchange
     public ExchangeDTO exchange(String customerName, String customerIdentity, String buyCurrency, String saleCurrency, double amount, String reason) {
 
         if(buyCurrency.equalsIgnoreCase(saleCurrency))
-            throw new IllegalTransactionException("Currencies must be different");
+            throw new IllegalOperationException("Currencies must be different");
 
         amount = CurrencyExchanger.exchange(buyCurrency, saleCurrency, amount);
 

@@ -9,7 +9,7 @@ import com.dabel.oculusbank.dto.AccountDTO;
 import com.dabel.oculusbank.dto.TransactionDTO;
 import com.dabel.oculusbank.exception.AccountNotFoundException;
 import com.dabel.oculusbank.exception.BalanceInsufficientException;
-import com.dabel.oculusbank.exception.IllegalTransactionException;
+import com.dabel.oculusbank.exception.IllegalOperationException;
 import com.dabel.oculusbank.service.AccountOperationService;
 import com.dabel.oculusbank.service.AccountService;
 import com.dabel.oculusbank.service.TransactionService;
@@ -46,7 +46,7 @@ public class DelegateTransactionService implements OperationAcknowledgment<Trans
         return transactionService.save(transaction);
     }
 
-    public TransactionDTO withdraw(String accountNumber, double amount, String sourceType, String sourceValue, String reason) throws AccountNotFoundException, BalanceInsufficientException, IllegalTransactionException {
+    public TransactionDTO withdraw(String accountNumber, double amount, String sourceType, String sourceValue, String reason) throws AccountNotFoundException, BalanceInsufficientException, IllegalOperationException {
 
         AccountDTO account = accountService.findByNumber(accountNumber);
         TransactionDTO transaction = TransactionDTO.builder()

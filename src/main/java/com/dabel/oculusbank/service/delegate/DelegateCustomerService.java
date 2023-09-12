@@ -20,22 +20,25 @@ public class DelegateCustomerService {
     @Autowired
     AccountService accountService;
 
-    public CustomerDTO createWithOwnAccountsAtOnce(CustomerDTO customerDTO) {
+    public CustomerDTO createWithOwnAccountsAtOnce(CustomerDTO customerDTO, boolean withAccount) {
 
         customerDTO.setStatus(Status.Active.code());
         CustomerDTO savedCustomer = customerService.save(customerDTO);
-        //TODO: save trunk KMF
-        TrunkDTO trunkDTO = TrunkDTO.builder()
-                .customerId(savedCustomer.getCustomerId())
-                .accountName(savedCustomer.getFirstName() + " " + savedCustomer.getLastName())
-                .accountNumber(Generator.generateAccountNumber())
-                .accountType(AccountType.Current.name())
-                .accountProfile(AccountProfile.Personal.name())
-                .currency(Currency.KMF.name())
-                .balance(0.0)
-                .status(Status.Active.code())
-                .build();
-        accountService.saveTrunk(trunkDTO);
+
+        if(withAccount) {
+            //TODO: save trunk KMF
+            TrunkDTO trunkDTO = TrunkDTO.builder()
+                    .customerId(savedCustomer.getCustomerId())
+                    .accountName(savedCustomer.getFirstName() + " " + savedCustomer.getLastName())
+                    .accountNumber(Generator.generateAccountNumber())
+                    .accountType(AccountType.Current.name())
+                    .accountProfile(AccountProfile.Personal.name())
+                    .currency(Currency.KMF.name())
+                    .balance(0.0)
+                    .status(Status.Active.code())
+                    .build();
+            accountService.saveTrunk(trunkDTO);
+        }
 
         return savedCustomer;
     }

@@ -4,6 +4,7 @@ import com.dabel.oculusbank.DatabaseSettingsForTests;
 import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.dto.BranchDTO;
 import com.dabel.oculusbank.dto.VaultDTO;
+import com.dabel.oculusbank.service.delegate.DelegateBranchService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

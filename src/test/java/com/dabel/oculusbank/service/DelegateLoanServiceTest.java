@@ -6,6 +6,7 @@ import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.dto.BranchDTO;
 import com.dabel.oculusbank.dto.CustomerDTO;
 import com.dabel.oculusbank.dto.LoanDTO;
+import com.dabel.oculusbank.service.delegate.DelegateLoanService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +15,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-class LoanOperationServiceTest {
+class DelegateLoanServiceTest {
 
     @Autowired
-    LoanOperationService loanOperationService;
+    DelegateLoanService delegateLoanService;
     @Autowired
     BranchService branchService;
     @Autowired
@@ -54,7 +55,7 @@ class LoanOperationServiceTest {
         int duration = 3;
 
         //WHEN
-        LoanDTO expected = loanOperationService.loan(savedCustomer.getCustomerId(), loanType, issuedAmount, interestRate, duration, reason);
+        LoanDTO expected = delegateLoanService.loan(savedCustomer.getCustomerId(), loanType, issuedAmount, interestRate, duration, reason);
 
         //THEN
         assertThat(expected.getLoanId()).isGreaterThan(0);
@@ -70,10 +71,10 @@ class LoanOperationServiceTest {
         String loanType = LoanType.Gold.name(),reason = "Sample reason";
         double issuedAmount = 15239, interestRate = 1.24;
         int duration = 3;
-        LoanDTO savedLoan = loanOperationService.loan(savedCustomer.getCustomerId(), loanType, issuedAmount, interestRate, duration, reason);
+        LoanDTO savedLoan = delegateLoanService.loan(savedCustomer.getCustomerId(), loanType, issuedAmount, interestRate, duration, reason);
 
         //WHEN
-        LoanDTO expected = loanOperationService.approve(savedLoan.getLoanId());
+        LoanDTO expected = delegateLoanService.approve(savedLoan.getLoanId());
 
         //THEN
         assertThat(expected.getLoanId()).isGreaterThan(0);
@@ -86,10 +87,10 @@ class LoanOperationServiceTest {
         String loanType = LoanType.Gold.name(),reason = "Sample reason";
         double issuedAmount = 15239, interestRate = 1.24;
         int duration = 3;
-        LoanDTO savedLoan = loanOperationService.loan(savedCustomer.getCustomerId(), loanType, issuedAmount, interestRate, duration, reason);
+        LoanDTO savedLoan = delegateLoanService.loan(savedCustomer.getCustomerId(), loanType, issuedAmount, interestRate, duration, reason);
 
         //WHEN
-        LoanDTO expected = loanOperationService.reject(savedLoan.getLoanId(), "Sample remark");
+        LoanDTO expected = delegateLoanService.reject(savedLoan.getLoanId(), "Sample remark");
 
         //THEN
         assertThat(expected.getStatus()).isEqualTo(Status.Rejected.code());

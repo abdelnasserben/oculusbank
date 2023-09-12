@@ -5,6 +5,7 @@ import com.dabel.oculusbank.constant.*;
 import com.dabel.oculusbank.dto.AccountDTO;
 import com.dabel.oculusbank.dto.TransactionDTO;
 import com.dabel.oculusbank.exception.BalanceInsufficientException;
+import com.dabel.oculusbank.service.delegate.DelegateTransactionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +15,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
-class TransactionOperationServiceTest {
+class DelegateTransactionServiceTest {
 
     @Autowired
-    TransactionOperationService basicTransactionOperationService;
+    DelegateTransactionService basicDelegateTransactionService;
     @Autowired
     AccountService accountService;
     @Autowired
@@ -47,7 +48,7 @@ class TransactionOperationServiceTest {
         DepositParams depositParams = getDepositParams();
 
         //WHEN
-        TransactionDTO expected = basicTransactionOperationService.deposit(depositParams.accountNumber(), depositParams.amount(), depositParams.currency(), depositParams.sourceType(), depositParams.sourceValue(), depositParams.reason());
+        TransactionDTO expected = basicDelegateTransactionService.deposit(depositParams.accountNumber(), depositParams.amount(), depositParams.currency(), depositParams.sourceType(), depositParams.sourceValue(), depositParams.reason());
 
         //THEN
         assertThat(expected.getTransactionId()).isGreaterThan(0);
@@ -59,10 +60,10 @@ class TransactionOperationServiceTest {
     void shouldApprovePendingSavedDeposit() {
         //GIVEN
         DepositParams depositParams = getDepositParams();
-        TransactionDTO savedTransaction = basicTransactionOperationService.deposit(depositParams.accountNumber(), depositParams.amount(), depositParams.currency(), depositParams.sourceType(), depositParams.sourceValue(), depositParams.reason());
+        TransactionDTO savedTransaction = basicDelegateTransactionService.deposit(depositParams.accountNumber(), depositParams.amount(), depositParams.currency(), depositParams.sourceType(), depositParams.sourceValue(), depositParams.reason());
 
         //WHEN
-        TransactionDTO expected = basicTransactionOperationService.approve(savedTransaction.getTransactionId());
+        TransactionDTO expected = basicDelegateTransactionService.approve(savedTransaction.getTransactionId());
 
         //THEN
         assertThat(expected.getStatus()).isEqualTo(Status.Approved.code());
@@ -75,10 +76,10 @@ class TransactionOperationServiceTest {
     void shouldRejectPendingSavedDeposit() {
         //GIVEN
         DepositParams depositParams = getDepositParams();
-        TransactionDTO savedTransaction = basicTransactionOperationService.deposit(depositParams.accountNumber(), depositParams.amount(), depositParams.currency(), depositParams.sourceType(), depositParams.sourceValue(), depositParams.reason());
+        TransactionDTO savedTransaction = basicDelegateTransactionService.deposit(depositParams.accountNumber(), depositParams.amount(), depositParams.currency(), depositParams.sourceType(), depositParams.sourceValue(), depositParams.reason());
 
         //WHEN
-        TransactionDTO expected =  basicTransactionOperationService.reject(savedTransaction.getTransactionId(), "Sample remark");
+        TransactionDTO expected =  basicDelegateTransactionService.reject(savedTransaction.getTransactionId(), "Sample remark");
 
         //THEN
         assertThat(expected.getStatus()).isEqualTo(Status.Rejected.code());
@@ -93,7 +94,7 @@ class TransactionOperationServiceTest {
         WithdrawParams result = getWithdrawParams();
 
         //WHEN
-        TransactionDTO expected = basicTransactionOperationService.withdraw(result.accountNumber(), result.amount(), result.sourceType(), result.sourceValue(), result.reason());
+        TransactionDTO expected = basicDelegateTransactionService.withdraw(result.accountNumber(), result.amount(), result.sourceType(), result.sourceValue(), result.reason());
 
         //THEN
         assertThat(expected.getTransactionId()).isGreaterThan(0);
@@ -105,10 +106,10 @@ class TransactionOperationServiceTest {
     void shouldApprovePendingSavedWithdraw() {
         //GIVEN
         WithdrawParams withdrawParams = getWithdrawParams();
-        TransactionDTO savedTransaction = basicTransactionOperationService.withdraw(withdrawParams.accountNumber(), withdrawParams.amount(), withdrawParams.sourceType(), withdrawParams.sourceValue(), withdrawParams.reason());
+        TransactionDTO savedTransaction = basicDelegateTransactionService.withdraw(withdrawParams.accountNumber(), withdrawParams.amount(), withdrawParams.sourceType(), withdrawParams.sourceValue(), withdrawParams.reason());
 
         //WHEN
-        TransactionDTO expected = basicTransactionOperationService.approve(savedTransaction.getTransactionId());
+        TransactionDTO expected = basicDelegateTransactionService.approve(savedTransaction.getTransactionId());
 
         //THEN
         assertThat(expected.getStatus()).isEqualTo(Status.Approved.code());
@@ -121,10 +122,10 @@ class TransactionOperationServiceTest {
     void shouldRejectPendingSavedWithdraw() {
         //GIVEN
         WithdrawParams withdrawParams = getWithdrawParams();
-        TransactionDTO savedTransaction = basicTransactionOperationService.withdraw(withdrawParams.accountNumber(), withdrawParams.amount(), withdrawParams.sourceType(), withdrawParams.sourceValue(), withdrawParams.reason());
+        TransactionDTO savedTransaction = basicDelegateTransactionService.withdraw(withdrawParams.accountNumber(), withdrawParams.amount(), withdrawParams.sourceType(), withdrawParams.sourceValue(), withdrawParams.reason());
 
         //WHEN
-        TransactionDTO expected = basicTransactionOperationService.reject(savedTransaction.getTransactionId(), "Sample remark");
+        TransactionDTO expected = basicDelegateTransactionService.reject(savedTransaction.getTransactionId(), "Sample remark");
 
         //THEN
         assertThat(expected.getStatus()).isEqualTo(Status.Rejected.code());
@@ -140,7 +141,7 @@ class TransactionOperationServiceTest {
 
         //WHEN
         Exception expected = assertThrows(BalanceInsufficientException.class,
-                () -> basicTransactionOperationService.withdraw(withdrawParams.accountNumber(), 2000, withdrawParams.sourceType(), withdrawParams.sourceValue(), withdrawParams.reason()));
+                () -> basicDelegateTransactionService.withdraw(withdrawParams.accountNumber(), 2000, withdrawParams.sourceType(), withdrawParams.sourceValue(), withdrawParams.reason()));
 
         //THEN
         TransactionDTO expectedTransaction = transactionService.findAll().get(0);
@@ -152,8 +153,8 @@ class TransactionOperationServiceTest {
     void shouldCreditConvertAmountWhenTryMakeADepositWithEurToAnAccountWithKMFCurrency() {
         //GIVEN
         DepositParams depositParams = getDepositParams();
-        TransactionDTO savedTransaction = basicTransactionOperationService.deposit(depositParams.accountNumber(), 20, Currency.EUR.name(), depositParams.sourceType(), depositParams.sourceValue(), depositParams.reason());
-        basicTransactionOperationService.approve(savedTransaction.getTransactionId());
+        TransactionDTO savedTransaction = basicDelegateTransactionService.deposit(depositParams.accountNumber(), 20, Currency.EUR.name(), depositParams.sourceType(), depositParams.sourceValue(), depositParams.reason());
+        basicDelegateTransactionService.approve(savedTransaction.getTransactionId());
 
         //WHEN
         AccountDTO expected = accountService.findByNumber(depositParams.accountNumber());
@@ -167,8 +168,8 @@ class TransactionOperationServiceTest {
     void shouldCreditConvertAmountWhenTryMakeADepositWithUsdToAnAccountWithKMFCurrency() {
         //GIVEN
         DepositParams depositParams = getDepositParams();
-        TransactionDTO savedTransaction = basicTransactionOperationService.deposit(depositParams.accountNumber(), 20, Currency.USD.name(), depositParams.sourceType(), depositParams.sourceValue(), depositParams.reason());
-        basicTransactionOperationService.approve(savedTransaction.getTransactionId());
+        TransactionDTO savedTransaction = basicDelegateTransactionService.deposit(depositParams.accountNumber(), 20, Currency.USD.name(), depositParams.sourceType(), depositParams.sourceValue(), depositParams.reason());
+        basicDelegateTransactionService.approve(savedTransaction.getTransactionId());
 
         //WHEN
         AccountDTO expected = accountService.findByNumber(depositParams.accountNumber());

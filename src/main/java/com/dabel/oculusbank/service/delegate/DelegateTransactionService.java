@@ -1,4 +1,4 @@
-package com.dabel.oculusbank.service;
+package com.dabel.oculusbank.service.delegate;
 
 import com.dabel.oculusbank.app.CurrencyExchanger;
 import com.dabel.oculusbank.app.OperationAcknowledgment;
@@ -10,13 +10,16 @@ import com.dabel.oculusbank.dto.TransactionDTO;
 import com.dabel.oculusbank.exception.AccountNotFoundException;
 import com.dabel.oculusbank.exception.BalanceInsufficientException;
 import com.dabel.oculusbank.exception.IllegalTransactionException;
+import com.dabel.oculusbank.service.AccountOperationService;
+import com.dabel.oculusbank.service.AccountService;
+import com.dabel.oculusbank.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
 @Service
-public class TransactionOperationService implements OperationAcknowledgment<TransactionDTO> {
+public class DelegateTransactionService implements OperationAcknowledgment<TransactionDTO> {
 
     @Autowired
     TransactionService transactionService;

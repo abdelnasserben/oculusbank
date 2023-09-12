@@ -53,7 +53,7 @@ create table accounts(
     account_name varchar(255),
     account_number varchar(255),
     account_type varchar(50), -- saving/business
-    account_profile varchar(50), -- current/joint/staff/system
+    account_profile varchar(50), -- personal/joint/staff/system
     balance decimal(10,2) default 0.0,
     currency varchar(50),
     status int default 0,
@@ -351,7 +351,8 @@ c.first_name,
 c.last_name,
 c.identity_number,
 a.account_name,
-a.account_number
+a.account_number,
+a.balance as remaining_amount
 from
     loans as l
 inner join borrowers as b

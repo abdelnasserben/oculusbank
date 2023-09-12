@@ -1,17 +1,18 @@
-package com.dabel.oculusbank.service;
+package com.dabel.oculusbank.service.delegate;
 
 import com.dabel.oculusbank.app.CurrencyExchanger;
 import com.dabel.oculusbank.app.OperationAcknowledgment;
 import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.dto.ExchangeDTO;
 import com.dabel.oculusbank.exception.IllegalTransactionException;
+import com.dabel.oculusbank.service.ExchangeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
 @Service
-public class ExchangeOperationService implements OperationAcknowledgment<ExchangeDTO> {
+public class DelegateExchangeService implements OperationAcknowledgment<ExchangeDTO> {
 
     @Autowired
     ExchangeService exchangeService;

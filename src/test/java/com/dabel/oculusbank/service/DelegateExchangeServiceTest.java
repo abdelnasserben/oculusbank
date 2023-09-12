@@ -5,6 +5,7 @@ import com.dabel.oculusbank.constant.Currency;
 import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.dto.ExchangeDTO;
 import com.dabel.oculusbank.exception.IllegalTransactionException;
+import com.dabel.oculusbank.service.delegate.DelegateExchangeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +15,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
-class ExchangeOperationServiceTest {
+class DelegateExchangeServiceTest {
 
     @Autowired
-    ExchangeOperationService exchangeOperationService;
+    DelegateExchangeService delegateExchangeService;
     @Autowired
     DatabaseSettingsForTests databaseSettingsForTests;
 
@@ -34,7 +35,7 @@ class ExchangeOperationServiceTest {
         double amount = 20;
 
         //WHEN
-        ExchangeDTO expected = exchangeOperationService.exchange(customerName, customerIdentity, buyCurrency, saleCurrency, amount, reason);
+        ExchangeDTO expected = delegateExchangeService.exchange(customerName, customerIdentity, buyCurrency, saleCurrency, amount, reason);
 
         //THEN
         //1£ = 490.31KMF => 20£ = 9806.2KMF | Note that this is a purchase
@@ -50,7 +51,7 @@ class ExchangeOperationServiceTest {
         double amount = 10_000;
 
         //WHEN
-        ExchangeDTO expected = exchangeOperationService.exchange(customerName, customerIdentity, buyCurrency, saleCurrency, amount, reason);
+        ExchangeDTO expected = delegateExchangeService.exchange(customerName, customerIdentity, buyCurrency, saleCurrency, amount, reason);
 
         //THEN
         //1$ = 462.12KMF => 10 000KMF = 21.63$ | note that this is a sale
@@ -64,10 +65,10 @@ class ExchangeOperationServiceTest {
         String customerName = "John Doe", customerIdentity = "NBE454532", buyCurrency = Currency.KMF.name(),
                 saleCurrency = Currency.USD.name(), reason = "Sample reason";
         double amount = 10_000;
-        ExchangeDTO savedExchange = exchangeOperationService.exchange(customerName, customerIdentity, buyCurrency, saleCurrency, amount, reason);
+        ExchangeDTO savedExchange = delegateExchangeService.exchange(customerName, customerIdentity, buyCurrency, saleCurrency, amount, reason);
 
         //WHEN
-        ExchangeDTO expected = exchangeOperationService.approve(savedExchange.getExchangeId());
+        ExchangeDTO expected = delegateExchangeService.approve(savedExchange.getExchangeId());
 
         //THEN
         //1$ = 462.12KMF => 10 000KMF = 21.63$ | note that this is a sale
@@ -81,10 +82,10 @@ class ExchangeOperationServiceTest {
         String customerName = "John Doe", customerIdentity = "NBE454532", buyCurrency = Currency.KMF.name(),
                 saleCurrency = Currency.USD.name(), reason = "Sample reason";
         double amount = 10_000;
-        ExchangeDTO savedExchange = exchangeOperationService.exchange(customerName, customerIdentity, buyCurrency, saleCurrency, amount, reason);
+        ExchangeDTO savedExchange = delegateExchangeService.exchange(customerName, customerIdentity, buyCurrency, saleCurrency, amount, reason);
 
         //WHEN
-        ExchangeDTO expected = exchangeOperationService.reject(savedExchange.getExchangeId(), "Sample remark");
+        ExchangeDTO expected = delegateExchangeService.reject(savedExchange.getExchangeId(), "Sample remark");
 
         //THEN
         //1$ = 462.12KMF => 10 000KMF = 21.63$ | note that this is a sale
@@ -102,7 +103,7 @@ class ExchangeOperationServiceTest {
 
         //WHEN
         Exception expected = assertThrows(IllegalTransactionException.class,
-                () -> exchangeOperationService.exchange(customerName, customerIdentity, buyCurrency, saleCurrency, amount, reason));
+                () -> delegateExchangeService.exchange(customerName, customerIdentity, buyCurrency, saleCurrency, amount, reason));
 
         //THEN
         assertThat(expected.getMessage()).isEqualTo("Currencies must be different");

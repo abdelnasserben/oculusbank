@@ -1,4 +1,4 @@
-package com.dabel.oculusbank.service;
+package com.dabel.oculusbank.service.delegate;
 
 import com.dabel.oculusbank.app.Generator;
 import com.dabel.oculusbank.constant.AccountProfile;
@@ -7,6 +7,8 @@ import com.dabel.oculusbank.constant.Currency;
 import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.dto.CustomerDTO;
 import com.dabel.oculusbank.dto.TrunkDTO;
+import com.dabel.oculusbank.service.AccountService;
+import com.dabel.oculusbank.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

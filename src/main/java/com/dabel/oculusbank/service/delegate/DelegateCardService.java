@@ -1,8 +1,9 @@
-package com.dabel.oculusbank.service;
+package com.dabel.oculusbank.service.delegate;
 
 import com.dabel.oculusbank.app.OperationAcknowledgment;
 import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.dto.CardDTO;
+import com.dabel.oculusbank.service.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

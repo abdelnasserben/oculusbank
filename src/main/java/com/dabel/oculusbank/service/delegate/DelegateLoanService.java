@@ -1,4 +1,4 @@
-package com.dabel.oculusbank.service;
+package com.dabel.oculusbank.service.delegate;
 
 import com.dabel.oculusbank.app.Generator;
 import com.dabel.oculusbank.app.LoanCalculator;
@@ -9,13 +9,16 @@ import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.dto.AccountDTO;
 import com.dabel.oculusbank.dto.CustomerDTO;
 import com.dabel.oculusbank.dto.LoanDTO;
+import com.dabel.oculusbank.service.AccountService;
+import com.dabel.oculusbank.service.CustomerService;
+import com.dabel.oculusbank.service.LoanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
 @Service
-public class LoanOperationService implements OperationAcknowledgment<LoanDTO> {
+public class DelegateLoanService implements OperationAcknowledgment<LoanDTO> {
 
     @Autowired
     LoanService loanService;

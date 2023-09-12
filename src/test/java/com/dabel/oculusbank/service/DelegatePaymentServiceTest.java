@@ -7,6 +7,7 @@ import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.dto.AccountDTO;
 import com.dabel.oculusbank.dto.PaymentDTO;
 import com.dabel.oculusbank.exception.BalanceInsufficientException;
+import com.dabel.oculusbank.service.delegate.DelegatePaymentService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +17,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
-class PaymentOperationServiceTest {
+class DelegatePaymentServiceTest {
 
     @Autowired
-    PaymentOperationService paymentOperationService;
+    DelegatePaymentService delegatePaymentService;
     @Autowired
     AccountService accountService;
     @Autowired
@@ -59,7 +60,7 @@ class PaymentOperationServiceTest {
         String reason = "Sample reason";
 
         //WHEN
-        PaymentDTO expected = paymentOperationService.pay(debitAccountNumber, amount, creditAccountNumber, reason);
+        PaymentDTO expected = delegatePaymentService.pay(debitAccountNumber, amount, creditAccountNumber, reason);
 
         //THEN
         assertThat(expected.getPaymentId()).isGreaterThan(0);
@@ -73,10 +74,10 @@ class PaymentOperationServiceTest {
         double amount = 50;
         String creditAccountNumber = savedAccount2.getAccountNumber();
         String reason = "Sample reason";
-        PaymentDTO savedPayment = paymentOperationService.pay(debitAccountNumber, amount, creditAccountNumber, reason);
+        PaymentDTO savedPayment = delegatePaymentService.pay(debitAccountNumber, amount, creditAccountNumber, reason);
 
         //WHEN
-        PaymentDTO expected = paymentOperationService.approve(savedPayment.getPaymentId());
+        PaymentDTO expected = delegatePaymentService.approve(savedPayment.getPaymentId());
 
         //THEN
         assertThat(expected.getStatus()).isEqualTo(Status.Approved.code());
@@ -95,10 +96,10 @@ class PaymentOperationServiceTest {
         double amount = 50;
         String creditAccountNumber = savedAccount2.getAccountNumber();
         String reason = "Sample reason";
-        PaymentDTO savedPayment = paymentOperationService.pay(debitAccountNumber, amount, creditAccountNumber, reason);
+        PaymentDTO savedPayment = delegatePaymentService.pay(debitAccountNumber, amount, creditAccountNumber, reason);
 
         //WHEN
-        PaymentDTO expected = paymentOperationService.reject(savedPayment.getPaymentId(), "Sample remark");
+        PaymentDTO expected = delegatePaymentService.reject(savedPayment.getPaymentId(), "Sample remark");
 
         //THEN
         assertThat(expected.getStatus()).isEqualTo(Status.Rejected.code());
@@ -120,7 +121,7 @@ class PaymentOperationServiceTest {
 
         //WHEN
         Exception expected = assertThrows(BalanceInsufficientException.class,
-                () -> paymentOperationService.pay(debitAccountNumber, amount, creditAccountNumber, reason));
+                () -> delegatePaymentService.pay(debitAccountNumber, amount, creditAccountNumber, reason));
 
         //THEN
         assertThat(expected.getMessage()).isEqualTo("Account balance is insufficient");

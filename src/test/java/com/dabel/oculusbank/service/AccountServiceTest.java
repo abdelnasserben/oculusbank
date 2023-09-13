@@ -65,7 +65,7 @@ public class AccountServiceTest {
         AccountDTO accountDTO = AccountDTO.builder()
                 .accountName("John Doe")
                 .accountNumber("123456789")
-                .accountType(AccountType.Current.name())
+                .accountType(AccountType.Saving.name())
                 .status(Status.Pending.code())
                 .build();
 
@@ -81,16 +81,16 @@ public class AccountServiceTest {
         //GIVEN
         BranchDTO savedBranch = getSavedBranch();
 
-        VaultDTO vaultDTO = VaultDTO.builder()
+        AccountDTO savedAccount = accountService.save(
+                AccountDTO.builder()
                 .accountName("Branch 2")
                 .accountNumber("123456789")
                 .accountType(AccountType.Business.name())
                 .status(Status.Pending.code())
-                .branchId(savedBranch.getBranchId())
-                .build();
+                .build());
 
         //WHEN
-        VaultDTO expected = accountService.saveVault(vaultDTO);
+        VaultDTO expected = accountService.saveVault(savedAccount.getAccountId(), savedBranch.getBranchId());
 
         //THEN
         assertThat(expected.getVaultId()).isGreaterThan(0);
@@ -101,22 +101,21 @@ public class AccountServiceTest {
     void shouldRetrieveListOfVaultsByBranchId() {
         //GIVEN
         BranchDTO savedBranch = getSavedBranch();
-
-        VaultDTO savedVault = accountService.saveVault(
-                VaultDTO.builder()
+        AccountDTO savedAccount = accountService.save(
+                AccountDTO.builder()
                         .accountName("Branch 2")
                         .accountNumber("123456789")
                         .accountType(AccountType.Business.name())
                         .status(Status.Pending.code())
-                        .branchId(savedBranch.getBranchId())
                         .build());
+        accountService.saveVault(savedAccount.getAccountId(), savedBranch.getBranchId());
 
         //WHEN
-        List<VaultDTO> expected = accountService.findAllVaultsByBranchId(savedVault.getBranchId());
+        List<VaultDTO> expected = accountService.findAllVaultsByBranchId(savedBranch.getBranchId());
 
         //THEN
         assertThat(expected.size()).isEqualTo(1);
-        assertThat(expected.get(0).getBranchId()).isEqualTo(savedVault.getBranchId());
+        assertThat(expected.get(0).getBranchId()).isEqualTo(savedBranch.getBranchId());
         assertThat(expected.get(0).getStatus()).isEqualTo(Status.Pending.name());
     }
 
@@ -124,21 +123,20 @@ public class AccountServiceTest {
     void shouldFindVaultByBranchId() {
         //GIVEN
         BranchDTO savedBranch = getSavedBranch();
-
-        VaultDTO savedVault = accountService.saveVault(
-                VaultDTO.builder()
-                        .accountName("Branch 2")
-                        .accountNumber("123456789")
-                        .accountType(AccountType.Business.name())
-                        .status(Status.Pending.code())
-                        .branchId(savedBranch.getBranchId())
-                        .build());
+        AccountDTO savedAccount = accountService.save(
+                AccountDTO.builder()
+                .accountName("Branch 2")
+                 .accountNumber("123456789")
+                 .accountType(AccountType.Business.name())
+                 .status(Status.Pending.code())
+                 .build());
+        accountService.saveVault(savedAccount.getAccountId(), savedBranch.getBranchId());
 
         //WHEN
-        VaultDTO expected = accountService.findVaultByBranchId(savedVault.getBranchId());
+        VaultDTO expected = accountService.findVaultByBranchId(savedBranch.getBranchId());
 
         //THEN
-        assertThat(expected.getBranchId()).isEqualTo(savedVault.getBranchId());
+        assertThat(expected.getBranchId()).isEqualTo(savedBranch.getBranchId());
         assertThat(expected.getStatus()).isEqualTo(Status.Pending.name());
     }
 
@@ -158,18 +156,16 @@ public class AccountServiceTest {
     void shouldSaveNewTrunk() {
         //GIVEN
         CustomerDTO savedCustomer = getSavedCustomer();
-
-        TrunkDTO trunkDTO =  TrunkDTO.builder()
+        AccountDTO savedAccount = accountService.save(
+                AccountDTO.builder()
                 .accountName("John Doe")
                 .accountNumber("123456789")
                 .accountType(AccountType.Business.name())
                 .status(Status.Pending.code())
-                .customerId(savedCustomer.getCustomerId())
-                .membership(AccountMemberShip.Owner.name())
-                .build();
+                .build());
 
         //WHEN
-        TrunkDTO expected = accountService.saveTrunk(trunkDTO);
+        TrunkDTO expected = accountService.saveTrunk(savedAccount.getAccountId(), savedCustomer.getCustomerId(), AccountMemberShip.Owner.name());
 
         //THEN
         assertThat(expected.getTrunkId()).isGreaterThan(0);
@@ -180,19 +176,17 @@ public class AccountServiceTest {
     void shouldRetrieveListOfTrunksByCustomerId() {
         //GIVEN
         CustomerDTO savedCustomer = getSavedCustomer();
-
-        TrunkDTO savedTrunk = accountService.saveTrunk(
-                TrunkDTO.builder()
+        AccountDTO savedAccount = accountService.save(
+                AccountDTO.builder()
                 .accountName("John Doe")
                 .accountNumber("123456789")
                 .accountType(AccountType.Business.name())
                 .status(Status.Pending.code())
-                .customerId(savedCustomer.getCustomerId())
-                .membership(AccountMemberShip.Owner.name())
                 .build());
+        accountService.saveTrunk(savedAccount.getAccountId(), savedCustomer.getCustomerId(), AccountMemberShip.Owner.name());
 
         //WHEN
-        List<TrunkDTO> expected = accountService.findAllTrunksByCustomerId(savedTrunk.getCustomerId());
+        List<TrunkDTO> expected = accountService.findAllTrunksByCustomerId(savedCustomer.getCustomerId());
 
         //THEN
         assertThat(expected.size()).isEqualTo(1);
@@ -204,19 +198,17 @@ public class AccountServiceTest {
     void shouldFindTrunkByCustomerId() {
         //GIVEN
         CustomerDTO savedCustomer = getSavedCustomer();
-
-        TrunkDTO savedTrunk = accountService.saveTrunk(
-                TrunkDTO.builder()
-                        .accountName("John Doe")
-                        .accountNumber("123456789")
-                        .accountType(AccountType.Business.name())
-                        .status(Status.Pending.code())
-                        .customerId(savedCustomer.getCustomerId())
-                        .membership(AccountMemberShip.Owner.name())
-                        .build());
+        AccountDTO savedAccount = accountService.save(
+                AccountDTO.builder()
+                .accountName("John Doe")
+                .accountNumber("123456789")
+                .accountType(AccountType.Business.name())
+                .status(Status.Pending.code())
+                .build());
+        accountService.saveTrunk(savedAccount.getAccountId(), savedCustomer.getCustomerId(), AccountMemberShip.Owner.name());
 
         //WHEN
-        TrunkDTO expected = accountService.findTrunkByCustomerId(savedTrunk.getCustomerId());
+        TrunkDTO expected = accountService.findTrunkByCustomerId(savedCustomer.getCustomerId());
 
         //THEN
         assertThat(expected.getCustomerId()).isEqualTo(savedCustomer.getCustomerId());
@@ -239,19 +231,17 @@ public class AccountServiceTest {
     void shouldCheckIfAnAccountIsATrunkByAccountNumber() {
         //GIVEN
         CustomerDTO savedCustomer = getSavedCustomer();
-
-        TrunkDTO savedTrunk = accountService.saveTrunk(
-                TrunkDTO.builder()
-                        .accountName("John Doe")
-                        .accountNumber("123456789")
-                        .accountType(AccountType.Business.name())
-                        .status(Status.Pending.code())
-                        .customerId(savedCustomer.getCustomerId())
-                        .membership(AccountMemberShip.Owner.name())
-                        .build());
+        AccountDTO savedAccount = accountService.save(
+                AccountDTO.builder()
+                .accountName("John Doe")
+                .accountNumber("123456789")
+                .accountType(AccountType.Business.name())
+                .status(Status.Pending.code())
+                .build());
+        accountService.saveTrunk(savedAccount.getAccountId(), savedCustomer.getCustomerId(), AccountMemberShip.Owner.name());
 
         //WHEN
-        boolean expected = accountService.isTrunk(savedTrunk.getAccountNumber());
+        boolean expected = accountService.isTrunk(savedAccount.getAccountNumber());
 
         //THEN
         assertTrue(expected);

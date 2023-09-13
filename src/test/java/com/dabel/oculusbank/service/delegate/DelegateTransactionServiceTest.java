@@ -1,11 +1,12 @@
-package com.dabel.oculusbank.service;
+package com.dabel.oculusbank.service.delegate;
 
 import com.dabel.oculusbank.DatabaseSettingsForTests;
 import com.dabel.oculusbank.constant.*;
 import com.dabel.oculusbank.dto.AccountDTO;
 import com.dabel.oculusbank.dto.TransactionDTO;
 import com.dabel.oculusbank.exception.BalanceInsufficientException;
-import com.dabel.oculusbank.service.delegate.DelegateTransactionService;
+import com.dabel.oculusbank.service.AccountService;
+import com.dabel.oculusbank.service.TransactionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,7 @@ class DelegateTransactionServiceTest {
                 .accountNumber("123456789")
                 .balance(1500)
                 .currency(Currency.KMF.name())
-                .accountType(AccountType.Current.name())
+                .accountType(AccountType.Saving.name())
                 .status(Status.Pending.code())
                 .build());
     }

@@ -1,4 +1,4 @@
-package com.dabel.oculusbank.service;
+package com.dabel.oculusbank.service.delegate;
 
 import com.dabel.oculusbank.DatabaseSettingsForTests;
 import com.dabel.oculusbank.constant.LoanType;
@@ -6,6 +6,8 @@ import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.dto.BranchDTO;
 import com.dabel.oculusbank.dto.CustomerDTO;
 import com.dabel.oculusbank.dto.LoanDTO;
+import com.dabel.oculusbank.service.BranchService;
+import com.dabel.oculusbank.service.CustomerService;
 import com.dabel.oculusbank.service.delegate.DelegateLoanService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -5,8 +5,8 @@ import com.dabel.oculusbank.constant.AccountProfile;
 import com.dabel.oculusbank.constant.AccountType;
 import com.dabel.oculusbank.constant.Currency;
 import com.dabel.oculusbank.constant.Status;
+import com.dabel.oculusbank.dto.AccountDTO;
 import com.dabel.oculusbank.dto.BranchDTO;
-import com.dabel.oculusbank.dto.VaultDTO;
 import com.dabel.oculusbank.service.AccountService;
 import com.dabel.oculusbank.service.BranchService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,13 +20,14 @@ public class DelegateBranchService {
     @Autowired
     AccountService accountService;
 
-    public BranchDTO createWithOwnAccountsAtOnce(BranchDTO branchDTO) {
+    public BranchDTO create(BranchDTO branchDTO) {
 
         branchDTO.setStatus(Status.Active.code());
         BranchDTO savedBranch = branchService.save(branchDTO);
+
         //TODO: save vault KMF
-        VaultDTO vaultKMF = VaultDTO.builder()
-                .branchId(savedBranch.getBranchId())
+        AccountDTO savedAccountKmf = accountService.save(
+                AccountDTO.builder()
                 .accountName(savedBranch.getBranchName())
                 .accountNumber(Generator.generateAccountNumber())
                 .accountType(AccountType.Business.name())
@@ -34,12 +35,12 @@ public class DelegateBranchService {
                 .currency(Currency.KMF.name())
                 .balance(0.0)
                 .status(Status.Active.code())
-                .build();
-        accountService.saveVault(vaultKMF);
+                .build());
+        accountService.saveVault(savedAccountKmf.getAccountId(), savedBranch.getBranchId());
 
         //TODO: save vault EUR
-        VaultDTO vaultEUR = VaultDTO.builder()
-                .branchId(savedBranch.getBranchId())
+        AccountDTO savedAccountEur = accountService.save(
+                AccountDTO.builder()
                 .accountName(savedBranch.getBranchName())
                 .accountNumber(Generator.generateAccountNumber())
                 .accountType(AccountType.Business.name())
@@ -47,21 +48,21 @@ public class DelegateBranchService {
                 .currency(Currency.EUR.name())
                 .balance(0.0)
                 .status(Status.Active.code())
-                .build();
-        accountService.saveVault(vaultEUR);
+                .build());
+        accountService.saveVault(savedAccountEur.getAccountId(), savedBranch.getBranchId());
 
         //TODO: save vault USD
-        VaultDTO vaultUSD = VaultDTO.builder()
-                .branchId(savedBranch.getBranchId())
-                .accountName(savedBranch.getBranchName())
-                .accountNumber(Generator.generateAccountNumber())
-                .accountType(AccountType.Business.name())
-                .accountProfile(AccountProfile.Personal.name())
-                .currency(Currency.USD.name())
-                .balance(0.0)
-                .status(Status.Active.code())
-                .build();
-        accountService.saveVault(vaultUSD);
+        AccountDTO savedAccountUsd = accountService.save(
+                AccountDTO.builder()
+                        .accountName(savedBranch.getBranchName())
+                        .accountNumber(Generator.generateAccountNumber())
+                        .accountType(AccountType.Business.name())
+                        .accountProfile(AccountProfile.Personal.name())
+                        .currency(Currency.USD.name())
+                        .balance(0.0)
+                        .status(Status.Active.code())
+                        .build());
+        accountService.saveVault(savedAccountUsd.getAccountId(), savedBranch.getBranchId());
 
         return savedBranch;
     }

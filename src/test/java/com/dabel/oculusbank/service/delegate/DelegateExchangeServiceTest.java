@@ -1,4 +1,4 @@
-package com.dabel.oculusbank.service;
+package com.dabel.oculusbank.service.delegate;
 
 import com.dabel.oculusbank.DatabaseSettingsForTests;
 import com.dabel.oculusbank.constant.Currency;

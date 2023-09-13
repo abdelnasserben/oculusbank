@@ -32,7 +32,7 @@ public class AccountOperationsServiceTest {
                 AccountDTO.builder()
                 .accountName("John Doe")
                 .accountNumber("123456789")
-                .accountType(AccountType.Current.name())
+                .accountType(AccountType.Saving.name())
                 .balance(1000)
                 .status(Status.Pending.code())
                 .build());

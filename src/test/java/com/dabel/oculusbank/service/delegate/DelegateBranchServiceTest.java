@@ -1,10 +1,10 @@
-package com.dabel.oculusbank.service;
+package com.dabel.oculusbank.service.delegate;
 
 import com.dabel.oculusbank.DatabaseSettingsForTests;
 import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.dto.BranchDTO;
 import com.dabel.oculusbank.dto.VaultDTO;
-import com.dabel.oculusbank.service.delegate.DelegateBranchService;
+import com.dabel.oculusbank.service.AccountService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +39,7 @@ public class DelegateBranchServiceTest {
                 .status(Status.Active.code())
                 .build();
         //WHEN
-        BranchDTO expected = delegateBranchService.createWithOwnAccountsAtOnce(branchDTO);
+        BranchDTO expected = delegateBranchService.create(branchDTO);
 
         //THEN
         assertThat(expected.getBranchId()).isGreaterThan(0);

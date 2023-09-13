@@ -7,11 +7,7 @@ import com.dabel.oculusbank.dto.AccountDTO;
 public final class AccountChecker {
 
     public static boolean isActive(AccountDTO accountDTO) {
-        return accountDTO.getStatus().equals(Status.Active.name()) || accountDTO.getStatus().equals(Status.Active.code());
-    }
-
-    public static boolean isPersonal(AccountDTO accountDTO) {
-        return accountDTO.getAccountProfile().equals(AccountProfile.Personal.name());
+        return !accountDTO.getStatus().equals(Status.Active.name()) && !accountDTO.getStatus().equals(Status.Active.code());
     }
 
     public static boolean isJoint(AccountDTO accountDTO) {
@@ -19,6 +15,6 @@ public final class AccountChecker {
     }
 
     public static boolean isAssociative(AccountDTO accountDTO) {
-        return accountDTO.getAccountProfile().equals(AccountProfile.Association.name());
+        return accountDTO.getAccountProfile().equals(AccountProfile.Associative.name());
     }
 }

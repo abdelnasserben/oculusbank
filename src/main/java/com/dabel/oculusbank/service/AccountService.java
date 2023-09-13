@@ -36,27 +36,35 @@ public class AccountService {
         return AccountMapper.toDTO(account);
     }
 
+    public VaultDTO saveVault(int accountId, int branchId) {
+
+        VaultDTO vaultDTO = VaultDTO.builder()
+                .accountId(accountId)
+                .branchId(branchId)
+                .build();
+        Vault savedVault = vaultRepository.save(VaultMapper.toEntity(vaultDTO));
+        vaultDTO.setVaultId(savedVault.getVaultId());
+
+        return vaultDTO;
+    }
+
+    public TrunkDTO saveTrunk(int accountId, int customerId, String membership) {
+
+        TrunkDTO trunkDTO = TrunkDTO.builder()
+                .accountId(accountId)
+                .customerId(customerId)
+                .membership(membership)
+                .build();
+        Trunk savedTrunk = trunkRepository.save(TrunkMapper.toEntity(trunkDTO));
+        trunkDTO.setTrunkId(savedTrunk.getTrunkId());
+
+        return trunkDTO;
+    }
+
     public AccountDTO findByNumber(String accountNumber) {
         Account account = accountRepository.findByAccountNumber(accountNumber)
                 .orElseThrow(AccountNotFoundException::new);
         return AccountMapper.toDTO(account);
-    }
-
-    public VaultDTO saveVault(VaultDTO vaultDTO) {
-        Account savedAccount = accountRepository.save(AccountMapper.toEntity(vaultDTO));
-
-        //TODO: actualize vault info
-        vaultDTO.setAccountId(savedAccount.getAccountId());
-        vaultDTO.setCreatedAt(savedAccount.getCreatedAt());
-        vaultDTO.setUpdatedAt(savedAccount.getUpdatedAt());
-
-        //TODO: save vault
-        Vault savedVault = vaultRepository.save(VaultMapper.toEntity(vaultDTO));
-
-        //TODO: actualize again vault info
-        vaultDTO.setVaultId(savedVault.getVaultId());
-
-        return vaultDTO;
     }
 
     public List<VaultDTO> findAllVaultsByBranchId(int branchId) {
@@ -73,23 +81,6 @@ public class AccountService {
         return formatVaultStatusToNameAndGetDTO(vaultView);
     }
 
-    public TrunkDTO saveTrunk(TrunkDTO trunkDTO) {
-        Account savedAccount = accountRepository.save(AccountMapper.toEntity(trunkDTO));
-
-        //TODO: actualize trunk info
-        trunkDTO.setAccountId(savedAccount.getAccountId());
-        trunkDTO.setCreatedAt(savedAccount.getCreatedAt());
-        trunkDTO.setUpdatedAt(savedAccount.getUpdatedAt());
-
-        //TODO: save trunk
-        Trunk savedTrunk = trunkRepository.save(TrunkMapper.toEntity(trunkDTO));
-
-        //TODO: actualize again trunk info
-        trunkDTO.setTrunkId(savedTrunk.getTrunkId());
-
-        return trunkDTO;
-    }
-
     public List<TrunkDTO> findAllTrunksByCustomerId(int customerId) {
         List<TrunkView> trunks = trunkViewRepository.findAllByCustomerId(customerId);
         return trunks.stream()
@@ -99,6 +90,13 @@ public class AccountService {
 
     public TrunkDTO findTrunkByCustomerId(int customerId) {
         TrunkView trunkView = trunkViewRepository.findByCustomerId(customerId)
+                .orElseThrow(AccountNotFoundException::new);
+
+        return formatTrunkStatusToNameAndGetDTO(trunkView);
+    }
+
+    public TrunkDTO findTrunkByNumber(String accountNumber) {
+        TrunkView trunkView = trunkViewRepository.findByAccountNumber(accountNumber)
                 .orElseThrow(AccountNotFoundException::new);
 
         return formatTrunkStatusToNameAndGetDTO(trunkView);
@@ -117,5 +115,4 @@ public class AccountService {
         t.setStatus(Status.nameOf(t.getStatus()));
         return TrunkMapper.toDTO(t);
     }
-
 }

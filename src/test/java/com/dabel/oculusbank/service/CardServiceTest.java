@@ -36,7 +36,7 @@ class CardServiceTest {
                 AccountDTO.builder()
                 .accountName("John Doe")
                 .accountNumber("66398832015")
-                .accountType(AccountType.Current.name())
+                .accountType(AccountType.Saving.name())
                 .status(Status.Pending.code())
                 .build());
     }

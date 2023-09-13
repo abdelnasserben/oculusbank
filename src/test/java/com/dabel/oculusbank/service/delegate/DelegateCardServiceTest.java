@@ -1,4 +1,4 @@
-package com.dabel.oculusbank.service;
+package com.dabel.oculusbank.service.delegate;
 
 import com.dabel.oculusbank.DatabaseSettingsForTests;
 import com.dabel.oculusbank.constant.AccountProfile;
@@ -8,7 +8,7 @@ import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.dto.AccountDTO;
 import com.dabel.oculusbank.dto.CardDTO;
 import com.dabel.oculusbank.exception.IllegalOperationException;
-import com.dabel.oculusbank.service.delegate.DelegateCardService;
+import com.dabel.oculusbank.service.AccountService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +41,7 @@ class DelegateCardServiceTest {
                 AccountDTO.builder()
                 .accountName("John Doe")
                 .accountNumber("66398832015")
-                .accountType(AccountType.Current.name())
+                .accountType(AccountType.Saving.name())
                 .accountProfile(AccountProfile.Joint.name())
                 .status(Status.Active.code())
                 .build());
@@ -68,7 +68,7 @@ class DelegateCardServiceTest {
                 AccountDTO.builder()
                 .accountName("John Doe")
                 .accountNumber("66398832015")
-                .accountType(AccountType.Current.name())
+                .accountType(AccountType.Saving.name())
                 .accountProfile(AccountProfile.Joint.name())
                 .status(Status.Pending.code())
                 .build());
@@ -95,8 +95,8 @@ class DelegateCardServiceTest {
                 AccountDTO.builder()
                 .accountName("John Doe")
                 .accountNumber("66398832015")
-                .accountType(AccountType.Current.name())
-                .accountProfile(AccountProfile.Association.name())
+                .accountType(AccountType.Saving.name())
+                .accountProfile(AccountProfile.Associative.name())
                 .status(Status.Active.code())
                 .build());
 
@@ -122,7 +122,7 @@ class DelegateCardServiceTest {
                 AccountDTO.builder()
                 .accountName("John Doe")
                 .accountNumber("66398832015")
-                .accountType(AccountType.Current.name())
+                .accountType(AccountType.Saving.name())
                 .accountProfile(AccountProfile.Joint.name())
                 .status(Status.Active.code())
                 .build());
@@ -150,7 +150,7 @@ class DelegateCardServiceTest {
                 AccountDTO.builder()
                 .accountName("John Doe")
                 .accountNumber("66398832015")
-                .accountType(AccountType.Current.name())
+                .accountType(AccountType.Saving.name())
                 .accountProfile(AccountProfile.Joint.name())
                 .status(Status.Active.code())
                 .build());

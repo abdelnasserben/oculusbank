@@ -1,12 +1,9 @@
 package com.dabel.oculusbank.service.delegate;
 
 import com.dabel.oculusbank.app.Generator;
-import com.dabel.oculusbank.constant.AccountProfile;
-import com.dabel.oculusbank.constant.AccountType;
-import com.dabel.oculusbank.constant.Currency;
-import com.dabel.oculusbank.constant.Status;
+import com.dabel.oculusbank.constant.*;
+import com.dabel.oculusbank.dto.AccountDTO;
 import com.dabel.oculusbank.dto.CustomerDTO;
-import com.dabel.oculusbank.dto.TrunkDTO;
 import com.dabel.oculusbank.service.AccountService;
 import com.dabel.oculusbank.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,25 +17,30 @@ public class DelegateCustomerService {
     @Autowired
     AccountService accountService;
 
-    public CustomerDTO createWithOwnAccountsAtOnce(CustomerDTO customerDTO, boolean withAccount) {
+    public CustomerDTO create(CustomerDTO customerDTO) {
+
+        customerDTO.setStatus(Status.Active.code());
+        return customerService.save(customerDTO);
+    }
+
+    public CustomerDTO create(CustomerDTO customerDTO, String accountType, String accountProfile, String accountMembership) {
 
         customerDTO.setStatus(Status.Active.code());
         CustomerDTO savedCustomer = customerService.save(customerDTO);
 
-        if(withAccount) {
-            //TODO: save trunk KMF
-            TrunkDTO trunkDTO = TrunkDTO.builder()
-                    .customerId(savedCustomer.getCustomerId())
-                    .accountName(savedCustomer.getFirstName() + " " + savedCustomer.getLastName())
-                    .accountNumber(Generator.generateAccountNumber())
-                    .accountType(AccountType.Current.name())
-                    .accountProfile(AccountProfile.Personal.name())
-                    .currency(Currency.KMF.name())
-                    .balance(0.0)
-                    .status(Status.Active.code())
-                    .build();
-            accountService.saveTrunk(trunkDTO);
-        }
+        //TODO: save trunk KMF
+        AccountDTO savedAccount = accountService.save(
+                AccountDTO.builder()
+                .accountName(savedCustomer.getFirstName() + " " + savedCustomer.getLastName())
+                .accountNumber(Generator.generateAccountNumber())
+                .accountType(accountType)
+                .accountProfile(accountProfile)
+                .currency(Currency.KMF.name())
+                .balance(0.0)
+                .status(Status.Active.code())
+                .build());
+
+        accountService.saveTrunk(savedAccount.getAccountId(), savedCustomer.getCustomerId(), accountMembership);
 
         return savedCustomer;
     }

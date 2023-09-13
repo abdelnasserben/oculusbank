@@ -40,7 +40,7 @@ public class TransactionServiceTest {
                 AccountDTO.builder()
                 .accountName("John Doe")
                 .accountNumber("123456789")
-                .accountType(AccountType.Current.name())
+                .accountType(AccountType.Saving.name())
                 .status(Status.Pending.code())
                 .build());
 
@@ -67,7 +67,7 @@ public class TransactionServiceTest {
                 AccountDTO.builder()
                         .accountName("John Doe")
                         .accountNumber("123456789")
-                        .accountType(AccountType.Current.name())
+                        .accountType(AccountType.Saving.name())
                         .status(Status.Pending.code())
                         .build());
 
@@ -95,7 +95,7 @@ public class TransactionServiceTest {
                 AccountDTO.builder()
                         .accountName("John Doe")
                         .accountNumber("123456789")
-                        .accountType(AccountType.Current.name())
+                        .accountType(AccountType.Saving.name())
                         .status(Status.Pending.code())
                         .build());
 

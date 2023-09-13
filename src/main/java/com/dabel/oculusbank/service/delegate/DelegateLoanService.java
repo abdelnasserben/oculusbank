@@ -27,10 +27,10 @@ public class DelegateLoanService implements OperationAcknowledgment<LoanDTO> {
     @Autowired
     AccountService accountService;
 
-    public LoanDTO loan(int customerId, String loanType, double issuedAmount, double interestRate, int duration, String reason) {
-        CustomerDTO customer = customerService.findById(customerId);
+    public LoanDTO loan(LoanDTO loanDTO) {
 
-        LoanCalculator loanCalculator = new LoanCalculator(issuedAmount, interestRate, duration);
+        CustomerDTO customer = customerService.findById(loanDTO.getCustomerId());
+        LoanCalculator loanCalculator = new LoanCalculator(loanDTO.getIssuedAmount(), loanDTO.getInterestRate(), loanDTO.getDuration());
 
         AccountDTO account = accountService.save(
                 AccountDTO.builder()
@@ -41,21 +41,28 @@ public class DelegateLoanService implements OperationAcknowledgment<LoanDTO> {
                 .balance(-loanCalculator.getTotalAmountDue())
                 .status(Status.Pending.code())
                 .build());
+//
+//
+//        LoanDTO loan = LoanDTO.builder()
+//                .customerId(customer.getCustomerId())
+//                .loanType(loanType)
+//                .accountId(account.getAccountId())
+//                .currency(Currency.KMF.name())
+//                .issuedAmount(issuedAmount)
+//                .interestRate(interestRate)
+//                .duration(duration)
+//                .totalAmount(loanCalculator.getTotalAmountDue())
+//                .perMonthAmount(loanCalculator.getPerMonthAmountDue())
+//                .reason(reason)
+//                .status(Status.Pending.code())
+//                .build();
 
-
-        LoanDTO loanDTO = LoanDTO.builder()
-                .customerId(customer.getCustomerId())
-                .loanType(loanType)
-                .accountId(account.getAccountId())
-                .currency(Currency.KMF.name())
-                .issuedAmount(issuedAmount)
-                .interestRate(interestRate)
-                .duration(duration)
-                .totalAmount(loanCalculator.getTotalAmountDue())
-                .perMonthAmount(loanCalculator.getPerMonthAmountDue())
-                .reason(reason)
-                .status(Status.Pending.code())
-                .build();
+        //TODO: Update loan information before saving
+        loanDTO.setAccountId(account.getAccountId());
+        loanDTO.setCurrency(Currency.KMF.name());
+        loanDTO.setTotalAmount(loanCalculator.getTotalAmountDue());
+        loanDTO.setPerMonthAmount(loanCalculator.getPerMonthAmountDue());
+        loanDTO.setStatus(Status.Pending.code());
 
         return loanService.save(loanDTO);
     }

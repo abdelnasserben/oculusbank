@@ -54,13 +54,15 @@ class DelegatePaymentServiceTest {
     @Test
     void shouldMakePayment() {
         //GIVEN
-        String debitAccountNumber = savedAccount1.getAccountNumber();
-        double amount = 50;
-        String creditAccountNumber = savedAccount2.getAccountNumber();
-        String reason = "Sample reason";
+        PaymentDTO paymentDTO = PaymentDTO.builder()
+                .debitAccountNumber(savedAccount1.getAccountNumber())
+                .creditAccountNumber(savedAccount2.getAccountNumber())
+                .amount(50)
+                .reason("Sample reason")
+                .build();
 
         //WHEN
-        PaymentDTO expected = delegatePaymentService.pay(debitAccountNumber, amount, creditAccountNumber, reason);
+        PaymentDTO expected = delegatePaymentService.pay(paymentDTO);
 
         //THEN
         assertThat(expected.getPaymentId()).isGreaterThan(0);
@@ -70,11 +72,13 @@ class DelegatePaymentServiceTest {
     @Test
     void shouldApprovePendingSavedPayment() {
         //GIVEN
-        String debitAccountNumber = savedAccount1.getAccountNumber();
-        double amount = 50;
-        String creditAccountNumber = savedAccount2.getAccountNumber();
-        String reason = "Sample reason";
-        PaymentDTO savedPayment = delegatePaymentService.pay(debitAccountNumber, amount, creditAccountNumber, reason);
+        PaymentDTO paymentDTO = PaymentDTO.builder()
+                .debitAccountNumber(savedAccount1.getAccountNumber())
+                .creditAccountNumber(savedAccount2.getAccountNumber())
+                .amount(50)
+                .reason("Sample reason")
+                .build();
+        PaymentDTO savedPayment = delegatePaymentService.pay(paymentDTO);
 
         //WHEN
         PaymentDTO expected = delegatePaymentService.approve(savedPayment.getPaymentId());
@@ -92,11 +96,13 @@ class DelegatePaymentServiceTest {
     @Test
     void shouldRejectedPendingSavedPayment() {
         //GIVEN
-        String debitAccountNumber = savedAccount1.getAccountNumber();
-        double amount = 50;
-        String creditAccountNumber = savedAccount2.getAccountNumber();
-        String reason = "Sample reason";
-        PaymentDTO savedPayment = delegatePaymentService.pay(debitAccountNumber, amount, creditAccountNumber, reason);
+        PaymentDTO paymentDTO = PaymentDTO.builder()
+                .debitAccountNumber(savedAccount1.getAccountNumber())
+                .creditAccountNumber(savedAccount2.getAccountNumber())
+                .amount(50)
+                .reason("Sample reason")
+                .build();
+        PaymentDTO savedPayment = delegatePaymentService.pay(paymentDTO);
 
         //WHEN
         PaymentDTO expected = delegatePaymentService.reject(savedPayment.getPaymentId(), "Sample remark");
@@ -114,14 +120,16 @@ class DelegatePaymentServiceTest {
     @Test
     void shouldThrowBalanceInsufficientExceptionWhenTryMakePaymentWithInsufficientBalance() {
         //GIVEN
-        String debitAccountNumber = savedAccount1.getAccountNumber();
-        double amount = 600;
-        String creditAccountNumber = savedAccount2.getAccountNumber();
-        String reason = "Sample reason";
+        PaymentDTO paymentDTO = PaymentDTO.builder()
+                .debitAccountNumber(savedAccount1.getAccountNumber())
+                .creditAccountNumber(savedAccount2.getAccountNumber())
+                .amount(600)
+                .reason("Sample reason")
+                .build();
 
         //WHEN
         Exception expected = assertThrows(BalanceInsufficientException.class,
-                () -> delegatePaymentService.pay(debitAccountNumber, amount, creditAccountNumber, reason));
+                () -> delegatePaymentService.pay(paymentDTO));
 
         //THEN
         assertThat(expected.getMessage()).isEqualTo("Account balance is insufficient");

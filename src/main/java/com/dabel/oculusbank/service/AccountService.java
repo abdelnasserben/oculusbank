@@ -104,6 +104,10 @@ public class AccountService {
         return formatTrunkStatusToNameAndGetDTO(trunkView);
     }
 
+    public boolean isTrunk(String accountNumber) {
+        return trunkViewRepository.findByAccountNumber(accountNumber).isPresent();
+    }
+
     private static VaultDTO formatVaultStatusToNameAndGetDTO(VaultView vaultView) {
         vaultView.setStatus(Status.nameOf(vaultView.getStatus()));
         return VaultMapper.toDTO(vaultView);

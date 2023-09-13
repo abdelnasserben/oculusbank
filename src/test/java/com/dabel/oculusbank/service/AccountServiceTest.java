@@ -15,6 +15,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 public class AccountServiceTest {
@@ -232,5 +233,27 @@ public class AccountServiceTest {
 
         //THEN
         assertThat(expected.getMessage()).isEqualTo("Account not found");
+    }
+
+    @Test
+    void shouldCheckIfAnAccountIsATrunkByAccountNumber() {
+        //GIVEN
+        CustomerDTO savedCustomer = getSavedCustomer();
+
+        TrunkDTO savedTrunk = accountService.saveTrunk(
+                TrunkDTO.builder()
+                        .accountName("John Doe")
+                        .accountNumber("123456789")
+                        .accountType(AccountType.Business.name())
+                        .status(Status.Pending.code())
+                        .customerId(savedCustomer.getCustomerId())
+                        .membership(AccountMemberShip.Owner.name())
+                        .build());
+
+        //WHEN
+        boolean expected = accountService.isTrunk(savedTrunk.getAccountNumber());
+
+        //THEN
+        assertTrue(expected);
     }
 }

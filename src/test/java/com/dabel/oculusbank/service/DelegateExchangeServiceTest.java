@@ -30,12 +30,17 @@ class DelegateExchangeServiceTest {
     @Test
     void shouldExchangeEur2Kmf() {
         //GIVEN
-        String customerName = "John Doe", customerIdentity = "NBE454532", buyCurrency = Currency.EUR.name(),
-                saleCurrency = Currency.KMF.name(), reason = "Sample reason";
-        double amount = 20;
+        ExchangeDTO exchangeDTO = ExchangeDTO.builder()
+                .customerName("John Doe")
+                .customerIdentity("NBE454532")
+                .buyCurrency(Currency.EUR.name())
+                .saleCurrency(Currency.KMF.name())
+                .amount(20)
+                .reason("Sample reason")
+                .build();
 
         //WHEN
-        ExchangeDTO expected = delegateExchangeService.exchange(customerName, customerIdentity, buyCurrency, saleCurrency, amount, reason);
+        ExchangeDTO expected = delegateExchangeService.exchange(exchangeDTO);
 
         //THEN
         //1£ = 490.31KMF => 20£ = 9806.2KMF | Note that this is a purchase
@@ -46,12 +51,17 @@ class DelegateExchangeServiceTest {
     @Test
     void shouldExchangeKmf2Usd() {
         //GIVEN
-        String customerName = "John Doe", customerIdentity = "NBE454532", buyCurrency = Currency.KMF.name(),
-                saleCurrency = Currency.USD.name(), reason = "Sample reason";
-        double amount = 10_000;
+        ExchangeDTO exchangeDTO = ExchangeDTO.builder()
+                .customerName("John Doe")
+                .customerIdentity("NBE454532")
+                .buyCurrency(Currency.KMF.name())
+                .saleCurrency(Currency.USD.name())
+                .amount(10000)
+                .reason("Sample reason")
+                .build();
 
         //WHEN
-        ExchangeDTO expected = delegateExchangeService.exchange(customerName, customerIdentity, buyCurrency, saleCurrency, amount, reason);
+        ExchangeDTO expected = delegateExchangeService.exchange(exchangeDTO);
 
         //THEN
         //1$ = 462.12KMF => 10 000KMF = 21.63$ | note that this is a sale
@@ -62,10 +72,15 @@ class DelegateExchangeServiceTest {
     @Test
     void shouldApprovePendingSavedExchange() {
         //GIVEN
-        String customerName = "John Doe", customerIdentity = "NBE454532", buyCurrency = Currency.KMF.name(),
-                saleCurrency = Currency.USD.name(), reason = "Sample reason";
-        double amount = 10_000;
-        ExchangeDTO savedExchange = delegateExchangeService.exchange(customerName, customerIdentity, buyCurrency, saleCurrency, amount, reason);
+        ExchangeDTO exchangeDTO = ExchangeDTO.builder()
+                .customerName("John Doe")
+                .customerIdentity("NBE454532")
+                .buyCurrency(Currency.KMF.name())
+                .saleCurrency(Currency.USD.name())
+                .amount(10000)
+                .reason("Sample reason")
+                .build();
+        ExchangeDTO savedExchange = delegateExchangeService.exchange(exchangeDTO);
 
         //WHEN
         ExchangeDTO expected = delegateExchangeService.approve(savedExchange.getExchangeId());
@@ -79,10 +94,15 @@ class DelegateExchangeServiceTest {
     @Test
     void shouldRejectPendingSavedExchange() {
         //GIVEN
-        String customerName = "John Doe", customerIdentity = "NBE454532", buyCurrency = Currency.KMF.name(),
-                saleCurrency = Currency.USD.name(), reason = "Sample reason";
-        double amount = 10_000;
-        ExchangeDTO savedExchange = delegateExchangeService.exchange(customerName, customerIdentity, buyCurrency, saleCurrency, amount, reason);
+        ExchangeDTO exchangeDTO = ExchangeDTO.builder()
+                .customerName("John Doe")
+                .customerIdentity("NBE454532")
+                .buyCurrency(Currency.KMF.name())
+                .saleCurrency(Currency.USD.name())
+                .amount(10000)
+                .reason("Sample reason")
+                .build();
+        ExchangeDTO savedExchange = delegateExchangeService.exchange(exchangeDTO);
 
         //WHEN
         ExchangeDTO expected = delegateExchangeService.reject(savedExchange.getExchangeId(), "Sample remark");
@@ -97,13 +117,18 @@ class DelegateExchangeServiceTest {
     @Test
     void shouldThrowAnIllegalOperationExceptionWhenTryMakeAnExchangeWithSameCurrencies() {
         //GIVEN
-        String customerName = "John Doe", customerIdentity = "NBE454532", buyCurrency = Currency.KMF.name(),
-                saleCurrency = Currency.KMF.name(), reason = "Sample reason";
-        double amount = 20;
+        ExchangeDTO exchangeDTO = ExchangeDTO.builder()
+                .customerName("John Doe")
+                .customerIdentity("NBE454532")
+                .buyCurrency(Currency.KMF.name())
+                .saleCurrency(Currency.KMF.name())
+                .amount(20)
+                .reason("Sample reason")
+                .build();
 
         //WHEN
         Exception expected = assertThrows(IllegalOperationException.class,
-                () -> delegateExchangeService.exchange(customerName, customerIdentity, buyCurrency, saleCurrency, amount, reason));
+                () -> delegateExchangeService.exchange(exchangeDTO));
 
         //THEN
         assertThat(expected.getMessage()).isEqualTo("Currencies must be different");

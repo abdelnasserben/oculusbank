@@ -45,10 +45,17 @@ class DelegateTransactionServiceTest {
     @Test
     void shouldMakeDeposit() {
         //GIVEN
-        DepositParams depositParams = getDepositParams();
+        TransactionDTO transactionDTO = TransactionDTO.builder()
+                .accountNumber(savedAccount.getAccountNumber())
+                .amount(500)
+                .currency(Currency.KMF.name())
+                .sourceType(SourceType.Online.name())
+                .sourceValue("Branch 1")
+                .reason("Sample description")
+                .build();
 
         //WHEN
-        TransactionDTO expected = basicDelegateTransactionService.deposit(depositParams.accountNumber(), depositParams.amount(), depositParams.currency(), depositParams.sourceType(), depositParams.sourceValue(), depositParams.reason());
+        TransactionDTO expected = basicDelegateTransactionService.deposit(transactionDTO);
 
         //THEN
         assertThat(expected.getTransactionId()).isGreaterThan(0);
@@ -59,8 +66,15 @@ class DelegateTransactionServiceTest {
     @Test
     void shouldApprovePendingSavedDeposit() {
         //GIVEN
-        DepositParams depositParams = getDepositParams();
-        TransactionDTO savedTransaction = basicDelegateTransactionService.deposit(depositParams.accountNumber(), depositParams.amount(), depositParams.currency(), depositParams.sourceType(), depositParams.sourceValue(), depositParams.reason());
+        TransactionDTO transactionDTO = TransactionDTO.builder()
+                .accountNumber(savedAccount.getAccountNumber())
+                .amount(500)
+                .currency(Currency.KMF.name())
+                .sourceType(SourceType.Online.name())
+                .sourceValue("Branch 1")
+                .reason("Sample description")
+                .build();
+        TransactionDTO savedTransaction = basicDelegateTransactionService.deposit(transactionDTO);
 
         //WHEN
         TransactionDTO expected = basicDelegateTransactionService.approve(savedTransaction.getTransactionId());
@@ -68,15 +82,22 @@ class DelegateTransactionServiceTest {
         //THEN
         assertThat(expected.getStatus()).isEqualTo(Status.Approved.code());
 
-        AccountDTO expectedAccount = accountService.findByNumber(depositParams.accountNumber());
+        AccountDTO expectedAccount = accountService.findByNumber(savedAccount.getAccountNumber());
         assertThat(expectedAccount.getBalance()).isEqualTo(2000);
     }
 
     @Test
     void shouldRejectPendingSavedDeposit() {
         //GIVEN
-        DepositParams depositParams = getDepositParams();
-        TransactionDTO savedTransaction = basicDelegateTransactionService.deposit(depositParams.accountNumber(), depositParams.amount(), depositParams.currency(), depositParams.sourceType(), depositParams.sourceValue(), depositParams.reason());
+        TransactionDTO transactionDTO = TransactionDTO.builder()
+                .accountNumber(savedAccount.getAccountNumber())
+                .amount(500)
+                .currency(Currency.KMF.name())
+                .sourceType(SourceType.Online.name())
+                .sourceValue("Branch 1")
+                .reason("Sample description")
+                .build();
+        TransactionDTO savedTransaction = basicDelegateTransactionService.deposit(transactionDTO);
 
         //WHEN
         TransactionDTO expected =  basicDelegateTransactionService.reject(savedTransaction.getTransactionId(), "Sample remark");
@@ -84,17 +105,23 @@ class DelegateTransactionServiceTest {
         //THEN
         assertThat(expected.getStatus()).isEqualTo(Status.Rejected.code());
 
-        AccountDTO expectedAccount = accountService.findByNumber(depositParams.accountNumber());
+        AccountDTO expectedAccount = accountService.findByNumber(savedAccount.getAccountNumber());
         assertThat(expectedAccount.getBalance()).isEqualTo(1500);
     }
 
     @Test
     void shouldMakeWithdraw() {
         //GIVEN
-        WithdrawParams result = getWithdrawParams();
-
+        TransactionDTO transactionDTO = TransactionDTO.builder()
+                .accountNumber(savedAccount.getAccountNumber())
+                .amount(500)
+                .currency(Currency.KMF.name())
+                .sourceType(SourceType.Online.name())
+                .sourceValue("Branch 1")
+                .reason("Sample description")
+                .build();
         //WHEN
-        TransactionDTO expected = basicDelegateTransactionService.withdraw(result.accountNumber(), result.amount(), result.sourceType(), result.sourceValue(), result.reason());
+        TransactionDTO expected = basicDelegateTransactionService.withdraw(transactionDTO);
 
         //THEN
         assertThat(expected.getTransactionId()).isGreaterThan(0);
@@ -105,8 +132,15 @@ class DelegateTransactionServiceTest {
     @Test
     void shouldApprovePendingSavedWithdraw() {
         //GIVEN
-        WithdrawParams withdrawParams = getWithdrawParams();
-        TransactionDTO savedTransaction = basicDelegateTransactionService.withdraw(withdrawParams.accountNumber(), withdrawParams.amount(), withdrawParams.sourceType(), withdrawParams.sourceValue(), withdrawParams.reason());
+        TransactionDTO transactionDTO = TransactionDTO.builder()
+                .accountNumber(savedAccount.getAccountNumber())
+                .amount(500)
+                .currency(Currency.KMF.name())
+                .sourceType(SourceType.Online.name())
+                .sourceValue("Branch 1")
+                .reason("Sample description")
+                .build();
+        TransactionDTO savedTransaction = basicDelegateTransactionService.withdraw(transactionDTO);
 
         //WHEN
         TransactionDTO expected = basicDelegateTransactionService.approve(savedTransaction.getTransactionId());
@@ -114,15 +148,22 @@ class DelegateTransactionServiceTest {
         //THEN
         assertThat(expected.getStatus()).isEqualTo(Status.Approved.code());
 
-        AccountDTO expectedAccount = accountService.findByNumber(withdrawParams.accountNumber());
+        AccountDTO expectedAccount = accountService.findByNumber(savedAccount.getAccountNumber());
         assertThat(expectedAccount.getBalance()).isEqualTo(1000);
     }
 
     @Test
     void shouldRejectPendingSavedWithdraw() {
         //GIVEN
-        WithdrawParams withdrawParams = getWithdrawParams();
-        TransactionDTO savedTransaction = basicDelegateTransactionService.withdraw(withdrawParams.accountNumber(), withdrawParams.amount(), withdrawParams.sourceType(), withdrawParams.sourceValue(), withdrawParams.reason());
+        TransactionDTO transactionDTO = TransactionDTO.builder()
+                .accountNumber(savedAccount.getAccountNumber())
+                .amount(500)
+                .currency(Currency.KMF.name())
+                .sourceType(SourceType.Online.name())
+                .sourceValue("Branch 1")
+                .reason("Sample description")
+                .build();
+        TransactionDTO savedTransaction = basicDelegateTransactionService.withdraw(transactionDTO);
 
         //WHEN
         TransactionDTO expected = basicDelegateTransactionService.reject(savedTransaction.getTransactionId(), "Sample remark");
@@ -130,18 +171,25 @@ class DelegateTransactionServiceTest {
         //THEN
         assertThat(expected.getStatus()).isEqualTo(Status.Rejected.code());
 
-        AccountDTO expectedAccount = accountService.findByNumber(withdrawParams.accountNumber());
+        AccountDTO expectedAccount = accountService.findByNumber(savedAccount.getAccountNumber());
         assertThat(expectedAccount.getBalance()).isEqualTo(1500);
     }
 
     @Test
     void shouldThrowABalanceInsufficientExceptionWhenTryWithdrawMoreAmountThanActualBalance() {
         //GIVEN
-        WithdrawParams withdrawParams = getWithdrawParams();
+        TransactionDTO transactionDTO = TransactionDTO.builder()
+                .accountNumber(savedAccount.getAccountNumber())
+                .amount(5000)
+                .currency(Currency.KMF.name())
+                .sourceType(SourceType.Online.name())
+                .sourceValue("Branch 1")
+                .reason("Sample description")
+                .build();
 
         //WHEN
         Exception expected = assertThrows(BalanceInsufficientException.class,
-                () -> basicDelegateTransactionService.withdraw(withdrawParams.accountNumber(), 2000, withdrawParams.sourceType(), withdrawParams.sourceValue(), withdrawParams.reason()));
+                () -> basicDelegateTransactionService.withdraw(transactionDTO));
 
         //THEN
         TransactionDTO expectedTransaction = transactionService.findAll().get(0);
@@ -152,12 +200,19 @@ class DelegateTransactionServiceTest {
     @Test
     void shouldCreditConvertAmountWhenTryMakeADepositWithEurToAnAccountWithKMFCurrency() {
         //GIVEN
-        DepositParams depositParams = getDepositParams();
-        TransactionDTO savedTransaction = basicDelegateTransactionService.deposit(depositParams.accountNumber(), 20, Currency.EUR.name(), depositParams.sourceType(), depositParams.sourceValue(), depositParams.reason());
+        TransactionDTO transactionDTO = TransactionDTO.builder()
+                .accountNumber(savedAccount.getAccountNumber())
+                .amount(20)
+                .currency(Currency.EUR.name())
+                .sourceType(SourceType.Online.name())
+                .sourceValue("Branch 1")
+                .reason("Sample description")
+                .build();
+        TransactionDTO savedTransaction = basicDelegateTransactionService.deposit(transactionDTO);
         basicDelegateTransactionService.approve(savedTransaction.getTransactionId());
 
         //WHEN
-        AccountDTO expected = accountService.findByNumber(depositParams.accountNumber());
+        AccountDTO expected = accountService.findByNumber(savedAccount.getAccountNumber());
 
         //THEN
         //1£ = 490.31KMF => 20£ = 9806.2KMF
@@ -167,40 +222,22 @@ class DelegateTransactionServiceTest {
     @Test
     void shouldCreditConvertAmountWhenTryMakeADepositWithUsdToAnAccountWithKMFCurrency() {
         //GIVEN
-        DepositParams depositParams = getDepositParams();
-        TransactionDTO savedTransaction = basicDelegateTransactionService.deposit(depositParams.accountNumber(), 20, Currency.USD.name(), depositParams.sourceType(), depositParams.sourceValue(), depositParams.reason());
+        TransactionDTO transactionDTO = TransactionDTO.builder()
+                .accountNumber(savedAccount.getAccountNumber())
+                .amount(20)
+                .currency(Currency.USD.name())
+                .sourceType(SourceType.Online.name())
+                .sourceValue("Branch 1")
+                .reason("Sample description")
+                .build();
+        TransactionDTO savedTransaction = basicDelegateTransactionService.deposit(transactionDTO);
         basicDelegateTransactionService.approve(savedTransaction.getTransactionId());
 
         //WHEN
-        AccountDTO expected = accountService.findByNumber(depositParams.accountNumber());
+        AccountDTO expected = accountService.findByNumber(savedAccount.getAccountNumber());
 
         //THEN
         //1$ = 456.51KMF => 20$ = 9130.2KMF
         assertThat(expected.getBalance()).isEqualTo(10630.2);
-    }
-
-    private record WithdrawParams(String accountNumber, double amount, String sourceType, String sourceValue, String reason) {
-    }
-    private record DepositParams(String accountNumber, double amount, String currency, String sourceType, String sourceValue, String reason) {
-
-    }
-
-    private WithdrawParams getWithdrawParams() {
-        return new WithdrawParams(
-                savedAccount.getAccountNumber(),
-                500,
-                SourceType.Online.name(),
-                "Branch 1",
-                "Sample description");
-    }
-
-    private DepositParams getDepositParams() {
-        return new DepositParams(
-                savedAccount.getAccountNumber(),
-                500,
-                Currency.KMF.name(),
-                SourceType.Online.name(),
-                "Branch 1",
-                "Sample description");
     }
 }

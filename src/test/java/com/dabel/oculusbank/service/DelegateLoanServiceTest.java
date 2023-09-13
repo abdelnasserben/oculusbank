@@ -50,12 +50,17 @@ class DelegateLoanServiceTest {
     @Test
     void shouldInitLoan() {
         //GIVEN
-        String loanType = LoanType.Gold.name(),reason = "Sample reason";
-        double issuedAmount = 15239, interestRate = 1.24;
-        int duration = 3;
+        LoanDTO loanDTO = LoanDTO.builder()
+                .loanType(LoanType.Gold.name())
+                .customerId(savedCustomer.getCustomerId())
+                .issuedAmount(15239)
+                .interestRate(1.24)
+                .duration(3)
+                .reason("Sample reason")
+                .build();
 
         //WHEN
-        LoanDTO expected = delegateLoanService.loan(savedCustomer.getCustomerId(), loanType, issuedAmount, interestRate, duration, reason);
+        LoanDTO expected = delegateLoanService.loan(loanDTO);
 
         //THEN
         assertThat(expected.getLoanId()).isGreaterThan(0);
@@ -68,10 +73,15 @@ class DelegateLoanServiceTest {
     @Test
     void shouldApprovePendingSavedLoan() {
         //GIVEN
-        String loanType = LoanType.Gold.name(),reason = "Sample reason";
-        double issuedAmount = 15239, interestRate = 1.24;
-        int duration = 3;
-        LoanDTO savedLoan = delegateLoanService.loan(savedCustomer.getCustomerId(), loanType, issuedAmount, interestRate, duration, reason);
+        LoanDTO loanDTO = LoanDTO.builder()
+                .loanType(LoanType.Gold.name())
+                .customerId(savedCustomer.getCustomerId())
+                .issuedAmount(15239)
+                .interestRate(1.24)
+                .duration(3)
+                .reason("Sample reason")
+                .build();
+        LoanDTO savedLoan = delegateLoanService.loan(loanDTO);
 
         //WHEN
         LoanDTO expected = delegateLoanService.approve(savedLoan.getLoanId());
@@ -84,10 +94,15 @@ class DelegateLoanServiceTest {
     @Test
     void shouldRejectPendingSavedLoan() {
         //GIVEN
-        String loanType = LoanType.Gold.name(),reason = "Sample reason";
-        double issuedAmount = 15239, interestRate = 1.24;
-        int duration = 3;
-        LoanDTO savedLoan = delegateLoanService.loan(savedCustomer.getCustomerId(), loanType, issuedAmount, interestRate, duration, reason);
+        LoanDTO loanDTO = LoanDTO.builder()
+                .loanType(LoanType.Gold.name())
+                .customerId(savedCustomer.getCustomerId())
+                .issuedAmount(15239)
+                .interestRate(1.24)
+                .duration(3)
+                .reason("Sample reason")
+                .build();
+        LoanDTO savedLoan = delegateLoanService.loan(loanDTO);
 
         //WHEN
         LoanDTO expected = delegateLoanService.reject(savedLoan.getLoanId(), "Sample remark");

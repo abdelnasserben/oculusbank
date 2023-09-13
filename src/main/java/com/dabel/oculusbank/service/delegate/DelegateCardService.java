@@ -1,5 +1,6 @@
 package com.dabel.oculusbank.service.delegate;
 
+import com.dabel.oculusbank.app.AccountChecker;
 import com.dabel.oculusbank.app.OperationAcknowledgment;
 import com.dabel.oculusbank.constant.AccountProfile;
 import com.dabel.oculusbank.constant.Status;
@@ -23,10 +24,15 @@ public class DelegateCardService implements OperationAcknowledgment<CardDTO> {
 
     public CardDTO save(CardDTO cardDTO) {
 
+        //TODO: check eligibility of account to receive card
         AccountDTO account = accountService.findByNumber(cardDTO.getAccountNumber());
-        if(account.getAccountProfile().equals(AccountProfile.Association.name()))
-            throw new IllegalOperationException("Associative account cannot have a card");
+        if(!AccountChecker.isActive(account) || AccountChecker.isAssociative(account))
+            throw new IllegalOperationException("The account is not eligible to receive a card");
 
+        if(accountService.isTrunk(account.getAccountNumber()))
+            throw new IllegalOperationException("The account is not eligible to receive a card");
+
+        //TODO: save card
         cardDTO.setStatus(Status.Pending.code());
         return cardService.save(cardDTO);
     }

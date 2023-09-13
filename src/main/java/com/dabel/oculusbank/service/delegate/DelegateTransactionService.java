@@ -28,48 +28,36 @@ public class DelegateTransactionService implements OperationAcknowledgment<Trans
     @Autowired
     AccountOperationService accountOperationService;
 
-    public TransactionDTO deposit(String accountNumber, double amount, String currency, String sourceType, String sourceValue, String reason) {
+    public TransactionDTO deposit(TransactionDTO transactionDTO) {
 
-        AccountDTO account = accountService.findByNumber(accountNumber);
+        AccountDTO account = accountService.findByNumber(transactionDTO.getAccountNumber());
 
-        TransactionDTO transaction = TransactionDTO.builder()
-                .transactionType(TransactionType.Deposit.name())
-                .accountId(account.getAccountId())
-                .currency(currency)
-                .amount(amount)
-                .sourceType(sourceType)
-                .sourceValue(sourceValue)
-                .reason(reason)
-                .status(Status.Pending.code())
-                .build();
+        transactionDTO.setTransactionType(TransactionType.Deposit.name());
+        transactionDTO.setAccountId(account.getAccountId());
+        transactionDTO.setStatus(Status.Pending.code());
 
-        return transactionService.save(transaction);
+        return transactionService.save(transactionDTO);
     }
 
-    public TransactionDTO withdraw(String accountNumber, double amount, String sourceType, String sourceValue, String reason) throws AccountNotFoundException, BalanceInsufficientException, IllegalOperationException {
+    public TransactionDTO withdraw(TransactionDTO transactionDTO) {
 
-        AccountDTO account = accountService.findByNumber(accountNumber);
-        TransactionDTO transaction = TransactionDTO.builder()
-                .transactionType(TransactionType.Withdraw.name())
-                .accountId(account.getAccountId())
-                .currency(Currency.KMF.name())
-                .amount(amount)
-                .sourceType(sourceType)
-                .sourceValue(sourceValue)
-                .reason(reason)
-                .build();
+        AccountDTO account = accountService.findByNumber(transactionDTO.getAccountNumber());
 
-        if(account.getBalance() < amount) {
+        transactionDTO.setTransactionType(TransactionType.Withdraw.name());
+        transactionDTO.setAccountId(account.getAccountId());
+        transactionDTO.setCurrency(Currency.KMF.name());
 
-            transaction.setStatus(Status.Failed.code());
-            transaction.setFailureReason("Insufficient balance");
-            transactionService.save(transaction);
+        if(account.getBalance() < transactionDTO.getAmount()) {
+
+            transactionDTO.setStatus(Status.Failed.code());
+            transactionDTO.setFailureReason("Insufficient balance");
+            transactionService.save(transactionDTO);
 
             throw new BalanceInsufficientException();
         }
 
-        transaction.setStatus(Status.Pending.code());
-        return transactionService.save(transaction);
+        transactionDTO.setStatus(Status.Pending.code());
+        return transactionService.save(transactionDTO);
     }
 
     @Override

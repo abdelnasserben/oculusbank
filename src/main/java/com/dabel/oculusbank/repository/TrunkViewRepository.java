@@ -8,4 +8,5 @@ import java.util.Optional;
 public interface TrunkViewRepository extends ReadOnlyRepository<TrunkView, Integer> {
     List<TrunkView> findAllByCustomerId(int customerId);
     Optional<TrunkView> findByCustomerId(int customerId);
+    Optional<TrunkView> findByAccountNumber(String accountNumber);
 }

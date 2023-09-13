@@ -24,36 +24,32 @@ public class DelegatePaymentService implements OperationAcknowledgment<PaymentDT
     @Autowired
     AccountOperationService accountOperationService;
 
-    public PaymentDTO pay(String debitAccountNumber, double amount, String creditAccountNumber, String reason) {
+    public PaymentDTO pay(PaymentDTO paymentDTO) {
 
-        AccountDTO debitAccount = accountService.findByNumber(debitAccountNumber);
-        AccountDTO creditAccount = accountService.findByNumber(creditAccountNumber);
+        AccountDTO debitAccount = accountService.findByNumber(paymentDTO.getDebitAccountNumber());
+        AccountDTO creditAccount = accountService.findByNumber(paymentDTO.getCreditAccountNumber());
 
-        if(debitAccount.getBalance() < amount) {
-            PaymentDTO payment = PaymentDTO.builder()
-                    .debitAccountId(debitAccount.getAccountId())
-                    .creditAccountId(creditAccount.getAccountId())
-                    .currency(debitAccount.getCurrency())
-                    .amount(amount)
-                    .reason(reason)
-                    .status(Status.Failed.code())
-                    .failureReason("Balance is insufficient")
-                    .build();
-            paymentService.save(payment);
+        if(debitAccount.getBalance() < paymentDTO.getAmount()) {
+
+            //TODO: update payment info before saving
+            paymentDTO.setDebitAccountId(debitAccount.getAccountId());
+            paymentDTO.setCreditAccountId(creditAccount.getAccountId());
+            paymentDTO.setCurrency(debitAccount.getCurrency());
+            paymentDTO.setStatus(Status.Failed.code());
+            paymentDTO.setFailureReason("Balance is insufficient");
+
+            paymentService.save(paymentDTO);
 
             throw new BalanceInsufficientException();
         }
 
-        PaymentDTO payment = PaymentDTO.builder()
-                .debitAccountId(debitAccount.getAccountId())
-                .creditAccountId(creditAccount.getAccountId())
-                .currency(debitAccount.getCurrency())
-                .amount(amount)
-                .reason(reason)
-                .status(Status.Pending.code())
-                .build();
+        //TODO: update payment info before saving
+        paymentDTO.setDebitAccountId(debitAccount.getAccountId());
+        paymentDTO.setCreditAccountId(creditAccount.getAccountId());
+        paymentDTO.setCurrency(debitAccount.getCurrency());
+        paymentDTO.setStatus(Status.Pending.code());
 
-        return paymentService.save(payment);
+        return paymentService.save(paymentDTO);
     }
 
     @Override

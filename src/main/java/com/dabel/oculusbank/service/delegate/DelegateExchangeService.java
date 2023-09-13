@@ -11,29 +11,25 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
+
 @Service
 public class DelegateExchangeService implements OperationAcknowledgment<ExchangeDTO> {
 
     @Autowired
     ExchangeService exchangeService;
 
-    public ExchangeDTO exchange(String customerName, String customerIdentity, String buyCurrency, String saleCurrency, double amount, String reason) {
+    public ExchangeDTO exchange(ExchangeDTO exchangeDTO) {
+
+        String buyCurrency = exchangeDTO.getBuyCurrency();
+        String saleCurrency = exchangeDTO.getSaleCurrency();
 
         if(buyCurrency.equalsIgnoreCase(saleCurrency))
             throw new IllegalOperationException("Currencies must be different");
 
-        amount = CurrencyExchanger.exchange(buyCurrency, saleCurrency, amount);
-
-        ExchangeDTO exchangeDTO = ExchangeDTO.builder()
-                .customerName(customerName)
-                .customerIdentity(customerIdentity)
-                .status(Status.Pending.code())
-                .amount(amount)
-                .buyCurrency(buyCurrency)
-                .saleCurrency(saleCurrency)
-                .reason(reason)
-                .build();
-
+        //TODO: convert amount and set status of exchange before saving
+        double amount = CurrencyExchanger.exchange(buyCurrency, saleCurrency, exchangeDTO.getAmount());
+        exchangeDTO.setAmount(amount);
+        exchangeDTO.setStatus(Status.Pending.code());
         return exchangeService.save(exchangeDTO);
     }
 

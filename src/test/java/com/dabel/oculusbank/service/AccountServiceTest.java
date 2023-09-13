@@ -33,10 +33,10 @@ public class AccountServiceTest {
     private BranchDTO getSavedBranch() {
         return branchService.save(
                 BranchDTO.builder()
-                        .branchName("HQ")
-                        .branchAddress("Moroni")
-                        .status(Status.Active.code())
-                        .build());
+                .branchName("HQ")
+                .branchAddress("Moroni")
+                .status(Status.Active.code())
+                .build());
     }
 
     private CustomerDTO getSavedCustomer() {
@@ -45,12 +45,12 @@ public class AccountServiceTest {
 
         return customerService.save(
                 CustomerDTO.builder()
-                        .branchId(savedBranch.getBranchId())
-                        .firstName("John")
-                        .lastName("Doe")
-                        .identityNumber("NBE466754")
-                        .status(Status.Pending.code())
-                        .build());
+                .branchId(savedBranch.getBranchId())
+                .firstName("John")
+                .lastName("Doe")
+                .identityNumber("NBE466754")
+                .status(Status.Pending.code())
+                .build());
     }
 
     @BeforeEach

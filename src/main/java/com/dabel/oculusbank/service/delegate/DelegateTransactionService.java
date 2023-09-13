@@ -1,6 +1,7 @@
 package com.dabel.oculusbank.service.delegate;
 
 import com.dabel.oculusbank.app.CurrencyExchanger;
+import com.dabel.oculusbank.app.Fee;
 import com.dabel.oculusbank.app.OperationAcknowledgment;
 import com.dabel.oculusbank.constant.Currency;
 import com.dabel.oculusbank.constant.Status;
@@ -10,6 +11,7 @@ import com.dabel.oculusbank.dto.TransactionDTO;
 import com.dabel.oculusbank.exception.BalanceInsufficientException;
 import com.dabel.oculusbank.service.AccountOperationService;
 import com.dabel.oculusbank.service.AccountService;
+import com.dabel.oculusbank.service.FeeService;
 import com.dabel.oculusbank.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,10 @@ public class DelegateTransactionService implements OperationAcknowledgment<Trans
     AccountService accountService;
     @Autowired
     AccountOperationService accountOperationService;
+    @Autowired
+    FeeService feeService;
+
+    private static final double WITHDRAW_FEE = 200;
 
     public TransactionDTO deposit(TransactionDTO transactionDTO) {
 
@@ -45,7 +51,7 @@ public class DelegateTransactionService implements OperationAcknowledgment<Trans
         transactionDTO.setAccountId(account.getAccountId());
         transactionDTO.setCurrency(Currency.KMF.name());
 
-        if(account.getBalance() < transactionDTO.getAmount()) {
+        if(account.getBalance() < transactionDTO.getAmount() + WITHDRAW_FEE) {
 
             transactionDTO.setStatus(Status.Failed.code());
             transactionDTO.setFailureReason("Insufficient balance");
@@ -69,8 +75,10 @@ public class DelegateTransactionService implements OperationAcknowledgment<Trans
             double amount = CurrencyExchanger.exchange(transaction.getCurrency(), account.getCurrency(), transaction.getAmount());
             accountOperationService.credit(account, amount);
         }
-        else
+        else{
             accountOperationService.debit(account, transaction.getAmount());
+            feeService.apply(account, new Fee(WITHDRAW_FEE, "Withdraw"), transaction.getSourceValue());
+        }
 
         //TODO: update transaction info and save it
         transaction.setStatus(Status.Approved.code());

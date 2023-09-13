@@ -150,7 +150,7 @@ class DelegateTransactionServiceTest {
         assertThat(expected.getStatus()).isEqualTo(Status.Approved.code());
 
         AccountDTO expectedAccount = accountService.findByNumber(savedAccount.getAccountNumber());
-        assertThat(expectedAccount.getBalance()).isEqualTo(1000);
+        assertThat(expectedAccount.getBalance()).isEqualTo(800); //withdraw apply fee of 200KMF then we expect 800 but no 1000
     }
 
     @Test

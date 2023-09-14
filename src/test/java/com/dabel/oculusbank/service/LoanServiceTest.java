@@ -25,27 +25,23 @@ class LoanServiceTest {
     @Autowired
     LoanService loanService;
     @Autowired
+    BranchService branchService;
+    @Autowired
     CustomerService customerService;
     @Autowired
     AccountService accountService;
     @Autowired
     DatabaseSettingsForTests databaseSettingsForTests;
-    @Autowired
-    BranchService branchService;
 
     private CustomerDTO savedCustomer;
     private AccountDTO savedAccount;
 
-    @BeforeEach
-    void init() {
-        databaseSettingsForTests.truncate();
-
-        BranchDTO savedBranch = branchService.save(
-                BranchDTO.builder()
-                        .branchName("HQ")
-                        .branchAddress("Moroni")
-                        .status(Status.Active.code())
-                        .build());
+    private void setSavedCustomerAndAccount() {
+        BranchDTO savedBranch = branchService.save(BranchDTO.builder()
+                .branchName("HQ")
+                .branchAddress("Moroni")
+                .status(Status.Active.code())
+                .build());
         savedCustomer = customerService.save(CustomerDTO.builder()
                 .branchId(savedBranch.getBranchId())
                 .firstName("John")
@@ -53,8 +49,7 @@ class LoanServiceTest {
                 .identityNumber("NBE466754")
                 .status(Status.Pending.code())
                 .build());
-        savedAccount = accountService.save(
-                AccountDTO.builder()
+        savedAccount = accountService.save(AccountDTO.builder()
                 .accountName("John Doe")
                 .accountNumber("66398832015")
                 .accountType(AccountType.Saving.name())
@@ -62,9 +57,15 @@ class LoanServiceTest {
                 .build());
     }
 
+    @BeforeEach
+    void init() {
+        databaseSettingsForTests.truncate();
+    }
+
     @Test
     void shouldSaveLoan() {
         //GIVEN
+        setSavedCustomerAndAccount();
         LoanDTO loanDTO = LoanDTO.builder()
                 .customerId(savedCustomer.getCustomerId())
                 .loanType(LoanType.Gold.name())
@@ -82,6 +83,7 @@ class LoanServiceTest {
     @Test
     void shouldFindLoanById() {
         //GIVEN
+        setSavedCustomerAndAccount();
         LoanDTO loanDTO = LoanDTO.builder()
                 .customerId(savedCustomer.getCustomerId())
                 .loanType(LoanType.Gold.name())
@@ -89,6 +91,7 @@ class LoanServiceTest {
                 .status(Status.Pending.code())
                 .build();
         LoanDTO savedLoan = loanService.save(loanDTO);
+
         //WHEN
         LoanDTO expected = loanService.findLoanById(savedLoan.getLoanId());
 
@@ -113,6 +116,7 @@ class LoanServiceTest {
     @Test
     void shouldRetrieveListOfAllLoans() {
         //GIVEN
+        setSavedCustomerAndAccount();
         LoanDTO loanDTO = LoanDTO.builder()
                 .customerId(savedCustomer.getCustomerId())
                 .loanType(LoanType.Gold.name())
@@ -120,6 +124,7 @@ class LoanServiceTest {
                 .status(Status.Pending.code())
                 .build();
         loanService.save(loanDTO);
+
         //WHEN
         List<LoanDTO> expected = loanService.findAll();
 
@@ -132,6 +137,7 @@ class LoanServiceTest {
     @Test
     void shouldRetrieveAllLoansByCustomerIdentityNumber() {
         //GIVEN
+        setSavedCustomerAndAccount();
         LoanDTO loanDTO = LoanDTO.builder()
                 .customerId(savedCustomer.getCustomerId())
                 .loanType(LoanType.Gold.name())

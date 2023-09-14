@@ -28,6 +28,17 @@ public class TransactionServiceTest {
     @Autowired
     DatabaseSettingsForTests databaseSettingsForTests;
 
+    private AccountDTO savedAccount;
+
+    private void setSavedAccount() {
+        savedAccount = accountService.save(AccountDTO.builder()
+                .accountName("John Doe")
+                .accountNumber("123456789")
+                .accountType(AccountType.Saving.name())
+                .status(Status.Pending.code())
+                .build());
+    }
+
     @BeforeEach
     void init() {
         databaseSettingsForTests.truncate();
@@ -36,14 +47,7 @@ public class TransactionServiceTest {
     @Test
     void shouldSaveNewTransaction() {
         //GIVEN
-        AccountDTO savedAccount = accountService.save(
-                AccountDTO.builder()
-                .accountName("John Doe")
-                .accountNumber("123456789")
-                .accountType(AccountType.Saving.name())
-                .status(Status.Pending.code())
-                .build());
-
+        setSavedAccount();
         TransactionDTO transactionDTO = TransactionDTO.builder()
                 .transactionType(TransactionType.Deposit.name())
                 .accountId(savedAccount.getAccountId())
@@ -63,14 +67,7 @@ public class TransactionServiceTest {
     @Test
     void shouldRetrieveListOfAllSavedTransactions() {
         //GIVEN
-        AccountDTO savedAccount = accountService.save(
-                AccountDTO.builder()
-                        .accountName("John Doe")
-                        .accountNumber("123456789")
-                        .accountType(AccountType.Saving.name())
-                        .status(Status.Pending.code())
-                        .build());
-
+        setSavedAccount();
         transactionService.save(
                 TransactionDTO.builder()
                 .transactionType(TransactionType.Deposit.name())
@@ -91,23 +88,15 @@ public class TransactionServiceTest {
     @Test
     void shouldFindTransactionById() {
         //GIVEN
-        AccountDTO savedAccount = accountService.save(
-                AccountDTO.builder()
-                        .accountName("John Doe")
-                        .accountNumber("123456789")
-                        .accountType(AccountType.Saving.name())
-                        .status(Status.Pending.code())
-                        .build());
-
-        TransactionDTO savedTransaction = transactionService.save(
-                TransactionDTO.builder()
-                        .transactionType(TransactionType.Deposit.name())
-                        .accountId(savedAccount.getAccountId())
-                        .amount(500)
-                        .currency(Currency.KMF.name())
-                        .reason("Just for test")
-                        .status(Status.Pending.code())
-                        .build());
+        setSavedAccount();
+        TransactionDTO savedTransaction = transactionService.save(TransactionDTO.builder()
+                .transactionType(TransactionType.Deposit.name())
+                .accountId(savedAccount.getAccountId())
+                .amount(500)
+                .currency(Currency.KMF.name())
+                .reason("Just for test")
+                .status(Status.Pending.code())
+                .build());
 
         //WHEN
         TransactionDTO expected = transactionService.findById(savedTransaction.getTransactionId());
@@ -119,7 +108,6 @@ public class TransactionServiceTest {
 
     @Test
     void shouldThrowATransactionNotFoundExceptionWhenTryFindTransactionByANotExistsId() {
-
         //GIVEN
 
         //WHEN

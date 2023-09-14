@@ -41,10 +41,10 @@ public class DelegateCustomerServiceTest {
         //GIVEN
         BranchDTO savedBranch = branchService.save(
                 BranchDTO.builder()
-                        .branchName("HQ")
-                        .branchAddress("Moroni")
-                        .status(Status.Active.code())
-                        .build());
+                .branchName("HQ")
+                .branchAddress("Moroni")
+                .status(Status.Active.code())
+                .build());
 
         CustomerDTO customerDTO = CustomerDTO.builder()
                 .branchId(savedBranch.getBranchId())

@@ -207,6 +207,22 @@ create table cards(
     constraint c_card_number unique(card_number)
 );
 
+-- table card application requests structure --
+create table card_applications(
+    request_id int not null auto_increment,
+    account_id int not null,
+    card_type varchar(50),
+    status int default 0,
+    failure_reason varchar(255),
+    initiated_by varchar(50),
+    updated_by varchar(50),
+    created_at datetime default now(),
+    updated_at datetime default now(),
+
+    primary key(request_id),
+    foreign key(account_id) references accounts(account_id)
+);
+
 -- table cheques structure --
 create table cheques(
     cheque_id int not null auto_increment,
@@ -407,6 +423,27 @@ a.account_name,
 a.account_number
 from
     cheques as c
+inner join accounts as a
+    on a.account_id = c.account_id
+order by created_at desc;
+
+-- view card_applications structure --
+create view v_card_applications
+as
+select
+c.request_id,
+c.account_id,
+c.card_type,
+c.status,
+c.failure_reason,
+c.initiated_by,
+c.updated_by,
+c.created_at,
+c.updated_at,
+a.account_name,
+a.account_number
+from
+    card_applications as c
 inner join accounts as a
     on a.account_id = c.account_id
 order by created_at desc;

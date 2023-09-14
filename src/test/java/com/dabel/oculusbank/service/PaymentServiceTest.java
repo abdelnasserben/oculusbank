@@ -29,11 +29,8 @@ class PaymentServiceTest {
 
     private AccountDTO savedAccount1, savedAccount2;
 
-    @BeforeEach
-    void init() {
-        databaseSettingsForTests.truncate();
-        savedAccount1 = accountService.save(
-                AccountDTO.builder()
+    private void setSavedAccounts() {
+        savedAccount1 = accountService.save(AccountDTO.builder()
                 .accountName("John Doe")
                 .accountNumber("123456789")
                 .accountType(AccountType.Saving.name())
@@ -41,8 +38,7 @@ class PaymentServiceTest {
                 .balance(500)
                 .status(Status.Pending.code())
                 .build());
-        savedAccount2 = accountService.save(
-                AccountDTO.builder()
+        savedAccount2 = accountService.save(AccountDTO.builder()
                 .accountName("Tom Hunt")
                 .accountNumber("987654321")
                 .accountType(AccountType.Saving.name())
@@ -52,9 +48,15 @@ class PaymentServiceTest {
                 .build());
     }
 
+    @BeforeEach
+    void init() {
+        databaseSettingsForTests.truncate();
+    }
+
     @Test
     void shouldSaveNewPayment() {
         //GIVEN
+        setSavedAccounts();
         PaymentDTO paymentDTO = PaymentDTO.builder()
                 .debitAccountId(savedAccount1.getAccountId())
                 .creditAccountId(savedAccount2.getAccountId())
@@ -74,6 +76,7 @@ class PaymentServiceTest {
     @Test
     void shouldRetrieveListOfAllPayments() {
         //GIVEN
+        setSavedAccounts();
         PaymentDTO paymentDTO = PaymentDTO.builder()
                 .debitAccountId(savedAccount1.getAccountId())
                 .creditAccountId(savedAccount2.getAccountId())
@@ -95,6 +98,7 @@ class PaymentServiceTest {
     @Test
     void shouldFindAPaymentById() {
         //GIVEN
+        setSavedAccounts();
         PaymentDTO paymentDTO = PaymentDTO.builder()
                 .debitAccountId(savedAccount1.getAccountId())
                 .creditAccountId(savedAccount2.getAccountId())

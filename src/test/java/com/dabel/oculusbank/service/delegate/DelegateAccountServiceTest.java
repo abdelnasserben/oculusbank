@@ -42,8 +42,7 @@ public class DelegateAccountServiceTest {
     @Test
     void shouldAddAJointCustomerOnPersonalAccount() {
         //GIVEN
-        BranchDTO savedBranch = branchService.save(
-                BranchDTO.builder()
+        BranchDTO savedBranch = branchService.save(BranchDTO.builder()
                 .branchName("HQ")
                 .branchAddress("Moroni")
                 .status(Status.Active.code())
@@ -57,13 +56,12 @@ public class DelegateAccountServiceTest {
 
         CustomerDTO savedCustomerWithAccount = delegateCustomerService.create(customerDTO, AccountType.Saving.name(), AccountProfile.Personal.name(), AccountMemberShip.Owner.name());
 
-        CustomerDTO savedCustomerWithoutAccount = delegateCustomerService.create(
-                CustomerDTO.builder()
-                        .branchId(savedBranch.getBranchId())
-                        .firstName("Tom")
-                        .lastName("Hank")
-                        .identityNumber("NBE021586")
-                        .build());
+        CustomerDTO savedCustomerWithoutAccount = delegateCustomerService.create(CustomerDTO.builder()
+                .branchId(savedBranch.getBranchId())
+                .firstName("Tom")
+                .lastName("Hank")
+                .identityNumber("NBE021586")
+                .build());
 
         TrunkDTO trunkSaved = accountService.findTrunkByCustomerId(savedCustomerWithAccount.getCustomerId());
 
@@ -79,15 +77,9 @@ public class DelegateAccountServiceTest {
     @Test
     void shouldThrowAnIllegalOperationExceptionWhenTryAddJointOnANonActiveAccount() {
         //GIVEN
-        BranchDTO savedBranch = branchService.save(
-                BranchDTO.builder()
-                        .branchName("HQ")
-                        .branchAddress("Moroni")
-                        .status(Status.Active.code())
-                        .build());
+        CustomerDTO savedCustomer = getSavedCustomerWithoutAccount();
 
-        AccountDTO savedAccount = accountService.save(
-                AccountDTO.builder()
+        AccountDTO savedAccount = accountService.save(AccountDTO.builder()
                 .accountName("John Doe")
                 .accountNumber("123456789")
                 .accountType(AccountType.Saving.name())
@@ -95,13 +87,6 @@ public class DelegateAccountServiceTest {
                 .status(Status.Pending.code())
                 .build());
 
-        CustomerDTO savedCustomer= delegateCustomerService.create(
-                CustomerDTO.builder()
-                        .branchId(savedBranch.getBranchId())
-                        .firstName("Tom")
-                        .lastName("Hank")
-                        .identityNumber("NBE021586")
-                        .build());
         accountService.saveTrunk(savedAccount.getAccountId(), savedCustomer.getCustomerId(), AccountMemberShip.Owner.name());
 
         //WHEN
@@ -115,29 +100,16 @@ public class DelegateAccountServiceTest {
     @Test
     void shouldThrowAnIllegalOperationExceptionWhenTryAddJointOnAnAssociativeAccount() {
         //GIVEN
-        BranchDTO savedBranch = branchService.save(
-                BranchDTO.builder()
-                        .branchName("HQ")
-                        .branchAddress("Moroni")
-                        .status(Status.Active.code())
-                        .build());
+        CustomerDTO savedCustomer = getSavedCustomerWithoutAccount();
 
-        AccountDTO savedAccount = accountService.save(
-                AccountDTO.builder()
-                        .accountName("John Doe")
-                        .accountNumber("123456789")
-                        .accountType(AccountType.Saving.name())
-                        .accountProfile(AccountProfile.Associative.name())
-                        .status(Status.Active.code())
-                        .build());
+        AccountDTO savedAccount = accountService.save(AccountDTO.builder()
+                .accountName("John Doe")
+                .accountNumber("123456789")
+                .accountType(AccountType.Saving.name())
+                .accountProfile(AccountProfile.Associative.name())
+                .status(Status.Active.code())
+                .build());
 
-        CustomerDTO savedCustomer= delegateCustomerService.create(
-                CustomerDTO.builder()
-                        .branchId(savedBranch.getBranchId())
-                        .firstName("Tom")
-                        .lastName("Hank")
-                        .identityNumber("NBE021586")
-                        .build());
         accountService.saveTrunk(savedAccount.getAccountId(), savedCustomer.getCustomerId(), AccountMemberShip.Owner.name());
 
         //WHEN
@@ -151,30 +123,28 @@ public class DelegateAccountServiceTest {
     @Test
     void shouldThrowAnIllegalOperationExceptionWhenTryAddJointOnAccountWithNonActiveCustomer() {
         //GIVEN
-        BranchDTO savedBranch = branchService.save(
-                BranchDTO.builder()
-                        .branchName("HQ")
-                        .branchAddress("Moroni")
-                        .status(Status.Active.code())
-                        .build());
+        BranchDTO savedBranch = branchService.save(BranchDTO.builder()
+                .branchName("HQ")
+                .branchAddress("Moroni")
+                .status(Status.Active.code())
+                .build());
 
-        AccountDTO savedAccount = accountService.save(
-                AccountDTO.builder()
-                        .accountName("John Doe")
-                        .accountNumber("123456789")
-                        .accountType(AccountType.Saving.name())
-                        .accountProfile(AccountProfile.Associative.name())
-                        .status(Status.Active.code())
-                        .build());
+        CustomerDTO savedCustomer= delegateCustomerService.create(CustomerDTO.builder()
+                .branchId(savedBranch.getBranchId())
+                .firstName("Tom")
+                .lastName("Hank")
+                .identityNumber("NBE021586")
+                .status(Status.Pending.code())
+                .build());
 
-        CustomerDTO savedCustomer= delegateCustomerService.create(
-                CustomerDTO.builder()
-                        .branchId(savedBranch.getBranchId())
-                        .firstName("Tom")
-                        .lastName("Hank")
-                        .identityNumber("NBE021586")
-                        .status(Status.Pending.code())
-                        .build());
+        AccountDTO savedAccount = accountService.save(AccountDTO.builder()
+                .accountName("John Doe")
+                .accountNumber("123456789")
+                .accountType(AccountType.Saving.name())
+                .accountProfile(AccountProfile.Associative.name())
+                .status(Status.Active.code())
+                .build());
+
         accountService.saveTrunk(savedAccount.getAccountId(), savedCustomer.getCustomerId(), AccountMemberShip.Owner.name());
 
         //WHEN
@@ -188,12 +158,11 @@ public class DelegateAccountServiceTest {
     @Test
     void shouldAddAnAssociateCustomerOnAssociativeAccount() {
         //GIVEN
-        BranchDTO savedBranch = branchService.save(
-                BranchDTO.builder()
-                        .branchName("HQ")
-                        .branchAddress("Moroni")
-                        .status(Status.Active.code())
-                        .build());
+        BranchDTO savedBranch = branchService.save(BranchDTO.builder()
+                .branchName("HQ")
+                .branchAddress("Moroni")
+                .status(Status.Active.code())
+                .build());
 
         CustomerDTO customerDTO = CustomerDTO.builder()
                 .branchId(savedBranch.getBranchId())
@@ -201,16 +170,15 @@ public class DelegateAccountServiceTest {
                 .lastName("Doe")
                 .identityNumber("NBE466754")
                 .build();
+
         CustomerDTO savedCustomerWithAccount = delegateCustomerService.create(customerDTO, AccountType.Saving.name(), AccountProfile.Associative.name(), AccountMemberShip.Associated.name());
 
-
-        CustomerDTO savedCustomerWithoutAccount = delegateCustomerService.create(
-                CustomerDTO.builder()
-                        .branchId(savedBranch.getBranchId())
-                        .firstName("Tom")
-                        .lastName("Hank")
-                        .identityNumber("NBE021586")
-                        .build());
+        CustomerDTO savedCustomerWithoutAccount = delegateCustomerService.create(CustomerDTO.builder()
+                .branchId(savedBranch.getBranchId())
+                .firstName("Tom")
+                .lastName("Hank")
+                .identityNumber("NBE021586")
+                .build());
 
         TrunkDTO trunkSaved = accountService.findTrunkByCustomerId(savedCustomerWithAccount.getCustomerId());
 
@@ -221,5 +189,20 @@ public class DelegateAccountServiceTest {
         //THEN
         assertThat(expected.getAccountProfile()).isEqualTo(AccountProfile.Associative.name());
         assertThat(expected.getMembership()).isEqualTo(AccountMemberShip.Associated.name());
+    }
+
+    private CustomerDTO getSavedCustomerWithoutAccount() {
+        BranchDTO savedBranch = branchService.save(BranchDTO.builder()
+                .branchName("HQ")
+                .branchAddress("Moroni")
+                .status(Status.Active.code())
+                .build());
+
+        return delegateCustomerService.create(CustomerDTO.builder()
+                .branchId(savedBranch.getBranchId())
+                .firstName("Tom")
+                .lastName("Hank")
+                .identityNumber("NBE021586")
+                .build());
     }
 }

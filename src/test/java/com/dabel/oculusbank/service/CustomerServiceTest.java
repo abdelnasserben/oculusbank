@@ -23,26 +23,29 @@ public class CustomerServiceTest {
     @Autowired
     CustomerService customerService;
     @Autowired
-    DatabaseSettingsForTests databaseSettingsForTests;
-    @Autowired
     BranchService branchService;
+    @Autowired
+    DatabaseSettingsForTests databaseSettingsForTests;
 
     private BranchDTO savedBranch;
 
-    @BeforeEach
-    void init() {
-        databaseSettingsForTests.truncate();
-        savedBranch = branchService.save(
-                BranchDTO.builder()
+    private void setSavedBranch() {
+        savedBranch = branchService.save(BranchDTO.builder()
                 .branchName("HQ")
                 .branchAddress("Moroni")
                 .status(Status.Active.code())
                 .build());
     }
 
+    @BeforeEach
+    void init() {
+        databaseSettingsForTests.truncate();
+    }
+
     @Test
     void shouldSaveNewCustomer() {
         //GIVEN
+        setSavedBranch();
         CustomerDTO customerDTO = CustomerDTO.builder()
                 .branchId(savedBranch.getBranchId())
                 .firstName("John")
@@ -63,6 +66,7 @@ public class CustomerServiceTest {
     @Test
     void shouldRetrieveListOfSavedCustomers() {
         //GIVEN
+        setSavedBranch();
         customerService.save(CustomerDTO.builder()
                 .branchId(savedBranch.getBranchId())
                 .firstName("John")
@@ -83,6 +87,7 @@ public class CustomerServiceTest {
     @Test
     void shouldFindCustomerById() {
         //GIVEN
+        setSavedBranch();
         CustomerDTO savedCustomer = customerService.save(CustomerDTO.builder()
                 .branchId(savedBranch.getBranchId())
                 .firstName("John")
@@ -100,8 +105,21 @@ public class CustomerServiceTest {
     }
 
     @Test
+    void shouldThrowACustomerNotFoundExceptionWhenTryToFindCustomerByANotExitsId() {
+        //GIVEN
+
+        //WHEN
+        Exception expected =  assertThrows(CustomerNotFoundException.class,
+                () -> customerService.findById(-12));
+
+        //THEN
+        assertThat(expected.getMessage()).isEqualTo("Customer not found");
+    }
+
+    @Test
     void shouldFindCustomerByIdentityNumber() {
         //GIVEN
+        setSavedBranch();
         CustomerDTO savedCustomer = customerService.save(CustomerDTO.builder()
                 .branchId(savedBranch.getBranchId())
                 .firstName("John")
@@ -116,18 +134,6 @@ public class CustomerServiceTest {
         //THEN
         assertThat(expected.getFirstName()).isEqualTo("John");
         assertThat(expected.getStatus()).isEqualTo(Status.Pending.name());
-    }
-
-    @Test
-    void shouldThrowACustomerNotFoundExceptionWhenTryToFindCustomerByANotExitsId() {
-        //GIVEN
-
-        //WHEN
-        Exception expected =  assertThrows(CustomerNotFoundException.class,
-                () -> customerService.findById(-12));
-
-        //THEN
-        assertThat(expected.getMessage()).isEqualTo("Customer not found");
     }
 
     @Test

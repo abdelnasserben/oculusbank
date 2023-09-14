@@ -36,6 +36,12 @@ public class AccountService {
         return AccountMapper.toDTO(account);
     }
 
+    public AccountDTO findByNumber(String accountNumber) {
+        Account account = accountRepository.findByAccountNumber(accountNumber)
+                .orElseThrow(AccountNotFoundException::new);
+        return AccountMapper.toDTO(account);
+    }
+
     public VaultDTO saveVault(int accountId, int branchId) {
 
         VaultDTO vaultDTO = VaultDTO.builder()
@@ -59,12 +65,6 @@ public class AccountService {
         trunkDTO.setTrunkId(savedTrunk.getTrunkId());
 
         return trunkDTO;
-    }
-
-    public AccountDTO findByNumber(String accountNumber) {
-        Account account = accountRepository.findByAccountNumber(accountNumber)
-                .orElseThrow(AccountNotFoundException::new);
-        return AccountMapper.toDTO(account);
     }
 
     public List<VaultDTO> findAllVaultsByBranchId(int branchId) {
@@ -100,10 +100,6 @@ public class AccountService {
                 .orElseThrow(AccountNotFoundException::new);
 
         return formatTrunkStatusToNameAndGetDTO(trunkView);
-    }
-
-    public boolean isTrunk(String accountNumber) {
-        return trunkViewRepository.findByAccountNumber(accountNumber).isPresent();
     }
 
     private static VaultDTO formatVaultStatusToNameAndGetDTO(VaultView vaultView) {

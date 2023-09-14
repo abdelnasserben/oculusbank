@@ -41,21 +41,6 @@ public class DelegateLoanService implements OperationAcknowledgment<LoanDTO> {
                 .balance(-loanCalculator.getTotalAmountDue())
                 .status(Status.Pending.code())
                 .build());
-//
-//
-//        LoanDTO loan = LoanDTO.builder()
-//                .customerId(customer.getCustomerId())
-//                .loanType(loanType)
-//                .accountId(account.getAccountId())
-//                .currency(Currency.KMF.name())
-//                .issuedAmount(issuedAmount)
-//                .interestRate(interestRate)
-//                .duration(duration)
-//                .totalAmount(loanCalculator.getTotalAmountDue())
-//                .perMonthAmount(loanCalculator.getPerMonthAmountDue())
-//                .reason(reason)
-//                .status(Status.Pending.code())
-//                .build();
 
         //TODO: Update loan information before saving
         loanDTO.setAccountId(account.getAccountId());

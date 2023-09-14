@@ -45,7 +45,6 @@ public class LoanService {
     public LoanDTO findLoanById(int loanId) {
         LoanView loan = loanViewRepository.findById(loanId)
                 .orElseThrow(LoanNotFoundException::new);
-
         return formatStatusToNameAndGetDTO(loan);
     }
 

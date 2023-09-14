@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class DatabaseSettingsForTests {
     @Autowired
+    CardAppRequestRepository cardAppRequestRepository;
+    @Autowired
     ChequeRepository chequeRepository;
     @Autowired
     CardRepository cardRepository;
@@ -32,6 +34,7 @@ public class DatabaseSettingsForTests {
     BranchRepository branchRepository;
 
     public void truncate() {
+        cardAppRequestRepository.deleteAll();
         chequeRepository.deleteAll();
         cardRepository.deleteAll();
         borrowerRepository.deleteAll();

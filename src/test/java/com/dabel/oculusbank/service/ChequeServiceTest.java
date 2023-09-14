@@ -28,11 +28,8 @@ class ChequeServiceTest {
 
     private AccountDTO savedAccount;
 
-    @BeforeEach
-    void init() {
-        databaseSettingsForTests.truncate();
-        savedAccount = accountService.save(
-                AccountDTO.builder()
+    private void setSavedAccount() {
+        savedAccount = accountService.save(AccountDTO.builder()
                 .accountName("John Doe")
                 .accountNumber("66398832015")
                 .accountType(AccountType.Saving.name())
@@ -40,9 +37,15 @@ class ChequeServiceTest {
                 .build());
     }
 
+    @BeforeEach
+    void init() {
+        databaseSettingsForTests.truncate();
+    }
+
     @Test
     void shouldSaveNewCheque() {
         //GIVEN
+        setSavedAccount();
         ChequeDTO chequeDTO = ChequeDTO.builder()
                 .chequeName("John Doe")
                 .chequeNumber("25687133213")
@@ -60,6 +63,7 @@ class ChequeServiceTest {
     @Test
     void shouldFindChequeByNumber() {
         //GIVEN
+        setSavedAccount();
         ChequeDTO savedCheque = chequeService.save(
                 ChequeDTO.builder()
                 .chequeName("John Doe")
@@ -79,13 +83,13 @@ class ChequeServiceTest {
     @Test
     void shouldCheckTheExistenceOfAChequeByNumber() {
         //GIVEN
-        ChequeDTO savedCheque = chequeService.save(
-                ChequeDTO.builder()
-                        .chequeName("John Doe")
-                        .chequeNumber("25687133213")
-                        .accountId(savedAccount.getAccountId())
-                        .status(Status.Active.code())
-                        .build());
+        setSavedAccount();
+        ChequeDTO savedCheque = chequeService.save(ChequeDTO.builder()
+                .chequeName("John Doe")
+                .chequeNumber("25687133213")
+                .accountId(savedAccount.getAccountId())
+                .status(Status.Active.code())
+                .build());
 
         //WHEN
         boolean expectedTrue = chequeService.exists(savedCheque.getChequeNumber());
@@ -99,13 +103,6 @@ class ChequeServiceTest {
     @Test
     void shouldThrowChequeNotFoundExceptionWhenTryFindChequeByANotExistsNumber() {
         //GIVEN
-        chequeService.save(
-                ChequeDTO.builder()
-                        .chequeName("John Doe")
-                        .chequeNumber("25687133213")
-                        .accountId(savedAccount.getAccountId())
-                        .status(Status.Active.code())
-                        .build());
 
         //WHEN
         Exception expected = assertThrows(ChequeNotFountException.class,

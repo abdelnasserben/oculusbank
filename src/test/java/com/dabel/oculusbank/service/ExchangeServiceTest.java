@@ -20,9 +20,9 @@ class ExchangeServiceTest {
 
     @Autowired
     ExchangeService exchangeService;
-
     @Autowired
     DatabaseSettingsForTests databaseSettingsForTests;
+
 
     @BeforeEach
     void init() {

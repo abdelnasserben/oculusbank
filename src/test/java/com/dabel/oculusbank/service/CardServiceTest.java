@@ -29,11 +29,8 @@ class CardServiceTest {
 
     private AccountDTO savedAccount;
 
-    @BeforeEach
-    void init() {
-        databaseSettingsForTests.truncate();
-        savedAccount = accountService.save(
-                AccountDTO.builder()
+    private void setSavedAccount() {
+        savedAccount = accountService.save(AccountDTO.builder()
                 .accountName("John Doe")
                 .accountNumber("66398832015")
                 .accountType(AccountType.Saving.name())
@@ -41,9 +38,15 @@ class CardServiceTest {
                 .build());
     }
 
+    @BeforeEach
+    void init() {
+        databaseSettingsForTests.truncate();
+    }
+
     @Test
     void shouldSaveANewCard() {
         //GIVEN
+        setSavedAccount();
         CardDTO cardDTO = CardDTO.builder()
                 .accountId(savedAccount.getAccountId())
                 .cardName("John Doe")
@@ -61,6 +64,7 @@ class CardServiceTest {
     @Test
     void shouldFindByCardById() {
         //GIVEN
+        setSavedAccount();
         CardDTO savedCard = cardService.save(
                 CardDTO.builder()
                 .accountId(savedAccount.getAccountId())
@@ -93,6 +97,7 @@ class CardServiceTest {
     @Test
     void findByCardNumber() {
         //GIVEN
+        setSavedAccount();
         CardDTO savedCard = cardService.save(
                 CardDTO.builder()
                 .accountId(savedAccount.getAccountId())
@@ -125,8 +130,8 @@ class CardServiceTest {
     @Test
     void findAllByAccountId() {
         //GIVEN
-        cardService.save(
-                CardDTO.builder()
+        setSavedAccount();
+        cardService.save(CardDTO.builder()
                 .accountId(savedAccount.getAccountId())
                 .cardName("John Doe")
                 .cardNumber("123456789")

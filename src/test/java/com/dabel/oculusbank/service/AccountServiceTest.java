@@ -15,7 +15,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 public class AccountServiceTest {
@@ -23,12 +22,12 @@ public class AccountServiceTest {
     @Autowired
     AccountService accountService;
     @Autowired
-    DatabaseSettingsForTests databaseSettingsForTests;
-
-    @Autowired
     BranchService branchService;
     @Autowired
     CustomerService customerService;
+    @Autowired
+    DatabaseSettingsForTests databaseSettingsForTests;
+
 
     private BranchDTO getSavedBranch() {
         return branchService.save(
@@ -40,9 +39,7 @@ public class AccountServiceTest {
     }
 
     private CustomerDTO getSavedCustomer() {
-
         BranchDTO savedBranch = getSavedBranch();
-
         return customerService.save(
                 CustomerDTO.builder()
                 .branchId(savedBranch.getBranchId())
@@ -74,6 +71,37 @@ public class AccountServiceTest {
 
         //THEN
         assertThat(expected.getAccountId()).isGreaterThan(0);
+    }
+
+    @Test
+    void shouldFindAnAccountByAccountNumber() {
+        //GIVEN
+        AccountDTO accountDTO = AccountDTO.builder()
+                .accountName("John Doe")
+                .accountNumber("123456789")
+                .accountType(AccountType.Saving.name())
+                .status(Status.Pending.code())
+                .build();
+        accountService.save(accountDTO);
+
+        //WHEN
+        AccountDTO expected = accountService.findByNumber(accountDTO.getAccountNumber());
+
+        //THEN
+        assertThat(expected.getAccountId()).isGreaterThan(0);
+        assertThat(expected.getStatus()).isEqualTo(Status.Pending.code());
+    }
+
+    @Test
+    void shouldThrowAnAccountNotFoundExceptionWhenTryFindTrunkByANotExistsAccountNumber() {
+        //GIVEN
+
+        //WHEN
+        Exception expected = assertThrows(AccountNotFoundException.class,
+                () -> accountService.findByNumber("fakeAccountNumber"));
+
+        //THEN
+        assertThat(expected.getMessage()).isEqualTo("Account not found");
     }
 
     @Test
@@ -146,7 +174,7 @@ public class AccountServiceTest {
 
         //WHEN
         Exception expected = assertThrows(AccountNotFoundException.class,
-                () -> accountService.findVaultByBranchId(-12));
+                () -> accountService.findVaultByBranchId(-1));
 
         //THEN
         assertThat(expected.getMessage()).isEqualTo("Account not found");
@@ -221,29 +249,9 @@ public class AccountServiceTest {
 
         //WHEN
         Exception expected = assertThrows(AccountNotFoundException.class,
-                () -> accountService.findTrunkByCustomerId(-12));
+                () -> accountService.findTrunkByCustomerId(-1));
 
         //THEN
         assertThat(expected.getMessage()).isEqualTo("Account not found");
-    }
-
-    @Test
-    void shouldCheckIfAnAccountIsATrunkByAccountNumber() {
-        //GIVEN
-        CustomerDTO savedCustomer = getSavedCustomer();
-        AccountDTO savedAccount = accountService.save(
-                AccountDTO.builder()
-                .accountName("John Doe")
-                .accountNumber("123456789")
-                .accountType(AccountType.Business.name())
-                .status(Status.Pending.code())
-                .build());
-        accountService.saveTrunk(savedAccount.getAccountId(), savedCustomer.getCustomerId(), AccountMemberShip.Owner.name());
-
-        //WHEN
-        boolean expected = accountService.isTrunk(savedAccount.getAccountNumber());
-
-        //THEN
-        assertTrue(expected);
     }
 }

@@ -21,14 +21,11 @@ public class DelegateCardService implements OperationAcknowledgment<CardDTO> {
     @Autowired
     AccountService accountService;
 
-    public CardDTO save(CardDTO cardDTO) {
+    public CardDTO add(CardDTO cardDTO) {
 
-        //TODO: check eligibility of account to receive card
-        AccountDTO account = accountService.findByNumber(cardDTO.getAccountNumber());
-        if(AccountChecker.isActive(account) || AccountChecker.isAssociative(account))
-            throw new IllegalOperationException("The account is not eligible to receive a card");
+        AccountDTO account = accountService.findTrunkByNumber(cardDTO.getAccountNumber());
 
-        if(accountService.isTrunk(account.getAccountNumber()))
+        if(!AccountChecker.isActive(account) || AccountChecker.isAssociative(account))
             throw new IllegalOperationException("The account is not eligible to receive a card");
 
         //TODO: save card

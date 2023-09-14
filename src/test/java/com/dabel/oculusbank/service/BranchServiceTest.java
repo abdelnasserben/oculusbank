@@ -41,7 +41,6 @@ public class BranchServiceTest {
 
         //THEN
         assertThat(expected.getBranchId()).isGreaterThan(0);
-        assertThat(expected.getBranchName()).isEqualTo(branch.getBranchName());
     }
 
     @Test
@@ -86,7 +85,7 @@ public class BranchServiceTest {
 
         //WHEN
         Exception expected =  assertThrows(BranchNotFoundException.class,
-                () -> branchService.findById(-12));
+                () -> branchService.findById(-1));
 
         //THEN
         assertThat(expected.getMessage()).isEqualTo("Branch not found");

@@ -28,7 +28,6 @@ public class PaymentService {
     }
 
     public List<PaymentDTO> findAll() {
-
         return paymentViewRepository.findAll().stream()
                 .map(PaymentService::formatStatusToNameAndGetDTO)
                 .collect(Collectors.toList());

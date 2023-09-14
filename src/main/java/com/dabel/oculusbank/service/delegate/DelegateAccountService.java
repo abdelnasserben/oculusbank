@@ -23,12 +23,11 @@ public class DelegateAccountService {
 
     public void addJoint(String accountNumber, String identityNumber) {
 
-        //TODO: check eligibility of account for joint operation
         TrunkDTO account = accountService.findTrunkByNumber(accountNumber);
-        if(AccountChecker.isActive(account) || AccountChecker.isAssociative(account))
+
+        if(!AccountChecker.isActive(account) || AccountChecker.isAssociative(account))
             throw new IllegalOperationException("The account is not eligible for this operation");
 
-        //TODO: check if customer is active
         CustomerDTO customer = customerService.findByIdentityNumber(identityNumber);
         if(CustomerChecker.isActive(customer))
             throw new IllegalOperationException("Customer must be active");
@@ -38,7 +37,6 @@ public class DelegateAccountService {
 
         //TODO: update the account profile to joint if it's not yet
         if(!AccountChecker.isJoint(account)) {
-
             account.setStatus(Status.Active.code());
             account.setAccountProfile(AccountProfile.Joint.name());
             accountService.save(account);
@@ -48,12 +46,10 @@ public class DelegateAccountService {
 
     public void addAssociate(String accountNumber, String identityNumber) {
 
-        //TODO: check eligibility of account for joint operation
         TrunkDTO account = accountService.findTrunkByNumber(accountNumber);
-        if(AccountChecker.isActive(account) || !AccountChecker.isAssociative(account))
+        if(!AccountChecker.isActive(account) || !AccountChecker.isAssociative(account))
             throw new IllegalOperationException("The account is not eligible for this operation");
 
-        //TODO: check if customer is active
         CustomerDTO customer = customerService.findByIdentityNumber(identityNumber);
         if(CustomerChecker.isActive(customer))
             throw new IllegalOperationException("Customer must be active");

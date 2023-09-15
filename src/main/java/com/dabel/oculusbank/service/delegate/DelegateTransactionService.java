@@ -55,7 +55,7 @@ public class DelegateTransactionService implements OperationAcknowledgment<Trans
         transactionDTO.setAccountId(account.getAccountId());
         transactionDTO.setCurrency(Currency.KMF.name());
 
-        if((transactionDTO.getSourceType().equals(SourceType.ATM.name()) && account.getBalance() < transactionDTO.getAmount() + Fees.WITHDRAW_ONT_ATM)
+        if((transactionDTO.getSourceType().equals(SourceType.ATM.name()) && account.getBalance() < transactionDTO.getAmount() + Fees.WITHDRAW_ON_ATM)
             || (!transactionDTO.getSourceType().equals(SourceType.ATM.name()) && account.getBalance() < transactionDTO.getAmount() + Fees.WITHDRAW_IN_AGENCY)) {
 
             transactionDTO.setStatus(Status.Failed.code());
@@ -84,7 +84,7 @@ public class DelegateTransactionService implements OperationAcknowledgment<Trans
             accountOperationService.debit(account, transaction.getAmount());
 
             if(transaction.getSourceType().equals(SourceType.ATM.name()))
-                feeService.apply(account, new Fee(Fees.WITHDRAW_ONT_ATM, "Withdraw"), transaction.getSourceValue());
+                feeService.apply(account, new Fee(Fees.WITHDRAW_ON_ATM, "Withdraw"), transaction.getSourceValue());
             else
                 feeService.apply(account, new Fee(Fees.WITHDRAW_IN_AGENCY, "Withdraw"), transaction.getSourceValue());
         }

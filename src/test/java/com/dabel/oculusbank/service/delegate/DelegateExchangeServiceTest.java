@@ -5,7 +5,6 @@ import com.dabel.oculusbank.constant.Currency;
 import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.dto.ExchangeDTO;
 import com.dabel.oculusbank.exception.IllegalOperationException;
-import com.dabel.oculusbank.service.delegate.DelegateExchangeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,7 +114,7 @@ class DelegateExchangeServiceTest {
     }
 
     @Test
-    void shouldThrowAnIllegalOperationExceptionWhenTryMakeAnExchangeWithSameCurrencies() {
+    void shouldThrowAnIllegalOperationExceptionWhenTryMakeExchangeWithSameCurrencies() {
         //GIVEN
         ExchangeDTO exchangeDTO = ExchangeDTO.builder()
                 .customerName("John Doe")

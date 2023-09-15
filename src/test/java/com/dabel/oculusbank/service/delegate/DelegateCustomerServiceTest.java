@@ -15,8 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -37,7 +35,7 @@ public class DelegateCustomerServiceTest {
     }
 
     @Test
-    void shouldCreateAnActiveCustomerWithoutAccount() {
+    void shouldCreateNewCustomerWithoutAccountAndMakeHimActive() {
         //GIVEN
         BranchDTO savedBranch = branchService.save(
                 BranchDTO.builder()
@@ -61,7 +59,7 @@ public class DelegateCustomerServiceTest {
     }
 
     @Test
-    void shouldCreateCustomerWithHisAccountAllInOnce() {
+    void shouldCreateCustomerWithHisAccountAllInOnceAndMakeThemActives() {
         //GIVEN
         BranchDTO savedBranch = branchService.save(
                 BranchDTO.builder()
@@ -84,6 +82,6 @@ public class DelegateCustomerServiceTest {
         assertThat(expected.getCustomerId()).isGreaterThan(0);
         TrunkDTO trunks = accountService.findTrunkByCustomerId(expected.getCustomerId());
         assertThat(trunks.getAccountProfile()).isEqualTo(AccountProfile.Personal.name());
-        assertThat(trunks.getMembership()).isEqualTo(AccountMemberShip.Owner.name());
+        assertThat(trunks.getStatus()).isEqualTo(Status.Active.name());
     }
 }

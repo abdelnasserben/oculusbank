@@ -5,6 +5,7 @@ import com.dabel.oculusbank.constant.*;
 import com.dabel.oculusbank.dto.AccountDTO;
 import com.dabel.oculusbank.dto.TransactionDTO;
 import com.dabel.oculusbank.exception.BalanceInsufficientException;
+import com.dabel.oculusbank.exception.IllegalOperationException;
 import com.dabel.oculusbank.service.AccountService;
 import com.dabel.oculusbank.service.TransactionService;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,32 +29,41 @@ class DelegateTransactionServiceTest {
     DatabaseSettingsForTests databaseSettingsForTests;
 
     private AccountDTO savedAccount;
+    private TransactionDTO transactionDTO;
+
+    private void configSavedAccountAndTransactionDTO(boolean isActive, String transactionSourceType, double transactionAmount, String transactionCurrency) {
+
+        String accountStatus = isActive ? Status.Active.code() : Status.Pending.code();
+
+        savedAccount = accountService.save(
+                AccountDTO.builder()
+                        .accountName("John Doe")
+                        .accountNumber("123456789")
+                        .balance(1500)
+                        .currency(Currency.KMF.name())
+                        .accountType(AccountType.Saving.name())
+                        .status(accountStatus)
+                        .build());
+
+        transactionDTO = TransactionDTO.builder()
+                .accountNumber(savedAccount.getAccountNumber())
+                .amount(transactionAmount)
+                .currency(transactionCurrency)
+                .sourceType(transactionSourceType)
+                .sourceValue("Branch 1")
+                .reason("Sample description")
+                .build();
+    }
 
     @BeforeEach
     void init() {
         databaseSettingsForTests.truncate();
-        savedAccount = accountService.save(
-                AccountDTO.builder()
-                .accountName("John Doe")
-                .accountNumber("123456789")
-                .balance(1500)
-                .currency(Currency.KMF.name())
-                .accountType(AccountType.Saving.name())
-                .status(Status.Pending.code())
-                .build());
     }
 
     @Test
-    void shouldMakeDeposit() {
+    void shouldInitDepositAndPendingItOnActiveAccount() {
         //GIVEN
-        TransactionDTO transactionDTO = TransactionDTO.builder()
-                .accountNumber(savedAccount.getAccountNumber())
-                .amount(500)
-                .currency(Currency.KMF.name())
-                .sourceType(SourceType.Online.name())
-                .sourceValue("Branch 1")
-                .reason("Sample description")
-                .build();
+        configSavedAccountAndTransactionDTO(true, SourceType.Online.name(), 500, Currency.KMF.name());
 
         //WHEN
         TransactionDTO expected = basicDelegateTransactionService.deposit(transactionDTO);
@@ -65,16 +75,22 @@ class DelegateTransactionServiceTest {
     }
 
     @Test
+    void shouldThrowAnIllegalOperationExceptionWhenTryInitDepositOnAnInactiveAccount() {
+        //GIVEN
+        configSavedAccountAndTransactionDTO(false, SourceType.Online.name(), 500, Currency.KMF.name());
+
+        //WHEN
+        Exception expected = assertThrows(IllegalOperationException.class,
+                () -> basicDelegateTransactionService.deposit(transactionDTO));
+
+        //THEN
+        assertThat(expected.getMessage()).isEqualTo("Account must be active");
+    }
+
+    @Test
     void shouldApprovePendingSavedDeposit() {
         //GIVEN
-        TransactionDTO transactionDTO = TransactionDTO.builder()
-                .accountNumber(savedAccount.getAccountNumber())
-                .amount(500)
-                .currency(Currency.KMF.name())
-                .sourceType(SourceType.Online.name())
-                .sourceValue("Branch 1")
-                .reason("Sample description")
-                .build();
+        configSavedAccountAndTransactionDTO(true, SourceType.Online.name(), 500, Currency.KMF.name());
         TransactionDTO savedTransaction = basicDelegateTransactionService.deposit(transactionDTO);
 
         //WHEN
@@ -90,14 +106,7 @@ class DelegateTransactionServiceTest {
     @Test
     void shouldRejectPendingSavedDeposit() {
         //GIVEN
-        TransactionDTO transactionDTO = TransactionDTO.builder()
-                .accountNumber(savedAccount.getAccountNumber())
-                .amount(500)
-                .currency(Currency.KMF.name())
-                .sourceType(SourceType.Online.name())
-                .sourceValue("Branch 1")
-                .reason("Sample description")
-                .build();
+        configSavedAccountAndTransactionDTO(true, SourceType.Online.name(), 500, Currency.KMF.name());
         TransactionDTO savedTransaction = basicDelegateTransactionService.deposit(transactionDTO);
 
         //WHEN
@@ -111,16 +120,40 @@ class DelegateTransactionServiceTest {
     }
 
     @Test
-    void shouldMakeWithdraw() {
+    void shouldConvertDepositAmountWhenTryDepositEurOnKmfAccount() {
         //GIVEN
-        TransactionDTO transactionDTO = TransactionDTO.builder()
-                .accountNumber(savedAccount.getAccountNumber())
-                .amount(500)
-                .currency(Currency.KMF.name())
-                .sourceType(SourceType.Online.name())
-                .sourceValue("Branch 1")
-                .reason("Sample description")
-                .build();
+        configSavedAccountAndTransactionDTO(true, SourceType.Online.name(), 20, Currency.EUR.name());
+        TransactionDTO savedTransaction = basicDelegateTransactionService.deposit(transactionDTO);
+        basicDelegateTransactionService.approve(savedTransaction.getTransactionId());
+
+        //WHEN
+        AccountDTO expected = accountService.findByNumber(savedAccount.getAccountNumber());
+
+        //THEN
+        //1£ = 490.31KMF => 20£ = 9806.2KMF
+        assertThat(expected.getBalance()).isEqualTo(11306.2);
+    }
+
+    @Test
+    void shouldConvertDepositAmountWhenTryDepositUsdOnKmfAccount() {
+        //GIVEN
+        configSavedAccountAndTransactionDTO(true, SourceType.Online.name(), 20, Currency.USD.name());
+        TransactionDTO savedTransaction = basicDelegateTransactionService.deposit(transactionDTO);
+        basicDelegateTransactionService.approve(savedTransaction.getTransactionId());
+
+        //WHEN
+        AccountDTO expected = accountService.findByNumber(savedAccount.getAccountNumber());
+
+        //THEN
+        //1$ = 456.51KMF => 20$ = 9130.2KMF
+        assertThat(expected.getBalance()).isEqualTo(10630.2);
+    }
+
+    @Test
+    void shouldInitWithdrawAndPendingItOnActiveAccount() {
+        //GIVEN
+        configSavedAccountAndTransactionDTO(true, SourceType.Online.name(), 500, Currency.KMF.name());
+
         //WHEN
         TransactionDTO expected = basicDelegateTransactionService.withdraw(transactionDTO);
 
@@ -131,16 +164,22 @@ class DelegateTransactionServiceTest {
     }
 
     @Test
-    void shouldApprovePendingSavedWithdraw() {
+    void shouldThrowAnIllegalOperationExceptionWhenTryInitWithdrawOnAnInactiveAccount() {
         //GIVEN
-        TransactionDTO transactionDTO = TransactionDTO.builder()
-                .accountNumber(savedAccount.getAccountNumber())
-                .amount(500)
-                .currency(Currency.KMF.name())
-                .sourceType(SourceType.Online.name())
-                .sourceValue("Branch 1")
-                .reason("Sample description")
-                .build();
+        configSavedAccountAndTransactionDTO(false, SourceType.Online.name(), 500, Currency.KMF.name());
+
+        //WHEN
+        Exception expected = assertThrows(IllegalOperationException.class,
+                () -> basicDelegateTransactionService.withdraw(transactionDTO));
+
+        //THEN
+        assertThat(expected.getMessage()).isEqualTo("Account must be active");
+    }
+
+    @Test
+    void shouldApprovePendingSavedWithdrawDoneInAgency() {
+        //GIVEN
+        configSavedAccountAndTransactionDTO(true, SourceType.Online.name(), 500, Currency.KMF.name());
         TransactionDTO savedTransaction = basicDelegateTransactionService.withdraw(transactionDTO);
 
         //WHEN
@@ -150,20 +189,29 @@ class DelegateTransactionServiceTest {
         assertThat(expected.getStatus()).isEqualTo(Status.Approved.code());
 
         AccountDTO expectedAccount = accountService.findByNumber(savedAccount.getAccountNumber());
-        assertThat(expectedAccount.getBalance()).isEqualTo(800); //withdraw apply fee of 200KMF then we expect 800 but no 1000
+        assertThat(expectedAccount.getBalance()).isEqualTo(800); //in agency withdraw fees are 200KMF then we expect 800 but not 1000
+    }
+
+    @Test
+    void shouldApprovePendingSavedWithdrawDoneInATM() {
+        //GIVEN
+        configSavedAccountAndTransactionDTO(true, SourceType.ATM.name(), 500, Currency.KMF.name());
+        TransactionDTO savedTransaction = basicDelegateTransactionService.withdraw(transactionDTO);
+
+        //WHEN
+        TransactionDTO expected = basicDelegateTransactionService.approve(savedTransaction.getTransactionId());
+
+        //THEN
+        assertThat(expected.getStatus()).isEqualTo(Status.Approved.code());
+
+        AccountDTO expectedAccount = accountService.findByNumber(savedAccount.getAccountNumber());
+        assertThat(expectedAccount.getBalance()).isEqualTo(700); //in agency withdraw fees are 300KMF then we expect 700 but not 1000
     }
 
     @Test
     void shouldRejectPendingSavedWithdraw() {
         //GIVEN
-        TransactionDTO transactionDTO = TransactionDTO.builder()
-                .accountNumber(savedAccount.getAccountNumber())
-                .amount(500)
-                .currency(Currency.KMF.name())
-                .sourceType(SourceType.Online.name())
-                .sourceValue("Branch 1")
-                .reason("Sample description")
-                .build();
+        configSavedAccountAndTransactionDTO(true, SourceType.Online.name(), 500, Currency.KMF.name());
         TransactionDTO savedTransaction = basicDelegateTransactionService.withdraw(transactionDTO);
 
         //WHEN
@@ -177,16 +225,9 @@ class DelegateTransactionServiceTest {
     }
 
     @Test
-    void shouldThrowABalanceInsufficientExceptionWhenTryWithdrawMoreAmountThanActualBalance() {
+    void shouldThrowABalanceInsufficientExceptionWhenTryMakeAgencyWithdrawAndAccountBalanceIsLessThanTransactionAmountPlusWithdrawAgencyFees() {
         //GIVEN
-        TransactionDTO transactionDTO = TransactionDTO.builder()
-                .accountNumber(savedAccount.getAccountNumber())
-                .amount(5000)
-                .currency(Currency.KMF.name())
-                .sourceType(SourceType.Online.name())
-                .sourceValue("Branch 1")
-                .reason("Sample description")
-                .build();
+        configSavedAccountAndTransactionDTO(true, SourceType.Online.name(), 1699, Currency.KMF.name());
 
         //WHEN
         Exception expected = assertThrows(BalanceInsufficientException.class,
@@ -199,46 +240,17 @@ class DelegateTransactionServiceTest {
     }
 
     @Test
-    void shouldCreditConvertAmountWhenTryMakeADepositWithEurToAnAccountWithKMFCurrency() {
+    void shouldThrowABalanceInsufficientExceptionWhenTryMakeWithdrawOnATMAndAccountBalanceIsLessThanTransactionAmountPlusWithdrawATMFees() {
         //GIVEN
-        TransactionDTO transactionDTO = TransactionDTO.builder()
-                .accountNumber(savedAccount.getAccountNumber())
-                .amount(20)
-                .currency(Currency.EUR.name())
-                .sourceType(SourceType.Online.name())
-                .sourceValue("Branch 1")
-                .reason("Sample description")
-                .build();
-        TransactionDTO savedTransaction = basicDelegateTransactionService.deposit(transactionDTO);
-        basicDelegateTransactionService.approve(savedTransaction.getTransactionId());
+        configSavedAccountAndTransactionDTO(true, SourceType.Online.name(), 1799, Currency.KMF.name());
 
         //WHEN
-        AccountDTO expected = accountService.findByNumber(savedAccount.getAccountNumber());
+        Exception expected = assertThrows(BalanceInsufficientException.class,
+                () -> basicDelegateTransactionService.withdraw(transactionDTO));
 
         //THEN
-        //1£ = 490.31KMF => 20£ = 9806.2KMF
-        assertThat(expected.getBalance()).isEqualTo(11306.2);
-    }
-
-    @Test
-    void shouldCreditConvertAmountWhenTryMakeADepositWithUsdToAnAccountWithKMFCurrency() {
-        //GIVEN
-        TransactionDTO transactionDTO = TransactionDTO.builder()
-                .accountNumber(savedAccount.getAccountNumber())
-                .amount(20)
-                .currency(Currency.USD.name())
-                .sourceType(SourceType.Online.name())
-                .sourceValue("Branch 1")
-                .reason("Sample description")
-                .build();
-        TransactionDTO savedTransaction = basicDelegateTransactionService.deposit(transactionDTO);
-        basicDelegateTransactionService.approve(savedTransaction.getTransactionId());
-
-        //WHEN
-        AccountDTO expected = accountService.findByNumber(savedAccount.getAccountNumber());
-
-        //THEN
-        //1$ = 456.51KMF => 20$ = 9130.2KMF
-        assertThat(expected.getBalance()).isEqualTo(10630.2);
+        TransactionDTO expectedTransaction = transactionService.findAll().get(0);
+        assertThat(expectedTransaction.getStatus()).isEqualTo(Status.Failed.name());
+        assertThat(expected.getMessage()).isEqualTo("Account balance is insufficient");
     }
 }

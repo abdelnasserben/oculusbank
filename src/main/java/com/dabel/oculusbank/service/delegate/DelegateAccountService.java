@@ -24,12 +24,11 @@ public class DelegateAccountService {
     public void addJoint(String accountNumber, String identityNumber) {
 
         TrunkDTO account = accountService.findTrunkByNumber(accountNumber);
-
         if(!AccountChecker.isActive(account) || AccountChecker.isAssociative(account))
             throw new IllegalOperationException("The account is not eligible for this operation");
 
         CustomerDTO customer = customerService.findByIdentityNumber(identityNumber);
-        if(CustomerChecker.isActive(customer))
+        if(!CustomerChecker.isActive(customer))
             throw new IllegalOperationException("Customer must be active");
 
         //TODO: create new trunk for this account
@@ -51,7 +50,7 @@ public class DelegateAccountService {
             throw new IllegalOperationException("The account is not eligible for this operation");
 
         CustomerDTO customer = customerService.findByIdentityNumber(identityNumber);
-        if(CustomerChecker.isActive(customer))
+        if(!CustomerChecker.isActive(customer))
             throw new IllegalOperationException("Customer must be active");
 
         //TODO: create new trunk for this account

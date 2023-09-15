@@ -7,6 +7,7 @@ import com.dabel.oculusbank.exception.AccountNotFoundException;
 import com.dabel.oculusbank.exception.IllegalOperationException;
 import com.dabel.oculusbank.service.AccountService;
 import com.dabel.oculusbank.service.BranchService;
+import com.dabel.oculusbank.service.CustomerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +24,43 @@ class DelegateCardServiceTest {
     @Autowired
     BranchService branchService;
     @Autowired
-    DelegateCustomerService delegateCustomerService;
+    CustomerService customerService;
     @Autowired
     AccountService accountService;
     @Autowired
     DatabaseSettingsForTests databaseSettingsForTests;
 
+
+    private AccountDTO getSavedTrunk(boolean isActive, boolean isAssociative) {
+
+        String accountStatus = isActive ? Status.Active.code() : Status.Pending.code();
+        String accountProfile = isAssociative ? AccountProfile.Associative.name() : AccountProfile.Personal.name();
+
+        BranchDTO savedBranch = branchService.save(BranchDTO.builder()
+                .branchName("HQ")
+                .branchAddress("Moroni")
+                .status(Status.Active.code())
+                .build());
+        CustomerDTO savedCustomer = customerService.save(CustomerDTO.builder()
+                .branchId(savedBranch.getBranchId())
+                .firstName("John")
+                .lastName("Doe")
+                .identityNumber("NBE466754")
+                .status(Status.Active.code())
+                .build());
+
+        AccountDTO savedAccount = accountService.save(AccountDTO.builder()
+                .accountName("John Doe")
+                .accountNumber("123456789")
+                .accountType(AccountType.Saving.name())
+                .accountProfile(accountProfile)
+                .status(accountStatus)
+                .build());
+
+        accountService.saveTrunk(savedAccount.getAccountId(), savedCustomer.getCustomerId(), AccountMemberShip.Owner.name());
+
+        return savedAccount;
+    }
 
     @BeforeEach
     void init() {
@@ -36,10 +68,9 @@ class DelegateCardServiceTest {
     }
 
     @Test
-    void shouldAddNewCardAndMakeItPending() {
+    void shouldAddNewCardOnActivePersonalAccountAndMakeItPending() {
         //GIVEN
-        TrunkDTO savedAccount = getSavedTrunk();
-
+        AccountDTO savedAccount = getSavedTrunk(true, false);
         CardDTO cardDTO = CardDTO.builder()
                 .accountId(savedAccount.getAccountId())
                 .accountNumber(savedAccount.getAccountNumber())
@@ -56,61 +87,16 @@ class DelegateCardServiceTest {
     }
 
     @Test
-    void shouldThrowAnIllegalOperationExceptionWhenTrySaveCardOnANonactiveActive() {
-        //GIVEN
-        TrunkDTO savedAccount = getSavedTrunk();
-        savedAccount.setStatus(Status.Pending.code());
-        accountService.save(savedAccount);
-
-        CardDTO cardDTO = CardDTO.builder()
-                .accountId(savedAccount.getAccountId())
-                .accountNumber(savedAccount.getAccountNumber())
-                .cardName("John Doe")
-                .cardNumber("123456789")
-                .cardType(CardType.Mastercard.name())
-                .build();
-        //WHEN
-        Exception expected = assertThrows(IllegalOperationException.class,
-                () -> delegateCardService.add(cardDTO));
-
-        //THEN
-        assertThat(expected.getMessage()).isEqualTo("The account is not eligible to receive a card");
-    }
-
-    @Test
-    void shouldThrowAnIllegalOperationExceptionWhenTrySaveCardOnAnAssociativeAccount() {
-        //GIVEN
-        TrunkDTO savedAccount = getSavedTrunk();
-        savedAccount.setStatus(Status.Active.code());
-        savedAccount.setAccountProfile(AccountProfile.Associative.name());
-        accountService.save(savedAccount);
-
-        CardDTO cardDTO = CardDTO.builder()
-                .accountId(savedAccount.getAccountId())
-                .accountNumber(savedAccount.getAccountNumber())
-                .cardName("John Doe")
-                .cardNumber("123456789")
-                .cardType(CardType.Mastercard.name())
-                .build();
-        //WHEN
-        Exception expected = assertThrows(IllegalOperationException.class,
-                () -> delegateCardService.add(cardDTO));
-
-        //THEN
-        assertThat(expected.getMessage()).isEqualTo("The account is not eligible to receive a card");
-    }
-
-    @Test
-    void shouldThrowAnAccountNotFoundExceptionWhenTrySaveCardOnANotTrunkAccount() {
+    void shouldThrowAnAccountNotFoundExceptionWhenTryAddCardOnANotTrunkAccount() {
         //GIVEN
         AccountDTO savedAccount = accountService.save(
                 AccountDTO.builder()
-                .accountName("John Doe")
-                .accountNumber("66398832015")
-                .accountType(AccountType.Saving.name())
-                .accountProfile(AccountProfile.Personal.name())
-                .status(Status.Active.code())
-                .build());
+                        .accountName("John Doe")
+                        .accountNumber("66398832015")
+                        .accountType(AccountType.Saving.name())
+                        .accountProfile(AccountProfile.Personal.name())
+                        .status(Status.Active.code())
+                        .build());
 
         CardDTO cardDTO = CardDTO.builder()
                 .accountId(savedAccount.getAccountId())
@@ -128,10 +114,47 @@ class DelegateCardServiceTest {
     }
 
     @Test
+    void shouldThrowAnIllegalOperationExceptionWhenTryAddCardOnAnInactiveActivePersonalAccount() {
+        //GIVEN
+        AccountDTO savedAccount = getSavedTrunk(false, false);
+        CardDTO cardDTO = CardDTO.builder()
+                .accountId(savedAccount.getAccountId())
+                .accountNumber(savedAccount.getAccountNumber())
+                .cardName("John Doe")
+                .cardNumber("123456789")
+                .cardType(CardType.Mastercard.name())
+                .build();
+        //WHEN
+        Exception expected = assertThrows(IllegalOperationException.class,
+                () -> delegateCardService.add(cardDTO));
+
+        //THEN
+        assertThat(expected.getMessage()).isEqualTo("The account is not eligible to receive a card");
+    }
+
+    @Test
+    void shouldThrowAnIllegalOperationExceptionWhenTryAddCardOnActiveAssociativeAccount() {
+        //GIVEN
+        AccountDTO savedAccount = getSavedTrunk(true, true);
+        CardDTO cardDTO = CardDTO.builder()
+                .accountId(savedAccount.getAccountId())
+                .accountNumber(savedAccount.getAccountNumber())
+                .cardName("John Doe")
+                .cardNumber("123456789")
+                .cardType(CardType.Mastercard.name())
+                .build();
+        //WHEN
+        Exception expected = assertThrows(IllegalOperationException.class,
+                () -> delegateCardService.add(cardDTO));
+
+        //THEN
+        assertThat(expected.getMessage()).isEqualTo("The account is not eligible to receive a card");
+    }
+
+    @Test
     void shouldApprovePendingSavedCard() {
         //GIVEN
-        TrunkDTO savedAccount = getSavedTrunk();
-
+        AccountDTO savedAccount = getSavedTrunk(true, false);
         CardDTO cardDTO = CardDTO.builder()
                 .accountId(savedAccount.getAccountId())
                 .accountNumber(savedAccount.getAccountNumber())
@@ -151,8 +174,7 @@ class DelegateCardServiceTest {
     @Test
     void shouldRejectPendingSavedCard() {
         //GIVEN
-        TrunkDTO savedAccount = getSavedTrunk();
-
+        AccountDTO savedAccount = getSavedTrunk(true, false);
         CardDTO cardDTO = CardDTO.builder()
                 .accountId(savedAccount.getAccountId())
                 .accountNumber(savedAccount.getAccountNumber())
@@ -168,25 +190,6 @@ class DelegateCardServiceTest {
         //THEN
         assertThat(expected.getStatus()).isEqualTo(Status.Rejected.code());
         assertThat(expected.getFailureReason()).isEqualTo("Sample remark");
-    }
-
-    private TrunkDTO getSavedTrunk() {
-        BranchDTO savedBranch = branchService.save(
-                BranchDTO.builder()
-                .branchName("HQ")
-                .branchAddress("Moroni")
-                .status(Status.Active.code())
-                .build());
-
-        CustomerDTO customerDTO = CustomerDTO.builder()
-                .branchId(savedBranch.getBranchId())
-                .firstName("John")
-                .lastName("Doe")
-                .identityNumber("NBE466754")
-                .build();
-
-        CustomerDTO savedCustomer = delegateCustomerService.create(customerDTO, AccountType.Saving.name(), AccountProfile.Personal.name(), AccountMemberShip.Owner.name());
-        return accountService.findTrunkByCustomerId(savedCustomer.getCustomerId());
     }
 
 }

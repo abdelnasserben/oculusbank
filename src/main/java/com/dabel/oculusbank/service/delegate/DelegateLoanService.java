@@ -1,5 +1,6 @@
 package com.dabel.oculusbank.service.delegate;
 
+import com.dabel.oculusbank.app.CustomerChecker;
 import com.dabel.oculusbank.app.Generator;
 import com.dabel.oculusbank.app.LoanCalculator;
 import com.dabel.oculusbank.app.OperationAcknowledgment;
@@ -9,6 +10,7 @@ import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.dto.AccountDTO;
 import com.dabel.oculusbank.dto.CustomerDTO;
 import com.dabel.oculusbank.dto.LoanDTO;
+import com.dabel.oculusbank.exception.IllegalOperationException;
 import com.dabel.oculusbank.service.AccountService;
 import com.dabel.oculusbank.service.CustomerService;
 import com.dabel.oculusbank.service.LoanService;
@@ -30,6 +32,9 @@ public class DelegateLoanService implements OperationAcknowledgment<LoanDTO> {
     public LoanDTO loan(LoanDTO loanDTO) {
 
         CustomerDTO customer = customerService.findById(loanDTO.getCustomerId());
+        if(!CustomerChecker.isActive(customer))
+            throw new IllegalOperationException("Customer must be active");
+
         LoanCalculator loanCalculator = new LoanCalculator(loanDTO.getIssuedAmount(), loanDTO.getInterestRate(), loanDTO.getDuration());
 
         AccountDTO account = accountService.save(

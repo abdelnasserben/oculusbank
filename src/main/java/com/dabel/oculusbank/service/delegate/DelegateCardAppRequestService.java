@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 
 @Service
-public class DelegateCardAppService implements OperationAcknowledgment<CardAppRequestDTO> {
+public class DelegateCardAppRequestService implements OperationAcknowledgment<CardAppRequestDTO> {
 
     @Autowired
     CardAppRequestService cardAppRequestService;

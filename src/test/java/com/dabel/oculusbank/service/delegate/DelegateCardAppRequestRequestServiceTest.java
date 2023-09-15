@@ -3,6 +3,7 @@ package com.dabel.oculusbank.service.delegate;
 import com.dabel.oculusbank.DatabaseSettingsForTests;
 import com.dabel.oculusbank.constant.*;
 import com.dabel.oculusbank.dto.*;
+import com.dabel.oculusbank.exception.AccountNotFoundException;
 import com.dabel.oculusbank.exception.BalanceInsufficientException;
 import com.dabel.oculusbank.exception.IllegalOperationException;
 import com.dabel.oculusbank.service.AccountService;
@@ -20,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class DelegateCardAppRequestRequestServiceTest {
 
     @Autowired
-    DelegateCardAppService delegateCardAppService;
+    DelegateCardAppRequestService delegateCardAppRequestService;
     @Autowired
     BranchService branchService;
     @Autowired
@@ -30,145 +31,11 @@ class DelegateCardAppRequestRequestServiceTest {
     @Autowired
     DatabaseSettingsForTests databaseSettingsForTests;
 
-    @BeforeEach
-    void init() {
-        databaseSettingsForTests.truncate();
-    }
+    private AccountDTO getSavedTrunk(boolean isActive, boolean isAssociative, double balance) {
 
-    @Test
-    void shouldSendCardApplicationRequestAndMakeItPending() {
-        //GIVEN
-        AccountDTO savedAccount = getSavedTrunk();
+        String accountStatus = isActive ? Status.Active.code() : Status.Pending.code();
+        String accountProfile = isAssociative ? AccountProfile.Associative.name() : AccountProfile.Personal.name();
 
-        CardAppRequestDTO cardAppRequestDTO = CardAppRequestDTO.builder()
-                .cardType(CardType.Visa.name())
-                .accountId(savedAccount.getAccountId())
-                .accountNumber(savedAccount.getAccountNumber())
-                .build();
-
-        //WHEN
-        CardAppRequestDTO expected = delegateCardAppService.sendRequest(cardAppRequestDTO);
-
-        //THEN
-        assertThat(expected.getRequestId()).isGreaterThan(0);
-        assertThat(expected.getStatus()).isEqualTo(Status.Pending.code());
-    }
-
-    @Test
-    void shouldApproveACardApplicationRequest() {
-        //GIVEN
-        AccountDTO savedAccount = getSavedTrunk();
-
-        CardAppRequestDTO cardAppRequestDTO = CardAppRequestDTO.builder()
-                .cardType(CardType.Visa.name())
-                .accountId(savedAccount.getAccountId())
-                .accountNumber(savedAccount.getAccountNumber())
-                .build();
-        CardAppRequestDTO savedRequestApp = delegateCardAppService.sendRequest(cardAppRequestDTO);
-
-        //WHEN
-        CardAppRequestDTO expected = delegateCardAppService.approve(savedRequestApp.getRequestId());
-
-        //THEN
-        assertThat(expected.getStatus()).isEqualTo(Status.Approved.code());
-
-        AccountDTO expectedAccount = accountService.findByNumber(savedAccount.getAccountNumber());
-        assertThat(expectedAccount.getBalance()).isEqualTo(20000);
-    }
-
-    @Test
-    void shouldRejectACardApplicationRequest() {
-        //GIVEN
-        AccountDTO savedAccount = getSavedTrunk();
-
-        CardAppRequestDTO cardAppRequestDTO = CardAppRequestDTO.builder()
-                .cardType(CardType.Visa.name())
-                .accountId(savedAccount.getAccountId())
-                .accountNumber(savedAccount.getAccountNumber())
-                .build();
-        CardAppRequestDTO savedRequestApp = delegateCardAppService.sendRequest(cardAppRequestDTO);
-
-        //WHEN
-        CardAppRequestDTO expected = delegateCardAppService.reject(savedRequestApp.getRequestId(), "Sample remark");
-
-        //THEN
-        assertThat(expected.getStatus()).isEqualTo(Status.Rejected.code());
-    }
-
-    @Test
-    void shouldThrowAnIllegalOperationExceptionWhenTrySendRequestOnAnInActiveAccount() {
-        //GIVEN
-        AccountDTO savedAccount = getSavedTrunk();
-        savedAccount.setStatus(Status.Pending.code());
-        accountService.save(savedAccount);
-
-        CardAppRequestDTO cardAppRequestDTO = CardAppRequestDTO.builder()
-                .cardType(CardType.Visa.name())
-                .accountId(savedAccount.getAccountId())
-                .accountNumber(savedAccount.getAccountNumber())
-                .build();
-
-        //WHEN
-        Exception expected = assertThrows(IllegalOperationException.class,
-                () -> delegateCardAppService.sendRequest(cardAppRequestDTO));
-
-        //THEN
-        assertThat(expected.getMessage()).isEqualTo("The account is not eligible for this operation");
-    }
-
-    @Test
-    void shouldThrowAnIllegalOperationExceptionWhenTrySendRequestOnAnAssociativeAccount() {
-        //GIVEN
-        AccountDTO savedAccount = getSavedTrunk();
-        savedAccount.setStatus(Status.Pending.code());
-        savedAccount.setAccountProfile(AccountProfile.Associative.name());
-        accountService.save(savedAccount);
-
-        CardAppRequestDTO cardAppRequestDTO = CardAppRequestDTO.builder()
-                .cardType(CardType.Visa.name())
-                .accountId(savedAccount.getAccountId())
-                .accountNumber(savedAccount.getAccountNumber())
-                .build();
-
-        //WHEN
-        Exception expected = assertThrows(IllegalOperationException.class,
-                () -> delegateCardAppService.sendRequest(cardAppRequestDTO));
-
-        //THEN
-        assertThat(expected.getMessage()).isEqualTo("The account is not eligible for this operation");
-    }
-
-    @Test
-    void shouldThrowABalanceInsufficientExceptionWhenTrySendRequestOnAnAccountWithBalanceIsLessThanCardApplicationFees() {
-        //GIVEN
-        AccountDTO savedAccount = getSavedTrunk();
-        savedAccount.setStatus(Status.Active.code());
-        savedAccount.setBalance(100);
-        accountService.save(savedAccount);
-
-        CardAppRequestDTO cardAppRequestDTO = CardAppRequestDTO.builder()
-                .cardType(CardType.Visa.name())
-                .accountId(savedAccount.getAccountId())
-                .accountNumber(savedAccount.getAccountNumber())
-                .build();
-
-        //WHEN
-        Exception expected = assertThrows(BalanceInsufficientException.class,
-                () -> delegateCardAppService.sendRequest(cardAppRequestDTO));
-
-        //THEN
-        assertThat(expected.getMessage()).isEqualTo("Account balance is insufficient for application fees");
-    }
-
-    @Test
-    void approve() {
-    }
-
-    @Test
-    void reject() {
-    }
-
-    private TrunkDTO getSavedTrunk() {
         BranchDTO savedBranch = branchService.save(BranchDTO.builder()
                 .branchName("HQ")
                 .branchAddress("Moroni")
@@ -187,13 +54,155 @@ class DelegateCardAppRequestRequestServiceTest {
                 .accountName("John Doe")
                 .accountNumber("123456789")
                 .accountType(AccountType.Saving.name())
+                .accountProfile(accountProfile)
+                .status(accountStatus)
+                .balance(balance)
+                .build());
+
+        accountService.saveTrunk(savedAccount.getAccountId(), savedCustomer.getCustomerId(), AccountMemberShip.Owner.name());
+
+        return savedAccount;
+    }
+
+    @BeforeEach
+    void init() {
+        databaseSettingsForTests.truncate();
+    }
+
+    @Test
+    void shouldSendCardApplicationRequestAndMakeItPendingForAnActivePersonalAccount() {
+        //GIVEN
+        AccountDTO savedAccount = getSavedTrunk(true, false, 25000);
+        CardAppRequestDTO cardAppRequestDTO = CardAppRequestDTO.builder()
+                .cardType(CardType.Visa.name())
+                .accountId(savedAccount.getAccountId())
+                .accountNumber(savedAccount.getAccountNumber())
+                .build();
+
+        //WHEN
+        CardAppRequestDTO expected = delegateCardAppRequestService.sendRequest(cardAppRequestDTO);
+
+        //THEN
+        assertThat(expected.getRequestId()).isGreaterThan(0);
+        assertThat(expected.getStatus()).isEqualTo(Status.Pending.code());
+    }
+
+    @Test
+    void shouldThrowAnAccountNotFoundExceptionWhenTrySendRequestForANotTrunkAccount() {
+        //GIVEN
+        AccountDTO savedAccount = accountService.save(AccountDTO.builder()
+                .accountName("John Doe")
+                .accountNumber("123456789")
+                .accountType(AccountType.Saving.name())
                 .accountProfile(AccountProfile.Personal.name())
                 .status(Status.Active.code())
                 .balance(25000)
                 .build());
 
-        accountService.saveTrunk(savedAccount.getAccountId(), savedCustomer.getCustomerId(), AccountMemberShip.Owner.name());
+        CardAppRequestDTO cardAppRequestDTO = CardAppRequestDTO.builder()
+                .cardType(CardType.Visa.name())
+                .accountId(savedAccount.getAccountId())
+                .accountNumber(savedAccount.getAccountNumber())
+                .build();
 
-        return accountService.findTrunkByCustomerId(savedCustomer.getCustomerId());
+        //WHEN
+        Exception expected = assertThrows(AccountNotFoundException.class,
+                () -> delegateCardAppRequestService.sendRequest(cardAppRequestDTO));
+
+        //THEN
+        assertThat(expected.getMessage()).isEqualTo("Account not found");
+    }
+
+    @Test
+    void shouldThrowAnIllegalOperationExceptionWhenTrySendRequestForAnInActivePersonalAccount() {
+        //GIVEN
+        AccountDTO savedAccount = getSavedTrunk(false, false, 25000);
+        CardAppRequestDTO cardAppRequestDTO = CardAppRequestDTO.builder()
+                .cardType(CardType.Visa.name())
+                .accountId(savedAccount.getAccountId())
+                .accountNumber(savedAccount.getAccountNumber())
+                .build();
+
+        //WHEN
+        Exception expected = assertThrows(IllegalOperationException.class,
+                () -> delegateCardAppRequestService.sendRequest(cardAppRequestDTO));
+
+        //THEN
+        assertThat(expected.getMessage()).isEqualTo("The account is not eligible for this operation");
+    }
+
+    @Test
+    void shouldThrowAnIllegalOperationExceptionWhenTrySendRequestForActiveAssociativeAccount() {
+        //GIVEN
+        AccountDTO savedAccount = getSavedTrunk(true, true, 25000);
+        CardAppRequestDTO cardAppRequestDTO = CardAppRequestDTO.builder()
+                .cardType(CardType.Visa.name())
+                .accountId(savedAccount.getAccountId())
+                .accountNumber(savedAccount.getAccountNumber())
+                .build();
+
+        //WHEN
+        Exception expected = assertThrows(IllegalOperationException.class,
+                () -> delegateCardAppRequestService.sendRequest(cardAppRequestDTO));
+
+        //THEN
+        assertThat(expected.getMessage()).isEqualTo("The account is not eligible for this operation");
+    }
+
+    @Test
+    void shouldThrowABalanceInsufficientExceptionWhenTrySendRequestOnActivePersonalAccountWithLessBalanceThanCardApplicationFees() {
+        //GIVEN
+        AccountDTO savedAccount = getSavedTrunk(true, false, 100);
+        CardAppRequestDTO cardAppRequestDTO = CardAppRequestDTO.builder()
+                .cardType(CardType.Visa.name())
+                .accountId(savedAccount.getAccountId())
+                .accountNumber(savedAccount.getAccountNumber())
+                .build();
+
+        //WHEN
+        Exception expected = assertThrows(BalanceInsufficientException.class,
+                () -> delegateCardAppRequestService.sendRequest(cardAppRequestDTO));
+
+        //THEN
+        assertThat(expected.getMessage()).isEqualTo("Account balance is insufficient for application fees");
+    }
+
+    @Test
+    void shouldApproveAPendingCardApplicationRequest() {
+        //GIVEN
+        AccountDTO savedAccount = getSavedTrunk(true, false, 25000);
+        CardAppRequestDTO cardAppRequestDTO = CardAppRequestDTO.builder()
+                .cardType(CardType.Visa.name())
+                .accountId(savedAccount.getAccountId())
+                .accountNumber(savedAccount.getAccountNumber())
+                .build();
+        CardAppRequestDTO savedRequestApp = delegateCardAppRequestService.sendRequest(cardAppRequestDTO);
+
+        //WHEN
+        CardAppRequestDTO expected = delegateCardAppRequestService.approve(savedRequestApp.getRequestId());
+
+        //THEN
+        assertThat(expected.getStatus()).isEqualTo(Status.Approved.code());
+
+        AccountDTO expectedAccount = accountService.findByNumber(savedAccount.getAccountNumber());
+        assertThat(expectedAccount.getBalance()).isEqualTo(20000);
+    }
+
+    @Test
+    void shouldRejectAPendingCardApplicationRequest() {
+        //GIVEN
+        AccountDTO savedAccount = getSavedTrunk(true, false, 25000);
+        CardAppRequestDTO cardAppRequestDTO = CardAppRequestDTO.builder()
+                .cardType(CardType.Visa.name())
+                .accountId(savedAccount.getAccountId())
+                .accountNumber(savedAccount.getAccountNumber())
+                .build();
+        CardAppRequestDTO savedRequestApp = delegateCardAppRequestService.sendRequest(cardAppRequestDTO);
+
+        //WHEN
+        CardAppRequestDTO expected = delegateCardAppRequestService.reject(savedRequestApp.getRequestId(), "Sample remark");
+
+        //THEN
+        assertThat(expected.getStatus()).isEqualTo(Status.Rejected.code());
     }
 }

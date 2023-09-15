@@ -1,6 +1,7 @@
 package com.dabel.oculusbank.service.delegate;
 
 import com.dabel.oculusbank.DatabaseSettingsForTests;
+import com.dabel.oculusbank.constant.Currency;
 import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.dto.BranchDTO;
 import com.dabel.oculusbank.dto.VaultDTO;
@@ -31,7 +32,7 @@ public class DelegateBranchServiceTest {
     }
 
     @Test
-    void shouldCreateBranchWithHerAccountsAllInOnce() {
+    void shouldCreateBranchWithHisVaultsAllInOnce() {
         //GIVEN
         BranchDTO branchDTO = BranchDTO.builder()
                 .branchName("HQ")
@@ -45,5 +46,8 @@ public class DelegateBranchServiceTest {
         assertThat(expected.getBranchId()).isGreaterThan(0);
         List<VaultDTO> vaultDTOS = accountService.findAllVaultsByBranchId(expected.getBranchId());
         assertThat(vaultDTOS.size()).isEqualTo(3);
+        assertThat(vaultDTOS.get(0).getCurrency()).isEqualTo(Currency.KMF.name());
+        assertThat(vaultDTOS.get(1).getCurrency()).isEqualTo(Currency.EUR.name());
+        assertThat(vaultDTOS.get(2).getCurrency()).isEqualTo(Currency.USD.name());
     }
 }

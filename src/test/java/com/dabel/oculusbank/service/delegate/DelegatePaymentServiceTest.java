@@ -7,6 +7,7 @@ import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.dto.AccountDTO;
 import com.dabel.oculusbank.dto.PaymentDTO;
 import com.dabel.oculusbank.exception.BalanceInsufficientException;
+import com.dabel.oculusbank.exception.IllegalOperationException;
 import com.dabel.oculusbank.service.AccountService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,39 +28,47 @@ class DelegatePaymentServiceTest {
     DatabaseSettingsForTests databaseSettingsForTests;
 
     private AccountDTO savedAccount1, savedAccount2;
+    private PaymentDTO paymentDTO;
 
-    @BeforeEach
-    void init() {
-        databaseSettingsForTests.truncate();
-        savedAccount1 = accountService.save(
-                AccountDTO.builder()
+    private void configSavedAccountsAndPaymentDTO(boolean isActiveAccount1, double balanceOfAccount1) {
+
+        String account1Status = isActiveAccount1 ? Status.Active.code() : Status.Pending.code();
+
+        savedAccount1 = accountService.save(AccountDTO.builder()
                 .accountName("John Doe")
                 .accountNumber("123456789")
                 .accountType(AccountType.Saving.name())
                 .currency(Currency.KMF.name())
-                .balance(500)
-                .status(Status.Pending.code())
+                .balance(balanceOfAccount1)
+                .status(account1Status)
                 .build());
-        savedAccount2 = accountService.save(
-                AccountDTO.builder()
+
+        savedAccount2 = accountService.save(AccountDTO.builder()
                 .accountName("Tom Hunt")
                 .accountNumber("987654321")
                 .accountType(AccountType.Saving.name())
                 .currency(Currency.KMF.name())
                 .balance(300)
-                .status(Status.Pending.code())
+                .status(Status.Active.code())
                 .build());
-    }
 
-    @Test
-    void shouldMakePayment() {
-        //GIVEN
-        PaymentDTO paymentDTO = PaymentDTO.builder()
+        paymentDTO = PaymentDTO.builder()
                 .debitAccountNumber(savedAccount1.getAccountNumber())
                 .creditAccountNumber(savedAccount2.getAccountNumber())
                 .amount(50)
                 .reason("Sample reason")
                 .build();
+    }
+
+    @BeforeEach
+    void init() {
+        databaseSettingsForTests.truncate();
+    }
+
+    @Test
+    void shouldInitPaymentAndPendingItBetweenTwoActiveAccounts() {
+        //GIVEN
+        configSavedAccountsAndPaymentDTO(true, 900);
 
         //WHEN
         PaymentDTO expected = delegatePaymentService.pay(paymentDTO);
@@ -70,14 +79,35 @@ class DelegatePaymentServiceTest {
     }
 
     @Test
+    void shouldThrowAnIllegalOperationExceptionWhenTryInitPaymentWithAnInactiveAccount() {
+        //GIVEN
+        configSavedAccountsAndPaymentDTO(false, 900);
+
+        //WHEN
+        Exception expected = assertThrows(IllegalOperationException.class,
+                () -> delegatePaymentService.pay(paymentDTO));
+
+        //THEN
+        assertThat(expected.getMessage()).isEqualTo("Debit and credit account must be active");
+    }
+
+    @Test
+    void shouldThrowABalanceInsufficientExceptionWhenTryInitPaymentBetweenTwoActiveAccountsWithInsufficientBalance() {
+        //GIVEN
+        configSavedAccountsAndPaymentDTO(true, 500);
+
+        //WHEN
+        Exception expected = assertThrows(BalanceInsufficientException.class,
+                () -> delegatePaymentService.pay(paymentDTO));
+
+        //THEN
+        assertThat(expected.getMessage()).isEqualTo("Account balance is insufficient");
+    }
+
+    @Test
     void shouldApprovePendingSavedPayment() {
         //GIVEN
-        PaymentDTO paymentDTO = PaymentDTO.builder()
-                .debitAccountNumber(savedAccount1.getAccountNumber())
-                .creditAccountNumber(savedAccount2.getAccountNumber())
-                .amount(50)
-                .reason("Sample reason")
-                .build();
+        configSavedAccountsAndPaymentDTO(true, 900);
         PaymentDTO savedPayment = delegatePaymentService.pay(paymentDTO);
 
         //WHEN
@@ -87,7 +117,7 @@ class DelegatePaymentServiceTest {
         assertThat(expected.getStatus()).isEqualTo(Status.Approved.code());
 
         AccountDTO expectedDebitAccount = accountService.findByNumber(savedAccount1.getAccountNumber());
-        assertThat(expectedDebitAccount.getBalance()).isEqualTo(450);
+        assertThat(expectedDebitAccount.getBalance()).isEqualTo(325); // Payment fees are 525KMF
 
         AccountDTO expectedCreditAccount = accountService.findByNumber(savedAccount2.getAccountNumber());
         assertThat(expectedCreditAccount.getBalance()).isEqualTo(350);
@@ -96,12 +126,7 @@ class DelegatePaymentServiceTest {
     @Test
     void shouldRejectedPendingSavedPayment() {
         //GIVEN
-        PaymentDTO paymentDTO = PaymentDTO.builder()
-                .debitAccountNumber(savedAccount1.getAccountNumber())
-                .creditAccountNumber(savedAccount2.getAccountNumber())
-                .amount(50)
-                .reason("Sample reason")
-                .build();
+        configSavedAccountsAndPaymentDTO(true, 900);
         PaymentDTO savedPayment = delegatePaymentService.pay(paymentDTO);
 
         //WHEN
@@ -111,28 +136,11 @@ class DelegatePaymentServiceTest {
         assertThat(expected.getStatus()).isEqualTo(Status.Rejected.code());
 
         AccountDTO expectedDebitAccount = accountService.findByNumber(savedAccount1.getAccountNumber());
-        assertThat(expectedDebitAccount.getBalance()).isEqualTo(500);
+        assertThat(expectedDebitAccount.getBalance()).isEqualTo(900);
 
         AccountDTO expectedCreditAccount = accountService.findByNumber(savedAccount2.getAccountNumber());
         assertThat(expectedCreditAccount.getBalance()).isEqualTo(300);
     }
 
-    @Test
-    void shouldThrowBalanceInsufficientExceptionWhenTryMakePaymentWithInsufficientBalance() {
-        //GIVEN
-        PaymentDTO paymentDTO = PaymentDTO.builder()
-                .debitAccountNumber(savedAccount1.getAccountNumber())
-                .creditAccountNumber(savedAccount2.getAccountNumber())
-                .amount(600)
-                .reason("Sample reason")
-                .build();
-
-        //WHEN
-        Exception expected = assertThrows(BalanceInsufficientException.class,
-                () -> delegatePaymentService.pay(paymentDTO));
-
-        //THEN
-        assertThat(expected.getMessage()).isEqualTo("Account balance is insufficient");
-    }
 
 }

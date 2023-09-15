@@ -6,15 +6,16 @@ import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.dto.BranchDTO;
 import com.dabel.oculusbank.dto.CustomerDTO;
 import com.dabel.oculusbank.dto.LoanDTO;
+import com.dabel.oculusbank.exception.IllegalOperationException;
 import com.dabel.oculusbank.service.BranchService;
 import com.dabel.oculusbank.service.CustomerService;
-import com.dabel.oculusbank.service.delegate.DelegateLoanService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 class DelegateLoanServiceTest {
@@ -28,31 +29,25 @@ class DelegateLoanServiceTest {
     @Autowired
     DatabaseSettingsForTests databaseSettingsForTests;
 
-    private CustomerDTO savedCustomer;
+    private LoanDTO loanDTO;
 
-    @BeforeEach
-    void init() {
-        databaseSettingsForTests.truncate();
+    private void configSavedCustomerAndLoanDTO(boolean isActiveCustomer) {
 
+        String customerStatus = isActiveCustomer ? Status.Active.code() : Status.Pending.code();
         BranchDTO savedBranch = branchService.save(
                 BranchDTO.builder()
                         .branchName("HQ")
                         .branchAddress("Moroni")
                         .status(Status.Active.code())
                         .build());
-        savedCustomer = customerService.save(CustomerDTO.builder()
+        CustomerDTO savedCustomer = customerService.save(CustomerDTO.builder()
                 .branchId(savedBranch.getBranchId())
                 .firstName("John")
                 .lastName("Doe")
                 .identityNumber("NBE466754")
-                .status(Status.Pending.code())
+                .status(customerStatus)
                 .build());
-    }
-
-    @Test
-    void shouldInitLoan() {
-        //GIVEN
-        LoanDTO loanDTO = LoanDTO.builder()
+        loanDTO = LoanDTO.builder()
                 .loanType(LoanType.Gold.name())
                 .customerId(savedCustomer.getCustomerId())
                 .issuedAmount(15239)
@@ -60,6 +55,17 @@ class DelegateLoanServiceTest {
                 .duration(3)
                 .reason("Sample reason")
                 .build();
+    }
+
+    @BeforeEach
+    void init() {
+        databaseSettingsForTests.truncate();
+    }
+
+    @Test
+    void shouldInitLoan() {
+        //GIVEN
+        configSavedCustomerAndLoanDTO(true);
 
         //WHEN
         LoanDTO expected = delegateLoanService.loan(loanDTO);
@@ -73,16 +79,22 @@ class DelegateLoanServiceTest {
     }
 
     @Test
+    void shouldThrowAnIllegalOperationExceptionWhenTryInitLoanWithAnInactiveCustomer() {
+        //GIVEN
+        configSavedCustomerAndLoanDTO(false);
+
+        //WHEN
+        Exception expected = assertThrows(IllegalOperationException.class,
+                () -> delegateLoanService.loan(loanDTO));
+
+        //THEN
+        assertThat(expected.getMessage()).isEqualTo("Customer must be active");
+    }
+
+    @Test
     void shouldApprovePendingSavedLoan() {
         //GIVEN
-        LoanDTO loanDTO = LoanDTO.builder()
-                .loanType(LoanType.Gold.name())
-                .customerId(savedCustomer.getCustomerId())
-                .issuedAmount(15239)
-                .interestRate(1.24)
-                .duration(3)
-                .reason("Sample reason")
-                .build();
+        configSavedCustomerAndLoanDTO(true);
         LoanDTO savedLoan = delegateLoanService.loan(loanDTO);
 
         //WHEN
@@ -96,14 +108,7 @@ class DelegateLoanServiceTest {
     @Test
     void shouldRejectPendingSavedLoan() {
         //GIVEN
-        LoanDTO loanDTO = LoanDTO.builder()
-                .loanType(LoanType.Gold.name())
-                .customerId(savedCustomer.getCustomerId())
-                .issuedAmount(15239)
-                .interestRate(1.24)
-                .duration(3)
-                .reason("Sample reason")
-                .build();
+        configSavedCustomerAndLoanDTO(true);
         LoanDTO savedLoan = delegateLoanService.loan(loanDTO);
 
         //WHEN

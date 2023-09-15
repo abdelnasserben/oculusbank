@@ -9,9 +9,11 @@ import com.dabel.oculusbank.dto.AccountDTO;
 import com.dabel.oculusbank.dto.BranchDTO;
 import com.dabel.oculusbank.dto.CustomerDTO;
 import com.dabel.oculusbank.dto.TrunkDTO;
+import com.dabel.oculusbank.exception.AccountNotFoundException;
 import com.dabel.oculusbank.exception.IllegalOperationException;
 import com.dabel.oculusbank.service.AccountService;
 import com.dabel.oculusbank.service.BranchService;
+import com.dabel.oculusbank.service.CustomerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +32,51 @@ public class DelegateAccountServiceTest {
     @Autowired
     AccountService accountService;
     @Autowired
-    DelegateCustomerService delegateCustomerService;
+    CustomerService customerService;
     @Autowired
     DatabaseSettingsForTests databaseSettingsForTests;
+
+    private CustomerDTO savedCustomer;
+    private AccountDTO savedAccount;
+
+    private void configCustomersAndAccount(boolean isActiveAccount, boolean isAssociativeAccount, boolean isActiveCustomer) {
+
+        String accountStatus = isActiveAccount ? Status.Active.code() : Status.Pending.code();
+        String accountProfile = isAssociativeAccount ? AccountProfile.Associative.name() : AccountProfile.Personal.name();
+        String customer2Status = isActiveCustomer ? Status.Active.code() : Status.Pending.code();
+
+        BranchDTO savedBranch = branchService.save(BranchDTO.builder()
+                .branchName("HQ")
+                .branchAddress("Moroni")
+                .status(Status.Active.code())
+                .build());
+
+        CustomerDTO savedCustomer1 = customerService.save(CustomerDTO.builder()
+                .branchId(savedBranch.getBranchId())
+                .firstName("John")
+                .lastName("Doe")
+                .identityNumber("NBE466754")
+                .status(Status.Active.code())
+                .build());
+
+        savedAccount = accountService.save(AccountDTO.builder()
+                .accountName("John Doe")
+                .accountNumber("123456789")
+                .accountType(AccountType.Saving.name())
+                .accountProfile(accountProfile)
+                .status(accountStatus)
+                .build());
+
+        accountService.saveTrunk(savedAccount.getAccountId(), savedCustomer1.getCustomerId(), AccountMemberShip.Owner.name());
+
+        savedCustomer = customerService.save(CustomerDTO.builder()
+                .branchId(savedBranch.getBranchId())
+                .firstName("Tom")
+                .lastName("Hank")
+                .identityNumber("NBE021586")
+                .status(customer2Status)
+                .build());
+    }
 
     @BeforeEach
     void init() {
@@ -40,34 +84,13 @@ public class DelegateAccountServiceTest {
     }
 
     @Test
-    void shouldAddAJointCustomerOnPersonalAccount() {
+    void shouldAddActiveCustomerAsJointOnActivePersonalAccountAndUpdateTheAccountProfileToJoint() {
         //GIVEN
-        BranchDTO savedBranch = branchService.save(BranchDTO.builder()
-                .branchName("HQ")
-                .branchAddress("Moroni")
-                .status(Status.Active.code())
-                .build());
-        CustomerDTO customerDTO = CustomerDTO.builder()
-                .branchId(savedBranch.getBranchId())
-                .firstName("John")
-                .lastName("Doe")
-                .identityNumber("NBE466754")
-                .build();
-
-        CustomerDTO savedCustomerWithAccount = delegateCustomerService.create(customerDTO, AccountType.Saving.name(), AccountProfile.Personal.name(), AccountMemberShip.Owner.name());
-
-        CustomerDTO savedCustomerWithoutAccount = delegateCustomerService.create(CustomerDTO.builder()
-                .branchId(savedBranch.getBranchId())
-                .firstName("Tom")
-                .lastName("Hank")
-                .identityNumber("NBE021586")
-                .build());
-
-        TrunkDTO trunkSaved = accountService.findTrunkByCustomerId(savedCustomerWithAccount.getCustomerId());
+        configCustomersAndAccount(true, false, true);
 
         //WHEN
-        delegateAccountService.addJoint(trunkSaved.getAccountNumber(), savedCustomerWithoutAccount.getIdentityNumber());
-        TrunkDTO expected = accountService.findTrunkByCustomerId(savedCustomerWithoutAccount.getCustomerId());
+        delegateAccountService.addJoint(savedAccount.getAccountNumber(), savedCustomer.getIdentityNumber());
+        TrunkDTO expected = accountService.findTrunkByCustomerId(savedCustomer.getCustomerId());
 
         //THEN
         assertThat(expected.getAccountProfile()).isEqualTo(AccountProfile.Joint.name());
@@ -75,19 +98,40 @@ public class DelegateAccountServiceTest {
     }
 
     @Test
-    void shouldThrowAnIllegalOperationExceptionWhenTryAddJointOnANonActiveAccount() {
+    void shouldThrowAnAccountNotFoundExceptionWhenTryAddActiveCustomerAsJointOnActiveAccountThatIsNotTrunk() {
         //GIVEN
-        CustomerDTO savedCustomer = getSavedCustomerWithoutAccount();
-
         AccountDTO savedAccount = accountService.save(AccountDTO.builder()
                 .accountName("John Doe")
                 .accountNumber("123456789")
                 .accountType(AccountType.Saving.name())
                 .accountProfile(AccountProfile.Personal.name())
-                .status(Status.Pending.code())
+                .status(Status.Active.code())
                 .build());
 
-        accountService.saveTrunk(savedAccount.getAccountId(), savedCustomer.getCustomerId(), AccountMemberShip.Owner.name());
+        //WHEN
+        Exception expected = assertThrows(AccountNotFoundException.class,
+                () -> delegateAccountService.addJoint(savedAccount.getAccountNumber(), "fakeIdentityNumber"));
+
+        //THEN
+        assertThat(expected.getMessage()).isEqualTo("Account not found");
+    }
+
+    @Test
+    void shouldThrowAnIllegalOperationExceptionWhenTryAddActiveCustomerAsJointOnInactivePersonalAccount() {
+        //GIVEN
+        configCustomersAndAccount(false, false, true);
+        //WHEN
+        Exception expected = assertThrows(IllegalOperationException.class,
+                () -> delegateAccountService.addJoint(savedAccount.getAccountNumber(), savedCustomer.getIdentityNumber()));
+
+        //THEN
+        assertThat(expected.getMessage()).isEqualTo("The account is not eligible for this operation");
+    }
+
+    @Test
+    void shouldThrowAnIllegalOperationExceptionWhenTryAddActiveCustomerAsJointOnActiveAssociativeAccount() {
+        //GIVEN
+        configCustomersAndAccount(true, true, true);
 
         //WHEN
         Exception expected = assertThrows(IllegalOperationException.class,
@@ -98,111 +142,86 @@ public class DelegateAccountServiceTest {
     }
 
     @Test
-    void shouldThrowAnIllegalOperationExceptionWhenTryAddJointOnAnAssociativeAccount() {
+    void shouldThrowAnIllegalOperationExceptionWhenTryAddInActiveCustomerAsJointOnActivePersonalAccount() {
         //GIVEN
-        CustomerDTO savedCustomer = getSavedCustomerWithoutAccount();
-
-        AccountDTO savedAccount = accountService.save(AccountDTO.builder()
-                .accountName("John Doe")
-                .accountNumber("123456789")
-                .accountType(AccountType.Saving.name())
-                .accountProfile(AccountProfile.Associative.name())
-                .status(Status.Active.code())
-                .build());
-
-        accountService.saveTrunk(savedAccount.getAccountId(), savedCustomer.getCustomerId(), AccountMemberShip.Owner.name());
+        configCustomersAndAccount(true, false, false);
 
         //WHEN
         Exception expected = assertThrows(IllegalOperationException.class,
                 () -> delegateAccountService.addJoint(savedAccount.getAccountNumber(), savedCustomer.getIdentityNumber()));
 
         //THEN
-        assertThat(expected.getMessage()).isEqualTo("The account is not eligible for this operation");
+        assertThat(expected.getMessage()).isEqualTo("Customer must be active");
     }
 
     @Test
-    void shouldThrowAnIllegalOperationExceptionWhenTryAddJointOnAccountWithNonActiveCustomer() {
+    void shouldAddActiveCustomerAsAssociateOnActiveAssociativeAccount() {
         //GIVEN
-        BranchDTO savedBranch = branchService.save(BranchDTO.builder()
-                .branchName("HQ")
-                .branchAddress("Moroni")
-                .status(Status.Active.code())
-                .build());
-
-        CustomerDTO savedCustomer= delegateCustomerService.create(CustomerDTO.builder()
-                .branchId(savedBranch.getBranchId())
-                .firstName("Tom")
-                .lastName("Hank")
-                .identityNumber("NBE021586")
-                .status(Status.Pending.code())
-                .build());
-
-        AccountDTO savedAccount = accountService.save(AccountDTO.builder()
-                .accountName("John Doe")
-                .accountNumber("123456789")
-                .accountType(AccountType.Saving.name())
-                .accountProfile(AccountProfile.Associative.name())
-                .status(Status.Active.code())
-                .build());
-
-        accountService.saveTrunk(savedAccount.getAccountId(), savedCustomer.getCustomerId(), AccountMemberShip.Owner.name());
+        configCustomersAndAccount(true, true, true);
 
         //WHEN
-        Exception expected = assertThrows(IllegalOperationException.class,
-                () -> delegateAccountService.addJoint(savedAccount.getAccountNumber(), savedCustomer.getIdentityNumber()));
+        delegateAccountService.addAssociate(savedAccount.getAccountNumber(), savedCustomer.getIdentityNumber());
+        TrunkDTO expected = accountService.findTrunkByCustomerId(savedCustomer.getCustomerId());
 
         //THEN
-        assertThat(expected.getMessage()).isEqualTo("The account is not eligible for this operation");
-    }
-
-    @Test
-    void shouldAddAnAssociateCustomerOnAssociativeAccount() {
-        //GIVEN
-        BranchDTO savedBranch = branchService.save(BranchDTO.builder()
-                .branchName("HQ")
-                .branchAddress("Moroni")
-                .status(Status.Active.code())
-                .build());
-
-        CustomerDTO customerDTO = CustomerDTO.builder()
-                .branchId(savedBranch.getBranchId())
-                .firstName("John")
-                .lastName("Doe")
-                .identityNumber("NBE466754")
-                .build();
-
-        CustomerDTO savedCustomerWithAccount = delegateCustomerService.create(customerDTO, AccountType.Saving.name(), AccountProfile.Associative.name(), AccountMemberShip.Associated.name());
-
-        CustomerDTO savedCustomerWithoutAccount = delegateCustomerService.create(CustomerDTO.builder()
-                .branchId(savedBranch.getBranchId())
-                .firstName("Tom")
-                .lastName("Hank")
-                .identityNumber("NBE021586")
-                .build());
-
-        TrunkDTO trunkSaved = accountService.findTrunkByCustomerId(savedCustomerWithAccount.getCustomerId());
-
-        //WHEN
-        delegateAccountService.addAssociate(trunkSaved.getAccountNumber(), savedCustomerWithoutAccount.getIdentityNumber());
-        TrunkDTO expected = accountService.findTrunkByCustomerId(savedCustomerWithoutAccount.getCustomerId());
-
-        //THEN
-        assertThat(expected.getAccountProfile()).isEqualTo(AccountProfile.Associative.name());
         assertThat(expected.getMembership()).isEqualTo(AccountMemberShip.Associated.name());
     }
 
-    private CustomerDTO getSavedCustomerWithoutAccount() {
-        BranchDTO savedBranch = branchService.save(BranchDTO.builder()
-                .branchName("HQ")
-                .branchAddress("Moroni")
+    @Test
+    void shouldThrowAnAccountNotFoundExceptionWhenTryAddActiveCustomerAsAssociateOnActiveAssociativeAccountThatIsNotTrunk() {
+        //GIVEN
+        AccountDTO savedAccount = accountService.save(AccountDTO.builder()
+                .accountName("John Doe")
+                .accountNumber("123456789")
+                .accountType(AccountType.Saving.name())
+                .accountProfile(AccountProfile.Associative.name())
                 .status(Status.Active.code())
                 .build());
 
-        return delegateCustomerService.create(CustomerDTO.builder()
-                .branchId(savedBranch.getBranchId())
-                .firstName("Tom")
-                .lastName("Hank")
-                .identityNumber("NBE021586")
-                .build());
+        //WHEN
+        Exception expected = assertThrows(AccountNotFoundException.class,
+                () -> delegateAccountService.addAssociate(savedAccount.getAccountNumber(), "fakeIdentityNumber"));
+
+        //THEN
+        assertThat(expected.getMessage()).isEqualTo("Account not found");
+    }
+
+    @Test
+    void shouldThrowAnIllegalOperationExceptionWhenTryAddActiveCustomerAsAssociateOnInactiveAssociativeAccount() {
+        //GIVEN
+        configCustomersAndAccount(false, true, true);
+
+        //WHEN
+        Exception expected = assertThrows(IllegalOperationException.class,
+                () -> delegateAccountService.addAssociate(savedAccount.getAccountNumber(), savedCustomer.getIdentityNumber()));
+
+        //THEN
+        assertThat(expected.getMessage()).isEqualTo("The account is not eligible for this operation");
+    }
+
+    @Test
+    void shouldThrowAnIllegalOperationExceptionWhenTryAddActiveCustomerAsAssociateOnANotAssociativeActiveAccount() {
+        //GIVEN
+        configCustomersAndAccount(true, false, true);
+
+        //WHEN
+        Exception expected = assertThrows(IllegalOperationException.class,
+                () -> delegateAccountService.addAssociate(savedAccount.getAccountNumber(), savedCustomer.getIdentityNumber()));
+
+        //THEN
+        assertThat(expected.getMessage()).isEqualTo("The account is not eligible for this operation");
+    }
+
+    @Test
+    void shouldThrowAnIllegalOperationExceptionWhenTryAddInactiveCustomerAsAssociateOnActiveAssociativeAccount() {
+        //GIVEN
+        configCustomersAndAccount(true, true, false);
+
+        //WHEN
+        Exception expected = assertThrows(IllegalOperationException.class,
+                () -> delegateAccountService.addAssociate(savedAccount.getAccountNumber(), savedCustomer.getIdentityNumber()));
+
+        //THEN
+        assertThat(expected.getMessage()).isEqualTo("Customer must be active");
     }
 }

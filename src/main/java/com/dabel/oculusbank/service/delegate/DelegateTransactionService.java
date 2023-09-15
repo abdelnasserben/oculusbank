@@ -1,14 +1,14 @@
 package com.dabel.oculusbank.service.delegate;
 
+import com.dabel.oculusbank.app.AccountChecker;
 import com.dabel.oculusbank.app.CurrencyExchanger;
 import com.dabel.oculusbank.app.Fee;
 import com.dabel.oculusbank.app.OperationAcknowledgment;
-import com.dabel.oculusbank.constant.Currency;
-import com.dabel.oculusbank.constant.Status;
-import com.dabel.oculusbank.constant.TransactionType;
+import com.dabel.oculusbank.constant.*;
 import com.dabel.oculusbank.dto.AccountDTO;
 import com.dabel.oculusbank.dto.TransactionDTO;
 import com.dabel.oculusbank.exception.BalanceInsufficientException;
+import com.dabel.oculusbank.exception.IllegalOperationException;
 import com.dabel.oculusbank.service.AccountOperationService;
 import com.dabel.oculusbank.service.AccountService;
 import com.dabel.oculusbank.service.FeeService;
@@ -30,11 +30,12 @@ public class DelegateTransactionService implements OperationAcknowledgment<Trans
     @Autowired
     FeeService feeService;
 
-    private static final double WITHDRAW_FEE = 200;
-
     public TransactionDTO deposit(TransactionDTO transactionDTO) {
 
         AccountDTO account = accountService.findByNumber(transactionDTO.getAccountNumber());
+
+        if(!AccountChecker.isActive(account))
+            throw new IllegalOperationException("Account must be active");
 
         transactionDTO.setTransactionType(TransactionType.Deposit.name());
         transactionDTO.setAccountId(account.getAccountId());
@@ -47,11 +48,15 @@ public class DelegateTransactionService implements OperationAcknowledgment<Trans
 
         AccountDTO account = accountService.findByNumber(transactionDTO.getAccountNumber());
 
+        if(!AccountChecker.isActive(account))
+            throw new IllegalOperationException("Account must be active");
+
         transactionDTO.setTransactionType(TransactionType.Withdraw.name());
         transactionDTO.setAccountId(account.getAccountId());
         transactionDTO.setCurrency(Currency.KMF.name());
 
-        if(account.getBalance() < transactionDTO.getAmount() + WITHDRAW_FEE) {
+        if((transactionDTO.getSourceType().equals(SourceType.ATM.name()) && account.getBalance() < transactionDTO.getAmount() + Fees.WITHDRAW_ONT_ATM)
+            || (!transactionDTO.getSourceType().equals(SourceType.ATM.name()) && account.getBalance() < transactionDTO.getAmount() + Fees.WITHDRAW_IN_AGENCY)) {
 
             transactionDTO.setStatus(Status.Failed.code());
             transactionDTO.setFailureReason("Insufficient balance");
@@ -77,7 +82,11 @@ public class DelegateTransactionService implements OperationAcknowledgment<Trans
         }
         else{
             accountOperationService.debit(account, transaction.getAmount());
-            feeService.apply(account, new Fee(WITHDRAW_FEE, "Withdraw"), transaction.getSourceValue());
+
+            if(transaction.getSourceType().equals(SourceType.ATM.name()))
+                feeService.apply(account, new Fee(Fees.WITHDRAW_ONT_ATM, "Withdraw"), transaction.getSourceValue());
+            else
+                feeService.apply(account, new Fee(Fees.WITHDRAW_IN_AGENCY, "Withdraw"), transaction.getSourceValue());
         }
 
         //TODO: update transaction info and save it
@@ -99,4 +108,5 @@ public class DelegateTransactionService implements OperationAcknowledgment<Trans
 
         return transactionService.save(transaction);
     }
+
 }

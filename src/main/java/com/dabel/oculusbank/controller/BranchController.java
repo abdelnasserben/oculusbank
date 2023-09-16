@@ -9,18 +9,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class BranchController implements PageTitleConfig {
 
-    @GetMapping("/branchs")
+    @GetMapping("/branches")
     public String dashboard(Model model) {
 
-        setPageTitle(model, "All Branchs");
-        return "branchs";
+        setPageTitle(model, "Branches");
+        return "branches";
     }
 
     @Override
     public void setPageTitle(Model model, String pageTitle) {
 
         model.addAttribute("pageTitle", pageTitle);
-        model.addAttribute("pageBreadcrumb", "Settings / Branchs");
+        model.addAttribute("pageBreadcrumb", "Settings / Branches");
         model.addAttribute("currentPage", CurrentPageTitle.SETTINGS);
     }
 }

@@ -12,7 +12,7 @@ public class ChequeController implements PageTitleConfig {
     @GetMapping("/cheques")
     public String dashboard(Model model) {
 
-        setPageTitle(model, "Cheques Listing");
+        setPageTitle(model, "Cheques");
         return "cheques";
     }
 

@@ -2,8 +2,8 @@ drop database if exists ob;
 create database ob;
 use ob;
 
--- table branchs structure --
-create table branchs(
+-- table branches structure --
+create table branches(
     branch_id int not null auto_increment,
     branch_name varchar(50),
     branch_address varchar(255),
@@ -43,7 +43,7 @@ create table customers(
     updated_at datetime default now(),
 
     primary key(customer_id),
-    foreign key(branch_id) references branchs(branch_id),
+    foreign key(branch_id) references branches(branch_id),
     constraint c_identity_number unique(identity_number)
 );
 
@@ -72,7 +72,7 @@ create table vaults(
 
     primary key(vault_id),
     foreign key(account_id) references accounts(account_id),
-    foreign key(branch_id) references branchs(branch_id)
+    foreign key(branch_id) references branches(branch_id)
 );
 
 -- table trunks structure --
@@ -260,7 +260,7 @@ from
     accounts as a
 inner join vaults as v
     on v.account_id = a.account_id
-inner join branchs as b
+inner join branches as b
     on b.branch_id = v.branch_id;
 
 -- view trunks structure --

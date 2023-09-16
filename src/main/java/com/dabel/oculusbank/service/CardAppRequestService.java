@@ -2,7 +2,7 @@ package com.dabel.oculusbank.service;
 
 import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.dto.CardAppRequestDTO;
-import com.dabel.oculusbank.exception.CardAppNotFoundException;
+import com.dabel.oculusbank.exception.CardAppRequestNotFoundException;
 import com.dabel.oculusbank.mapper.CardAppRequestMapper;
 import com.dabel.oculusbank.model.CardAppRequest;
 import com.dabel.oculusbank.model.CardAppRequestView;
@@ -26,7 +26,7 @@ public class CardAppRequestService {
 
     public CardAppRequestDTO findById(int requestId) {
         CardAppRequestView cardView = cardAppRequestViewRepository.findById(requestId)
-                .orElseThrow(CardAppNotFoundException::new);
+                .orElseThrow(CardAppRequestNotFoundException::new);
         return formatStatusToNameAndGetDTO(cardView);
     }
 

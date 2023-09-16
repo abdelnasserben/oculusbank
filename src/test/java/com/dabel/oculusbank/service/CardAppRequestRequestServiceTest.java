@@ -6,7 +6,7 @@ import com.dabel.oculusbank.constant.CardType;
 import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.dto.AccountDTO;
 import com.dabel.oculusbank.dto.CardAppRequestDTO;
-import com.dabel.oculusbank.exception.CardAppNotFoundException;
+import com.dabel.oculusbank.exception.CardAppRequestNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,7 +84,7 @@ class CardAppRequestRequestServiceTest {
         //GIVEN
 
         //WHEN
-        Exception expected = assertThrows(CardAppNotFoundException.class,
+        Exception expected = assertThrows(CardAppRequestNotFoundException.class,
                 () -> cardAppRequestService.findById(-1));
 
         //THEN

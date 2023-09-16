@@ -590,7 +590,8 @@
                         <!--begin::Breadcrumb-->
                         <ul class="breadcrumb fw-bold fs-base my-1">
                             <li class="breadcrumb-item text-muted">Home</li>
-                            <li class="breadcrumb-item text-dark" th:text="${pageBreadcrumb}">Dashboard</li>
+                            <li class="breadcrumb-item text-muted" th:if="${pageBreadcrumb} != null" th:text="${pageBreadcrumb}">Home</li>
+                            <li class="breadcrumb-item text-dark" th:text="${pageTitle}">Dashboard</li>
                         </ul>
                         <!--end::Breadcrumb-->
                     </div>

@@ -12,15 +12,15 @@ public class TransactionController implements PageTitleConfig {
     @GetMapping("/transactions")
     public String dashboard(Model model) {
 
-        setPageTitle(model, "Transactions");
+        setPageTitle(model, "Transactions", null);
         return "transactions";
     }
 
     @Override
-    public void setPageTitle(Model model, String pageTitle) {
+    public void setPageTitle(Model model, String pageTitle, String breadcrumb) {
 
         model.addAttribute("pageTitle", pageTitle);
-        model.addAttribute("pageBreadcrumb", "Transactions");
+        model.addAttribute("pageBreadcrumb", breadcrumb);
         model.addAttribute("currentPage", CurrentPageTitle.TRANSACTIONS);
     }
 }

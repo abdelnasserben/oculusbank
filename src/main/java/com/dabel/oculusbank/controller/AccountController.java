@@ -12,15 +12,15 @@ public class AccountController implements PageTitleConfig {
     @GetMapping("/accounts")
     public String dashboard(Model model) {
 
-        setPageTitle(model, "Accounts");
+        setPageTitle(model, "Accounts", null);
         return "accounts";
     }
 
     @Override
-    public void setPageTitle(Model model, String pageTitle) {
+    public void setPageTitle(Model model, String pageTitle, String breadcrumb) {
 
         model.addAttribute("pageTitle", pageTitle);
-        model.addAttribute("pageBreadcrumb", "Accounts");
+        model.addAttribute("pageBreadcrumb", breadcrumb);
         model.addAttribute("currentPage", CurrentPageTitle.ACCOUNTS);
     }
 }

@@ -12,15 +12,15 @@ public class LoanController implements PageTitleConfig {
     @GetMapping("/loans")
     public String dashboard(Model model) {
 
-        setPageTitle(model, "Loans");
+        setPageTitle(model, "Loans", null);
         return "loans";
     }
 
     @Override
-    public void setPageTitle(Model model, String pageTitle) {
+    public void setPageTitle(Model model, String pageTitle, String breadcrumb) {
 
         model.addAttribute("pageTitle", pageTitle);
-        model.addAttribute("pageBreadcrumb", "Loans");
+        model.addAttribute("pageBreadcrumb", breadcrumb);
         model.addAttribute("currentPage", CurrentPageTitle.LOANS);
     }
 }

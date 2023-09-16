@@ -12,15 +12,15 @@ public class DashboardController implements PageTitleConfig {
     @GetMapping
     public String dashboard(Model model) {
 
-        setPageTitle(model, "Dashboard");
+        setPageTitle(model, "Dashboard", null);
         return "dashboard";
     }
 
     @Override
-    public void setPageTitle(Model model, String pageTitle) {
+    public void setPageTitle(Model model, String pageTitle, String breadcrumb) {
 
         model.addAttribute("pageTitle", pageTitle);
-        model.addAttribute("pageBreadcrumb", "Dashboard");
+        model.addAttribute("pageBreadcrumb", breadcrumb);
         model.addAttribute("currentPage", CurrentPageTitle.DASHBOARD);
     }
 }

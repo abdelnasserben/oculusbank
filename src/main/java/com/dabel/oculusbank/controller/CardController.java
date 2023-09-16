@@ -12,15 +12,15 @@ public class CardController implements PageTitleConfig {
     @GetMapping("/cards")
     public String dashboard(Model model) {
 
-        setPageTitle(model, "Cards List");
+        setPageTitle(model, "Cards", null);
         return "cards";
     }
 
     @Override
-    public void setPageTitle(Model model, String pageTitle) {
+    public void setPageTitle(Model model, String pageTitle, String breadcrumb) {
 
         model.addAttribute("pageTitle", pageTitle);
-        model.addAttribute("pageBreadcrumb", "Cards");
+        model.addAttribute("pageBreadcrumb", breadcrumb);
         model.addAttribute("currentPage", CurrentPageTitle.CARDS);
     }
 }

@@ -12,15 +12,15 @@ public class CustomerController implements PageTitleConfig {
     @GetMapping("/customers")
     public String listOfCustomers(Model model) {
 
-        setPageTitle(model, "Customers");
+        setPageTitle(model, "Customers", null);
         return "customers";
     }
 
     @Override
-    public void setPageTitle(Model model, String pageTitle) {
+    public void setPageTitle(Model model, String pageTitle, String breadcrumb) {
 
         model.addAttribute("pageTitle", pageTitle);
-        model.addAttribute("pageBreadcrumb", "Customers");
+        model.addAttribute("pageBreadcrumb", breadcrumb);
         model.addAttribute("currentPage", CurrentPageTitle.CUSTOMERS);
     }
 }

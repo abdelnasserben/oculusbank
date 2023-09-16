@@ -12,15 +12,15 @@ public class BranchController implements PageTitleConfig {
     @GetMapping("/branches")
     public String dashboard(Model model) {
 
-        setPageTitle(model, "Branches");
+        setPageTitle(model, "Branches", "Settings");
         return "branches";
     }
 
     @Override
-    public void setPageTitle(Model model, String pageTitle) {
+    public void setPageTitle(Model model, String pageTitle, String breadcrumb) {
 
         model.addAttribute("pageTitle", pageTitle);
-        model.addAttribute("pageBreadcrumb", "Settings / Branches");
+        model.addAttribute("pageBreadcrumb", breadcrumb);
         model.addAttribute("currentPage", CurrentPageTitle.SETTINGS);
     }
 }

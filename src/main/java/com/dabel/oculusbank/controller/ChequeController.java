@@ -12,15 +12,15 @@ public class ChequeController implements PageTitleConfig {
     @GetMapping("/cheques")
     public String dashboard(Model model) {
 
-        setPageTitle(model, "Cheques");
+        setPageTitle(model, "Cheques", null);
         return "cheques";
     }
 
     @Override
-    public void setPageTitle(Model model, String pageTitle) {
+    public void setPageTitle(Model model, String pageTitle, String breadcrumb) {
 
         model.addAttribute("pageTitle", pageTitle);
-        model.addAttribute("pageBreadcrumb", "Cheques");
+        model.addAttribute("pageBreadcrumb", breadcrumb);
         model.addAttribute("currentPage", CurrentPageTitle.CHEQUES);
     }
 }

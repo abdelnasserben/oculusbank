@@ -4,6 +4,18 @@
 <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
     <!--begin::Container-->
     <div class=" container-xxl " id="kt_content_container">
+
+        <div th:unless="${successMessage} == null">
+            <div class="alert alert-success" th:text="${successMessage}">
+                Successfully done !
+            </div>
+        </div>
+        <div th:unless="${errorMessage} == null">
+            <div class="alert alert-danger" th:text="${errorMessage}">
+                Something be wrong !
+            </div>
+        </div>
+
         <!--begin::Card-->
         <div class="card">
             <!--begin::Card header-->
@@ -70,34 +82,14 @@
 
                     <!--begin::Table body-->
                     <tbody class="fw-6 fw-bold text-gray-600">
-                    <tr>
+                    <tr th:each="branch: ${branches}">
                         <td>
-                            <a href="#" class="text-hover-primary text-gray-600">14330</a>
+                            <a th:href="@{/branchs/{id}(id=${branch.branchId})}" th:text="${branch.branchId}" class="text-hover-primary text-gray-600">14330</a>
                         </td>
-                        <td>HQ</td>
-                        <td>Ngazidja, Moroni Place de France</td>
+                        <td th:text="${branch.branchName}">HQ</td>
+                        <td th:text="${branch.branchAddress}">Ngazidja, Moroni Place de France</td>
                         <td class="pe-0">
-                            <div class="badge badge-light-danger">Failed</div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <a href="#" class="text-hover-primary text-gray-600">14330</a>
-                        </td>
-                        <td>MUTS</td>
-                        <td>Anjouan, Mutsamudu Chitsangani</td>
-                        <td class="pe-0">
-                            <div class="badge badge-light-success">Approved</div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <a href="#" class="text-hover-primary text-gray-600">14330</a>
-                        </td>
-                        <td>FOMB</td>
-                        <td>Moheli, Fomboni Mjihari</td>
-                        <td class="pe-0">
-                            <div class="badge badge-light-warning">Pending</div>
+                            <div th:text="${branch.status}" class="badge" th:classappend="${branch.status} == 'Active' ? 'badge-light-success' : (${branch.status} == 'Pending' ? 'badge-light-warning' : 'badge-light-danger')">Failed</div>
                         </td>
                     </tr>
                     </tbody>
@@ -142,14 +134,15 @@
             <!--begin::Modal body-->
             <div class="modal-body scroll-y mx-5 my-7">
                 <!--begin::Form-->
-                <form id="kt_modal_new_card_form" class="form" action="#">
+                <form class="form" th:action="@{/branches}" method="post" th:object="${branchDTO}">
 
                     <div class="row">
                         <div class="col-md-4">
                             <!--begin::Input group-->
                             <div class="mb-4 fv-row">
                                 <label class="required form-label">Branch Name</label>
-                                <input type="text" name="" class="form-control mb-2" placeholder="Branch name" />
+                                <input type="text" th:field="*{branchName}" class="form-control mb-2" th:classappend="${#fields.hasErrors('branchName')} ? 'is-invalid' : ''" placeholder="Branch name" />
+                                <div class="invalid-feedback" th:errors="*{branchName}"></div>
                             </div>
                             <!--end::Input group-->
                         </div>
@@ -157,7 +150,8 @@
                             <!--begin::Input group-->
                             <div class="mb-4 fv-row">
                                 <label class="required form-label">Branch Address</label>
-                                <input type="text" name="" class="form-control mb-2" placeholder="Branch Address" />
+                                <input type="text" th:field="*{branchAddress}" class="form-control mb-2" th:classappend="${#fields.hasErrors('branchAddress')} ? 'is-invalid' : ''" placeholder="Branch Address" />
+                                <div class="invalid-feedback" th:errors="*{branchAddress}"></div>
                             </div>
                             <!--end::Input group-->
                         </div>
@@ -167,7 +161,7 @@
                             <!--begin::Input group-->
                             <div class="mb-4 fv-row">
                                 <label class="form-label">Asset vault (KMF)</label>
-                                <input type="number" name="" class="form-control mb-2" step=".1" placeholder="0.00" />
+                                <input type="number" name="assetKMF" class="form-control mb-2" step=".01" placeholder="0.00" />
                             </div>
                             <!--end::Input group-->
                         </div>
@@ -175,7 +169,7 @@
                             <!--begin::Input group-->
                             <div class="mb-4 fv-row">
                                 <label class="form-label">Asset vault (EUR)</label>
-                                <input type="number" name="" class="form-control mb-2" step=".01" placeholder="0.00" />
+                                <input type="number" name="assetEUR" class="form-control mb-2" step=".01" placeholder="0.00" />
                             </div>
                             <!--end::Input group-->
                         </div>
@@ -183,7 +177,7 @@
                             <!--begin::Input group-->
                             <div class="mb-4 fv-row">
                                 <label class="form-label">Asset vault (USD)</label>
-                                <input type="number" name="" class="form-control mb-2" step=".1" placeholder="0.00" />
+                                <input type="number" name="assetUSD" class="form-control mb-2" step=".01" placeholder="0.00" />
                             </div>
                             <!--end::Input group-->
                         </div>
@@ -191,7 +185,7 @@
 
                     <!--begin::Actions-->
                     <div class="text-center pt-15">
-                        <button class="btn btn-light me-3" data-bs-dismiss="modal">
+                        <button type="button" class="btn btn-light me-3" data-bs-dismiss="modal">
                             Discard
                         </button>
 

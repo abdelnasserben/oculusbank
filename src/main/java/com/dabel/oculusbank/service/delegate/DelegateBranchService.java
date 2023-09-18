@@ -12,6 +12,8 @@ import com.dabel.oculusbank.service.BranchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class DelegateBranchService {
 
@@ -20,7 +22,7 @@ public class DelegateBranchService {
     @Autowired
     AccountService accountService;
 
-    public BranchDTO create(BranchDTO branchDTO) {
+    public BranchDTO create(BranchDTO branchDTO, double[] vaultsAsset) {
 
         branchDTO.setStatus(Status.Active.code());
         BranchDTO savedBranch = branchService.save(branchDTO);
@@ -33,7 +35,7 @@ public class DelegateBranchService {
                 .accountType(AccountType.Business.name())
                 .accountProfile(AccountProfile.System.name())
                 .currency(Currency.KMF.name())
-                .balance(0.0)
+                .balance(vaultsAsset[0])
                 .status(Status.Active.code())
                 .build());
         accountService.saveVault(savedAccountKmf.getAccountId(), savedBranch.getBranchId());
@@ -46,7 +48,7 @@ public class DelegateBranchService {
                 .accountType(AccountType.Business.name())
                 .accountProfile(AccountProfile.System.name())
                 .currency(Currency.EUR.name())
-                .balance(0.0)
+                .balance(vaultsAsset[1])
                 .status(Status.Active.code())
                 .build());
         accountService.saveVault(savedAccountEur.getAccountId(), savedBranch.getBranchId());
@@ -59,11 +61,15 @@ public class DelegateBranchService {
                         .accountType(AccountType.Business.name())
                         .accountProfile(AccountProfile.System.name())
                         .currency(Currency.USD.name())
-                        .balance(0.0)
+                        .balance(vaultsAsset[0])
                         .status(Status.Active.code())
                         .build());
         accountService.saveVault(savedAccountUsd.getAccountId(), savedBranch.getBranchId());
 
         return savedBranch;
+    }
+
+    public List<BranchDTO> findAll() {
+        return branchService.findAll();
     }
 }

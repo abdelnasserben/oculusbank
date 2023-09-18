@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CustomerService {
@@ -27,7 +26,7 @@ public class CustomerService {
 
         return customerRepository.findAll().stream()
                 .map(CustomerService::formatStatusToNameAndGetDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public CustomerDTO findByIdentityNumber(String identityNumber) {

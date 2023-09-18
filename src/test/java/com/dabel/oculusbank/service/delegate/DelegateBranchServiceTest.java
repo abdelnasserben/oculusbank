@@ -39,8 +39,9 @@ public class DelegateBranchServiceTest {
                 .branchAddress("Moroni")
                 .status(Status.Active.code())
                 .build();
+        double[] assets = {0, 0, 0};
         //WHEN
-        BranchDTO expected = delegateBranchService.create(branchDTO);
+        BranchDTO expected = delegateBranchService.create(branchDTO, assets);
 
         //THEN
         assertThat(expected.getBranchId()).isGreaterThan(0);

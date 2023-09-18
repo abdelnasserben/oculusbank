@@ -44,7 +44,7 @@ public class BranchServiceTest {
     }
 
     @Test
-    void shouldRetrieveListOfSavedBranchs() {
+    void shouldRetrieveListOfSavedBranches() {
         //GIVEN
         branchService.save(BranchDTO.builder()
                 .branchName("HQ")

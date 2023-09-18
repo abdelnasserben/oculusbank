@@ -3,6 +3,7 @@ package com.dabel.oculusbank.dto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.validator.constraints.Currency;
 
 import java.time.LocalDateTime;
 
@@ -15,6 +16,7 @@ public class TransactionDTO {
     private String transactionType;
     private int accountId;
     private double amount;
+    @Currency(value = {"KMF", "EUR", "USD"})
     private String currency;
     private String sourceType;
     private String sourceValue;

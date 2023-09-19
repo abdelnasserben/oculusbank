@@ -1,5 +1,7 @@
 package com.dabel.oculusbank.dto;
 
+import com.dabel.oculusbank.app.custom.validation.Gender;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -14,9 +16,13 @@ public class CustomerDTO {
 
     private int customerId;
     private int branchId;
+    @NotBlank
     private String firstName;
+    @NotBlank
     private String lastName;
+    @Gender
     private String gender;
+    @NotBlank
     private String identityNumber;
     private String identityType;
     private String identityIssue;

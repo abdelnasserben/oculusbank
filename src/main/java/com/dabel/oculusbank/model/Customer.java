@@ -38,5 +38,7 @@ public class Customer {
     private String identityPicture;
     private String status;
     @CurrentTimestamp(event = EventType.INSERT)
-    private LocalDateTime createdAt, updatedAt;
+    private LocalDateTime createdAt;
+    @CurrentTimestamp(event = {EventType.INSERT, EventType.UPDATE})
+    private LocalDateTime updatedAt;
 }

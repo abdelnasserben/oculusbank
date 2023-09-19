@@ -24,5 +24,7 @@ public class Cheque {
     private String initiatedBy;
     private String updatedBy;
     @CurrentTimestamp(event = EventType.INSERT)
-    private LocalDateTime createdAt, updatedAt;
+    private LocalDateTime createdAt;
+    @CurrentTimestamp(event = {EventType.INSERT, EventType.UPDATE})
+    private LocalDateTime updatedAt;
 }

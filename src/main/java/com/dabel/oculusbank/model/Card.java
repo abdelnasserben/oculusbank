@@ -29,5 +29,7 @@ public class Card {
     private String updatedBy;
     private String failureReason;
     @CurrentTimestamp(event = EventType.INSERT)
-    private LocalDateTime createdAt, updatedAt;
+    private LocalDateTime createdAt;
+    @CurrentTimestamp(event = {EventType.INSERT, EventType.UPDATE})
+    private LocalDateTime updatedAt;
 }

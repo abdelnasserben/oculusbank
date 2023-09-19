@@ -8,6 +8,10 @@ import com.dabel.oculusbank.service.AccountService;
 import com.dabel.oculusbank.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ReflectionUtils;
+
+import java.lang.reflect.Field;
+import java.util.List;
 
 @Service
 public class DelegateCustomerService {
@@ -43,5 +47,22 @@ public class DelegateCustomerService {
         accountService.saveTrunk(savedAccount.getAccountId(), savedCustomer.getCustomerId(), accountMembership);
 
         return savedCustomer;
+    }
+
+    public CustomerDTO findById(int customerId) {
+        return customerService.findById(customerId);
+    }
+
+    public CustomerDTO update(CustomerDTO customerDTO) {
+
+        CustomerDTO savedCustomer = customerService.findById(customerDTO.getCustomerId());
+        customerDTO.setBranchId(savedCustomer.getBranchId());
+        customerDTO.setStatus(Status.codeOf(savedCustomer.getStatus()));
+
+        return customerService.save(customerDTO);
+    }
+
+    public List<CustomerDTO> findAll() {
+        return customerService.findAll();
     }
 }

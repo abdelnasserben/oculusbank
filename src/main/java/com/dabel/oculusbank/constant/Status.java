@@ -20,4 +20,12 @@ public enum Status {
         }
         return Pending.name();
     }
+
+    public static String codeOf(String name) {
+        for(Status status: values()) {
+            if(status.name().equals(name))
+                return status.code();
+        }
+        return Pending.code();
+    }
 }

@@ -24,7 +24,7 @@ public class CardView {
     private String cardName;
     private LocalDate expirationDate;
     private String cvc;
-    private String cvcChecked;
+    private int cvcChecked;
     private String status;
     private String initiatedBy;
     private String updatedBy;

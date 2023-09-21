@@ -1,0 +1,285 @@
+<div th:replace="fragments/header"></div>
+
+<!--begin::Content-->
+<div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+    <!--begin::Container-->
+    <div class="container" id="kt_content_container">
+        <!--begin::Engage Widget 1-->
+        <div class="card card-xxl-stretch">
+            <!--begin::Card body-->
+            <div class="card-body d-flex flex-column justify-content-between h-100">
+
+                <!--begin::Section-->
+                <div class="row mb-7">
+                    <!--begin::Left column-->
+                    <div class="col-lg-7">
+
+                        <!--begin::Row-->
+                        <div class="row mb-4">
+                            <!--begin::Label-->
+                            <label class="col-lg-3 fw-bold text-muted">Card Type:</label>
+                            <!--end::Label-->
+
+                            <!--begin::Col-->
+                            <div class="col-lg-auto">
+                                <span class="fw-bolder fs-6 text-gray-800">
+                                    <img th:src="${card.cardType} == 'Visa' ? '/img/svg/card-logos/visa.svg' : '/img/svg/card-logos/mastercard.svg'"
+                                        class="w-35px me-3" alt="" />
+                                    <span th:text="${card.cardType}">Visa</span> Credit Card
+                                </span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <!--end::Row-->
+
+                        <!--begin::Row-->
+                        <div class="row mb-4">
+                            <!--begin::Label-->
+                            <label class="col-lg-3 fw-bold text-muted">Account Name :</label>
+                            <!--end::Label-->
+
+                            <!--begin::Col-->
+                            <div class="col-lg-auto">
+                                <span th:text="${card.accountName}" class="fw-bolder fs-6 text-gray-800">John Doe</span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <!--end::Row-->
+
+                        <!--begin::Row-->
+                        <div class="row mb-4">
+                            <!--begin::Label-->
+                            <label class="col-lg-3 fw-bold text-muted">Account Number :</label>
+                            <!--end::Label-->
+
+                            <!--begin::Col-->
+                            <div class="col-lg-auto">
+                                <span th:text="${card.accountNumber}"
+                                    class="fw-bolder fs-6 text-gray-800">0071001997</span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <!--end::Row-->
+
+                        <!--begin::Row-->
+                        <div class="row mb-4">
+                            <!--begin::Label-->
+                            <label class="col-lg-3 fw-bold text-muted">Card Name :</label>
+                            <!--end::Label-->
+
+                            <!--begin::Col-->
+                            <div class="col-lg-auto">
+                                <span th:text="${card.cardName}" class="fw-bolder fs-6 text-gray-800">John Doe</span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <!--end::Row-->
+
+                        <!--begin::Row-->
+                        <div class="row mb-4">
+                            <!--begin::Label-->
+                            <label class="col-lg-3 fw-bold text-muted">Card Number :</label>
+                            <!--end::Label-->
+
+                            <!--begin::Col-->
+                            <div class="col-lg-auto">
+                                <span th:text="${card.cardNumber}" class="fw-bolder fs-6 text-gray-800">1254 1254 1593
+                                    0025</span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <!--end::Row-->
+
+                        <!--begin::Row-->
+                        <div class="row mb-4">
+                            <!--begin::Label-->
+                            <label class="col-lg-3 fw-bold text-muted">Expiration Date:</label>
+                            <!--end::Label-->
+
+                            <!--begin::Col-->
+                            <div class="col-lg-auto">
+                                <span
+                                    th:text="${#strings.capitalize(#temporals.format(card.expirationDate, 'MMM yyyy'))}"
+                                    class="fw-bolder fs-6 text-gray-800">December 2024</span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <!--end::Row-->
+
+                        <!--begin::Row-->
+                        <div class="row mb-4">
+                            <!--begin::Label-->
+                            <label class="col-lg-3 fw-bold text-muted">CVC Checked:</label>
+                            <!--end::Label-->
+
+                            <!--begin::Col-->
+                            <div class="col-lg-auto">
+                                <span class="fw-bolder fs-6 text-gray-800">
+                                    <span th:text="${card.cvcChecked} == 1 ? 'Passed' : 'Not passed'">Passed</span>
+                                    <span class="svg-icon svg-icon-2"
+                                        th:classappend="${card.cvcChecked} == 1 ? 'svg-icon-success' : 'svg-icon-danger'">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none">
+                                            <rect opacity="0.3" x="2" y="2" width="20" height="20" rx="10"
+                                                fill="currentColor" />
+                                            <path
+                                                d="M10.4343 12.4343L8.75 10.75C8.33579 10.3358 7.66421 10.3358 7.25 10.75C6.83579 11.1642 6.83579 11.8358 7.25 12.25L10.2929 15.2929C10.6834 15.6834 11.3166 15.6834 11.7071 15.2929L17.25 9.75C17.6642 9.33579 17.6642 8.66421 17.25 8.25C16.8358 7.83579 16.1642 7.83579 15.75 8.25L11.5657 12.4343C11.2533 12.7467 10.7467 12.7467 10.4343 12.4343Z"
+                                                fill="currentColor" />
+                                        </svg>
+                                    </span>
+                                </span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <!--end::Row-->
+
+                        <!--begin::Row-->
+                        <div class="row mb-4">
+                            <!--begin::Label-->
+                            <label class="col-lg-3 fw-bold text-muted">Issuer :</label>
+                            <!--end::Label-->
+
+                            <!--begin::Col-->
+                            <div class="col-lg-auto">
+                                <span class="fw-bolder fs-6 text-gray-800">VICBANK</span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <!--end::Row-->
+
+                        <!--begin::Row-->
+                        <div class="row mb-4">
+                            <!--begin::Label-->
+                            <label class="col-lg-3 fw-bold text-muted">Billing address :</label>
+                            <!--end::Label-->
+
+                            <!--begin::Col-->
+                            <div class="col-lg-auto">
+                                <span class="fw-bolder fs-6 text-gray-800">Australia</span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <!--end::Row-->
+
+                        <!--begin::Row-->
+                        <div class="row mb-4">
+                            <!--begin::Label-->
+                            <label class="col-lg-3 fw-bold text-muted">Status :</label>
+                            <!--end::Label-->
+
+                            <!--begin::Col-->
+                            <div class="col-lg-auto">
+                                <div th:text="${card.status}" class="badge"
+                                    th:classappend="${card.status} == 'Active' ? 'badge-light-success' : (${card.status} == 'Pending' ? 'badge-light-warning' : 'badge-light-danger')">
+                                    Active</div>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <!--end::Row-->
+
+                    </div>
+                    <!--end::Left column-->
+
+                    <!--begin::Right column-->
+                    <div class="col-lg-5">
+
+                        <!--begin::Row-->
+                        <div class="row mb-4">
+                            <!--begin::Label-->
+                            <label class="col-lg-3 fw-bold text-muted">Initiated by :</label>
+                            <!--end::Label-->
+
+                            <!--begin::Col-->
+                            <div class="col-lg-auto">
+                                <span class="fw-bolder fs-6 text-gray-800">Mark Smith</span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <!--end::Row-->
+
+                        <!--begin::Row-->
+                        <div class="row mb-4">
+                            <!--begin::Label-->
+                            <label class="col-lg-3 fw-bold text-muted">Initiated at :</label>
+                            <!--end::Label-->
+
+                            <!--begin::Col-->
+                            <div class="col-lg-auto">
+                                <span th:text="${#temporals.format(card.createdAt, 'yyyy/MM/dd HH:mm')}"
+                                    class="fw-bolder fs-6 text-gray-800">23/09/2023 10:25</span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <!--end::Row-->
+
+                        <!--begin::Row-->
+                        <div class="row mb-4">
+                            <!--begin::Label-->
+                            <label class="col-lg-3 fw-bold text-muted">Updated by :</label>
+                            <!--end::Label-->
+
+                            <!--begin::Col-->
+                            <div class="col-lg-auto">
+                                <span class="fw-bolder fs-6 text-gray-800">Sarah Hunt</span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <!--end::Row-->
+
+                        <!--begin::Row-->
+                        <div class="row mb-4">
+                            <!--begin::Label-->
+                            <label class="col-lg-3 fw-bold text-muted">Updated at :</label>
+                            <!--end::Label-->
+
+                            <!--begin::Col-->
+                            <div class="col-lg-auto">
+                                <span th:text="${#temporals.format(card.updatedAt, 'yyyy/MM/dd HH:mm')}"
+                                    class="fw-bolder fs-6 text-gray-800">23/09/2023 11:25</span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <!--end::Row-->
+
+                        <!--begin::Row-->
+                        <div class="row mb-4">
+                            <!--begin::Label-->
+                            <label class="col-lg-3 fw-bold text-muted">Reject reason :</label>
+                            <!--end::Label-->
+
+                            <!--begin::Col-->
+                            <div class="col-lg-auto">
+                                <span class="fw-bolder fs-6 text-gray-800">Amount incorrect</span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <!--end::Row-->
+
+                        <div class="separator separator-dashed mb-5"></div>
+
+                        <div>
+                            <div th:unless="${card.status} != 'Pending'">
+                                <a th:href="@{/cards/reject/{id}(id=${card.cardId})}" class="btn btn-danger">Reject</a>
+                                <a th:href="@{/cards/approve/{id}(id=${card.cardId})}"
+                                    class="btn btn-primary">Approve</a>
+                            </div>
+                            <a th:unless="${card.status} != 'Active'"
+                                th:href="@{/cards/deactive/{id}(id=${card.cardId})}"
+                                class="btn btn-warning">Deactivate</a>
+                        </div>
+
+                    </div>
+                    <!--end::Right column-->
+                </div>
+                <!--end::Section-->
+
+            </div>
+            <!--end::Card body-->
+        </div>
+        <!--end::Engage Widget 1-->
+    </div>
+    <!--end::Container-->
+</div>
+<!--end::Content-->
+
+<div th:replace="fragments/footer"></div>

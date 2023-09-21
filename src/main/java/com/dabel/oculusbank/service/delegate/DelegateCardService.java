@@ -77,4 +77,8 @@ public class DelegateCardService implements OperationAcknowledgment<CardDTO> {
 
         return cards;
     }
+
+    public CardDTO finById(int cardId) {
+        return cardService.findById(cardId);
+    }
 }

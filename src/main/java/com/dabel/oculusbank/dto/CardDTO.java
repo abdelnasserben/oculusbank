@@ -27,7 +27,7 @@ public class CardDTO {
     private LocalDate expirationDate;
     @Size(min = 3, max = 4)
     private String cvc;
-    private String cvcChecked;
+    private int cvcChecked;
     private String status;
     private String initiatedBy;
     private String updatedBy;

@@ -1,9 +1,11 @@
 package com.dabel.oculusbank.controller;
 
-import com.dabel.oculusbank.app.CardExpirationDateHelper;
+import com.dabel.oculusbank.app.CardHelper;
 import com.dabel.oculusbank.app.web.PageTitleConfig;
 import com.dabel.oculusbank.constant.AccountMemberShip;
 import com.dabel.oculusbank.constant.AccountProfile;
+import com.dabel.oculusbank.constant.Status;
+import com.dabel.oculusbank.constant.web.Countries;
 import com.dabel.oculusbank.constant.web.CurrentPageTitle;
 import com.dabel.oculusbank.constant.web.MessageTag;
 import com.dabel.oculusbank.dto.AccountDTO;
@@ -49,7 +51,9 @@ public class CustomerController implements PageTitleConfig {
 
     @GetMapping("/customers/add")
     public String addNewCustomer(Model model, CustomerDTO customerDTO) {
+
         setPageTitle(model, "Add Customer", "Customers");
+        model.addAttribute("countries", Countries.getNames());
         return "customers-add";
     }
 
@@ -64,6 +68,7 @@ public class CustomerController implements PageTitleConfig {
 
         if(binding.hasErrors()) {
             model.addAttribute(MessageTag.ERROR, "Invalid information !");
+            model.addAttribute("countries", Countries.getNames());
             return "customers-add";
         }
 
@@ -91,24 +96,33 @@ public class CustomerController implements PageTitleConfig {
         // in this case: accounts in cache are status active name but no the status code
         entityManager.clear();
 
-        List<CardDTO> customerCards = delegateCardService.findAllByCustomerId(customerId);
+        List<CardDTO> customerCards = delegateCardService.findAllByCustomerId(customerId)
+                .stream()
+                .peek(c -> c.setCardNumber(CardHelper.hideCardNumber(c.getCardNumber())))
+                .toList();
+        boolean notifyNoActiveCreditCards = customerCards.stream()
+                        .anyMatch(c -> c.getStatus().equals(Status.Active.name()));
 
         setPageTitle(model, "Customer Details", "Customers");
         model.addAttribute("customer", customer);
         model.addAttribute("accounts", customerAccounts);
         model.addAttribute("totalBalance", totalBalance);
         model.addAttribute("cards", customerCards);
+        model.addAttribute("countries", Countries.getNames());
+        model.addAttribute("notifyNoActiveCreditCards", notifyNoActiveCreditCards);
+
         return "customers-details";
     }
 
     @PostMapping("/customers/{customerId}")
-    public String updateCustomerInfo(Model model, @Valid CustomerDTO customer, BindingResult binding, RedirectAttributes redirect) {
+    public String customerDetailsUpdateGeneralInfo(Model model, @Valid CustomerDTO customer, BindingResult binding, RedirectAttributes redirect) {
 
         setPageTitle(model, "Customer Details", "Customers");
 
         if(binding.hasErrors()) {
             model.addAttribute("customer", customer);
             model.addAttribute(MessageTag.ERROR, "Invalid information !");
+            model.addAttribute("countries", Countries.getNames());
             return "customers-details";
         }
 
@@ -123,14 +137,13 @@ public class CustomerController implements PageTitleConfig {
                                    @RequestParam String cardExpiryYear,
                                    RedirectAttributes redirect) {
 
-        if(binding.hasErrors() || !CardExpirationDateHelper.isMonth(cardExpiryMonth) || !CardExpirationDateHelper.isYear(cardExpiryYear)) {
+        if(binding.hasErrors() || !CardHelper.isValidMonth(cardExpiryMonth) || !CardHelper.isValidYear(cardExpiryYear)) {
             redirect.addFlashAttribute(MessageTag.ERROR, "Invalid card information !");
             return "redirect:/customers/" + customerId;
         }
 
         //we set the expiration date before saving
-        cardDTO.setExpirationDate(CardExpirationDateHelper.setDate(cardExpiryMonth, cardExpiryYear));
-
+        cardDTO.setExpirationDate(CardHelper.setExpirationDate(cardExpiryMonth, cardExpiryYear));
         delegateCardService.add(cardDTO);
         redirect.addFlashAttribute(MessageTag.SUCCESS, "Card added successfully !");
 

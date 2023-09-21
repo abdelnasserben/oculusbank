@@ -23,9 +23,8 @@ public class CardView {
     private String cardNumber;
     private String cardName;
     private LocalDate expirationDate;
+    private String cvc;
     private String cvcChecked;
-    private String issuer;
-    private String billingAddress;
     private String status;
     private String initiatedBy;
     private String updatedBy;

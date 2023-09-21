@@ -1,4 +1,4 @@
-package com.dabel.oculusbank.app.custom.validation;
+package com.dabel.oculusbank.app.validation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
@@ -8,11 +8,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ElementType.METHOD, ElementType.FIELD})
+@Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy= AccountTypeValidator.class)
-public @interface AccountType {
-    String message() default "account type must be Saving or Business";
+@Constraint(validatedBy = CardTypeValidator.class)
+public @interface CardType {
+    String message() default "gender must be Visa or Mastercard";
 
     Class<?>[] groups() default {};
 

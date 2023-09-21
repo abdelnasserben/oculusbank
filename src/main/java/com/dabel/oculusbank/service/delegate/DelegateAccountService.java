@@ -13,6 +13,8 @@ import com.dabel.oculusbank.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class DelegateAccountService {
 
@@ -59,5 +61,9 @@ public class DelegateAccountService {
         //TODO: update the status of account is changed by the findTrunkByNumber method
         account.setStatus(Status.Active.code());
         accountService.save(account);
+    }
+
+    public List<TrunkDTO> findCustomerAccountsByCustomerId(int customerId) {
+        return  accountService.findAllTrunksByCustomerId(customerId);
     }
 }

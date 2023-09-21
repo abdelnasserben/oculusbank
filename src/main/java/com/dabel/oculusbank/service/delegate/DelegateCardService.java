@@ -5,13 +5,19 @@ import com.dabel.oculusbank.app.OperationAcknowledgment;
 import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.dto.AccountDTO;
 import com.dabel.oculusbank.dto.CardDTO;
+import com.dabel.oculusbank.dto.TrunkDTO;
 import com.dabel.oculusbank.exception.IllegalOperationException;
 import com.dabel.oculusbank.service.AccountService;
 import com.dabel.oculusbank.service.CardService;
+import com.dabel.oculusbank.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class DelegateCardService implements OperationAcknowledgment<CardDTO> {
@@ -20,6 +26,8 @@ public class DelegateCardService implements OperationAcknowledgment<CardDTO> {
     CardService cardService;
     @Autowired
     AccountService accountService;
+    @Autowired
+    CustomerService customerService;
 
     public CardDTO add(CardDTO cardDTO) {
 
@@ -29,6 +37,7 @@ public class DelegateCardService implements OperationAcknowledgment<CardDTO> {
             throw new IllegalOperationException("The account is not eligible to receive a card");
 
         //TODO: save card
+        cardDTO.setAccountId(account.getAccountId());
         cardDTO.setStatus(Status.Pending.code());
         return cardService.save(cardDTO);
     }
@@ -53,5 +62,19 @@ public class DelegateCardService implements OperationAcknowledgment<CardDTO> {
         card.setUpdatedBy("Administrator");
         card.setUpdatedAt(LocalDateTime.now());
         return cardService.save(card);
+    }
+
+    public List<CardDTO> findAllByCustomerId(int customerId) {
+
+        List<CardDTO> cards = new ArrayList<>();
+
+        List<TrunkDTO> customerAccounts = accountService.findAllTrunksByCustomerId(customerId);
+
+        customerAccounts.forEach(trunkDTO -> {
+            List<CardDTO> cardDTOList = cardService.findAllByAccountId(trunkDTO.getAccountId());
+            cards.addAll(cardDTOList);
+        });
+
+        return cards;
     }
 }

@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class DefaultController {
 
     @GetMapping("/404")
-    @ResponseBody
     public String pageNotFound() {
         return "404";
     }

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Oculus Bank</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="shortcut icon" th:href="@{/img/logos/favicon.ico}" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,600,700" />
+    <link th:href="@{/css/plugins.bundle.css}" rel="stylesheet" type="text/css" />
+    <link th:href="@{/css/style.bundle.css}" rel="stylesheet" type="text/css" />
+</head>
+
+<body id="kt_body" class="auth-bg">
+
+<!--begin::Main-->
+<div class="d-flex flex-column flex-root">
+    <!--begin::Authentication - 404 Page-->
+    <div class="d-flex flex-column flex-center flex-column-fluid p-10">
+        <!--begin::Illustration-->
+        <img th:src="@{/img/illustrations/404.png}" alt=""
+             class="mw-100 mb-10 h-lg-450px" />
+        <!--end::Illustration-->
+
+        <!--begin::Message-->
+        <h1 class="fw-bold mb-10" style="color: #A3A3C7">Seems there is nothing here</h1>
+        <!--end::Message-->
+
+        <!--begin::Link-->
+        <a th:href="@{/}" class="btn btn-primary">Return Home</a>
+        <!--end::Link-->
+    </div>
+    <!--end::Authentication - 404 Page-->
+
+</div>
+<!--end::Main-->
+
+</body>
+<!--end::Body-->

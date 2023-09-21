@@ -84,7 +84,7 @@
                         <td>
                             <div th:text="${customer.status}" class="badge" th:classappend="${customer.status} == 'Active' ? 'badge-light-success' : (${customer.status} == 'Pending' ? 'badge-light-warning' : 'badge-light-danger')">Active</div>
                         </td>
-                        <td th:text="${#temporals.format(customer.createdAt, 'dd/MM/yyyy HH:mm')}">14/12/2020 08:43</td>
+                        <td th:text="${#temporals.format(customer.createdAt, 'yyyy-MM-dd HH:mm')}">14/12/2020 08:43</td>
                     </tr>
                     </tbody>
                     <!--end::Table body-->

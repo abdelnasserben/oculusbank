@@ -67,13 +67,11 @@ public class DelegateCardService implements OperationAcknowledgment<CardDTO> {
     public List<CardDTO> findAllByCustomerId(int customerId) {
 
         List<CardDTO> cards = new ArrayList<>();
-
         List<TrunkDTO> customerAccounts = accountService.findAllTrunksByCustomerId(customerId);
 
-        customerAccounts.forEach(trunkDTO -> {
-            List<CardDTO> cardDTOList = cardService.findAllByAccountId(trunkDTO.getAccountId());
-            cards.addAll(cardDTOList);
-        });
+        customerAccounts.stream()
+                .map(trunkDTO -> cardService.findAllByAccountId(trunkDTO.getAccountId()))
+                .forEach(cards::addAll);
 
         return cards;
     }

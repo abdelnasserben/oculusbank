@@ -1,9 +1,12 @@
 package com.dabel.oculusbank.dto;
 
+import com.dabel.oculusbank.app.validation.Currency;
+import com.dabel.oculusbank.app.validation.TransactionType;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.validator.constraints.Currency;
 
 import java.time.LocalDateTime;
 
@@ -13,14 +16,19 @@ import java.time.LocalDateTime;
 public class TransactionDTO {
 
     private int transactionId;
+    @TransactionType
     private String transactionType;
     private int accountId;
+    @Positive
     private double amount;
-    @Currency(value = {"KMF", "EUR", "USD"})
+   @Currency
     private String currency;
     private String sourceType;
     private String sourceValue;
+    @NotBlank
     private String reason;
+    @NotBlank
+    private String customerIdentity, customerFullName;
     private String failureReason;
     private String status;
     private LocalDateTime createdAt;
@@ -28,5 +36,7 @@ public class TransactionDTO {
     private String initiatedBy;
     private String updatedBy;
     private String accountName;
+    @NotBlank
     private String accountNumber;
+
 }

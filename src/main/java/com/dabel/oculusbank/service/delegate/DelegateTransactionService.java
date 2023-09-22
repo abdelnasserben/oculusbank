@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class DelegateTransactionService implements OperationAcknowledgment<TransactionDTO> {
@@ -55,8 +56,8 @@ public class DelegateTransactionService implements OperationAcknowledgment<Trans
         transactionDTO.setAccountId(account.getAccountId());
         transactionDTO.setCurrency(Currency.KMF.name());
 
-        if((transactionDTO.getSourceType().equals(SourceType.ATM.name()) && account.getBalance() < transactionDTO.getAmount() + Fees.WITHDRAW_ON_ATM)
-            || (!transactionDTO.getSourceType().equals(SourceType.ATM.name()) && account.getBalance() < transactionDTO.getAmount() + Fees.WITHDRAW_IN_AGENCY)) {
+        if((transactionDTO.getSourceType().equals(SourceType.Visa.name()) && account.getBalance() < transactionDTO.getAmount() + Fees.WITHDRAW_ON_ATM)
+            || (!transactionDTO.getSourceType().equals(SourceType.Visa.name()) && account.getBalance() < transactionDTO.getAmount() + Fees.WITHDRAW_IN_AGENCY)) {
 
             transactionDTO.setStatus(Status.Failed.code());
             transactionDTO.setFailureReason("Insufficient balance");
@@ -83,7 +84,7 @@ public class DelegateTransactionService implements OperationAcknowledgment<Trans
         else{
             accountOperationService.debit(account, transaction.getAmount());
 
-            if(transaction.getSourceType().equals(SourceType.ATM.name()))
+            if(transaction.getSourceType().equals(SourceType.Visa.name()))
                 feeService.apply(account, new Fee(Fees.WITHDRAW_ON_ATM, "Withdraw"), transaction.getSourceValue());
             else
                 feeService.apply(account, new Fee(Fees.WITHDRAW_IN_AGENCY, "Withdraw"), transaction.getSourceValue());
@@ -107,6 +108,14 @@ public class DelegateTransactionService implements OperationAcknowledgment<Trans
         transaction.setUpdatedAt(LocalDateTime.now());
 
         return transactionService.save(transaction);
+    }
+
+    public List<TransactionDTO> findAll() {
+        return transactionService.findAll();
+    }
+
+    public TransactionDTO findById(int transactionId) {
+        return transactionService.findById(transactionId);
     }
 
 }

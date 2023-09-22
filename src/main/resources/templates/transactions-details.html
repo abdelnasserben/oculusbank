@@ -1,0 +1,284 @@
+<div th:replace="fragments/header"></div>
+
+<!--begin::Content-->
+<div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+    <!--begin::Container-->
+    <div class="container" id="kt_content_container">
+        <!--begin::Engage Widget 1-->
+        <div class="card card-xxl-stretch">
+            <!--begin::Card body-->
+            <div class="card-body d-flex flex-column justify-content-between h-100">
+
+                <!--begin::Section-->
+                <div class="row mb-7">
+                    <!--begin::Left column-->
+                    <div class="col-lg-7">
+
+                        <!--begin::Row-->
+                        <div class="row mb-4">
+                            <!--begin::Label-->
+                            <label class="col-lg-3 fw-bold text-muted">Batch ID :</label>
+                            <!--end::Label-->
+
+                            <!--begin::Col-->
+                            <div class="col-lg-auto">
+                                <span th:text="${transaction.transactionId}"
+                                    class="fw-bolder fs-6 text-gray-800">16045</span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <!--end::Row-->
+
+                        <!--begin::Row-->
+                        <div class="row mb-4">
+                            <!--begin::Label-->
+                            <label class="col-lg-3 fw-bold text-muted">Transaction Type :</label>
+                            <!--end::Label-->
+
+                            <!--begin::Col-->
+                            <div class="col-lg-auto">
+                                <span th:text="${transaction.transactionType}"
+                                    class="fw-bolder fs-6 text-gray-800">Deposit</span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <!--end::Row-->
+
+                        <!--begin::Row-->
+                        <div class="row mb-4">
+                            <!--begin::Label-->
+                            <label class="col-lg-3 fw-bold text-muted">Account Name :</label>
+                            <!--end::Label-->
+
+                            <!--begin::Col-->
+                            <div class="col-lg-auto">
+                                <span th:text="${transaction.accountName}" class="fw-bolder fs-6 text-gray-800">John
+                                    Doe</span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <!--end::Row-->
+
+                        <!--begin::Row-->
+                        <div class="row mb-4">
+                            <!--begin::Label-->
+                            <label class="col-lg-3 fw-bold text-muted">Account Number :</label>
+                            <!--end::Label-->
+
+                            <!--begin::Col-->
+                            <div class="col-lg-auto">
+                                <span th:text="${transaction.accountNumber}"
+                                    class="fw-bolder fs-6 text-gray-800">0071001997</span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <!--end::Row-->
+
+                        <!--begin::Row-->
+                        <div class="row mb-4">
+                            <!--begin::Label-->
+                            <label class="col-lg-3 fw-bold text-muted">Amount :</label>
+                            <!--end::Label-->
+
+                            <!--begin::Col-->
+                            <div class="col-lg-auto">
+                                <span th:text="${transaction.amount + ' ' + transaction.currency}"
+                                    class="fw-bolder fs-6 text-gray-800">600 000 KMF</span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <!--end::Row-->
+
+                        <!--begin::Row-->
+                        <div class="row mb-4">
+                            <!--begin::Label-->
+                            <label class="col-lg-3 fw-bold text-muted">Currency :</label>
+                            <!--end::Label-->
+
+                            <!--begin::Col-->
+                            <div class="col-lg-auto">
+                                <span th:text="${transaction.currency}" class="fw-bolder fs-6 text-gray-800">KMF</span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <!--end::Row-->
+
+                        <!--begin::Row-->
+                        <div class="row mb-4">
+                            <!--begin::Label-->
+                            <label class="col-lg-3 fw-bold text-muted">Transaction method :</label>
+                            <!--end::Label-->
+
+                            <!--begin::Col-->
+                            <div class="col-lg-auto">
+                                <img th:unless="${transaction.sourceType} == 'Online'"
+                                    th:src="${transaction.sourceType} == 'Visa' ? '/img/svg/card-logos/visa.svg' : '/img/svg/card-logos/mastercard.svg'"
+                                    class="w-35px me-3" alt="" />
+                                <span th:text="${transaction.sourceValue}" class="fw-bolder fs-6 text-gray-800">**** 3840</span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <!--end::Row-->
+
+                        <!--begin::Row-->
+                        <div class="row mb-4">
+                            <!--begin::Label-->
+                            <label class="col-lg-3 fw-bold text-muted">Description :</label>
+                            <!--end::Label-->
+
+                            <!--begin::Col-->
+                            <div class="col-lg-auto">
+                                <span th:text="${transaction.reason}" class="fw-bolder fs-6 text-gray-800">Family
+                                    Assistence</span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <!--end::Row-->
+
+                        <!--begin::Row-->
+                        <div class="row mb-4">
+                            <!--begin::Label-->
+                            <label class="col-lg-3 fw-bold text-muted">Status :</label>
+                            <!--end::Label-->
+
+                            <!--begin::Col-->
+                            <div class="col-lg-auto">
+                                <div th:text="${transaction.status}" class="badge"
+                                    th:classappend="${transaction.status} == 'Active' ? 'badge-success' : (${transaction.status} == 'Pending' ? 'badge-warning' : 'badge-danger')">
+                                    Pending</div>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <!--end::Row-->
+
+                    </div>
+                    <!--end::Left column-->
+
+                    <!--begin::Right column-->
+                    <div class="col-lg-5">
+
+                        <!--begin::Row-->
+                        <div class="row mb-4">
+                            <!--begin::Label-->
+                            <label class="col-lg-3 fw-bold text-muted">Customer :</label>
+                            <!--end::Label-->
+
+                            <!--begin::Col-->
+                            <div class="col-lg-auto">
+                                <span th:text="${transaction.customerFullName}" class="fw-bolder fs-6 text-gray-800">Mark Smith</span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <!--end::Row-->
+
+                        <!--begin::Row-->
+                        <div class="row mb-4">
+                            <!--begin::Label-->
+                            <label class="col-lg-3 fw-bold text-muted">Customer CIN :</label>
+                            <!--end::Label-->
+
+                            <!--begin::Col-->
+                            <div class="col-lg-auto">
+                                <span th:text="${transaction.customerIdentity}" class="fw-bolder fs-6 text-gray-800">NBE4576</span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <!--end::Row-->
+
+                        <!--begin::Row-->
+                        <div class="row mb-4">
+                            <!--begin::Label-->
+                            <label class="col-lg-3 fw-bold text-muted">Initiated by :</label>
+                            <!--end::Label-->
+
+                            <!--begin::Col-->
+                            <div class="col-lg-auto">
+                                <span th:text="${transaction.initiatedBy}" class="fw-bolder fs-6 text-gray-800">Mark Smith</span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <!--end::Row-->
+
+                        <!--begin::Row-->
+                        <div class="row mb-4">
+                            <!--begin::Label-->
+                            <label class="col-lg-3 fw-bold text-muted">Initiated at :</label>
+                            <!--end::Label-->
+
+                            <!--begin::Col-->
+                            <div class="col-lg-auto">
+                                <span th:text="${#temporals.format(transaction.createdAt, 'yyyy-MM-dd HH:mm')}"
+                                    class="fw-bolder fs-6 text-gray-800">23/09/2023 10:25</span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <!--end::Row-->
+
+                        <!--begin::Row-->
+                        <div class="row mb-4">
+                            <!--begin::Label-->
+                            <label class="col-lg-3 fw-bold text-muted">Updated by :</label>
+                            <!--end::Label-->
+
+                            <!--begin::Col-->
+                            <div class="col-lg-auto">
+                                <span th:text="${transaction.updatedBy}" class="fw-bolder fs-6 text-gray-800">Sarah Hunt</span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <!--end::Row-->
+
+                        <!--begin::Row-->
+                        <div class="row mb-4">
+                            <!--begin::Label-->
+                            <label class="col-lg-3 fw-bold text-muted">Updated at :</label>
+                            <!--end::Label-->
+
+                            <!--begin::Col-->
+                            <div class="col-lg-auto">
+                                <span th:text="${#temporals.format(transaction.updatedAt, 'yyyy-MM-dd HH:mm')}"
+                                    class="fw-bolder fs-6 text-gray-800">23/09/2023 11:25</span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <!--end::Row-->
+
+                        <!--begin::Row-->
+                        <div th:unless="${transaction.status} != 'Failed'" class="row mb-4">
+                            <!--begin::Label-->
+                            <label class="col-lg-3 fw-bold text-muted">Failed reason :</label>
+                            <!--end::Label-->
+
+                            <!--begin::Col-->
+                            <div class="col-lg-auto">
+                                <span th:text="${transaction.failureReason}" class="fw-bolder fs-6 text-gray-800">Amount
+                                    incorrect</span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <!--end::Row-->
+
+                        <div class="separator separator-dashed mb-5"></div>
+
+                        <div th:unless="${transaction.status} != 'Pending'">
+                            <a th:href="@{/transactions/reject/{id}(id=${transaction.transactionId})}"
+                                class="btn btn-danger me-3">Reject</a>
+                            <a th:href="@{/transactions/approve/{id}(id=${transaction.transactionId})}"
+                                class="btn btn-primary">Approve</a>
+                        </div>
+
+                    </div>
+                    <!--end::Right column-->
+                </div>
+                <!--end::Section-->
+
+            </div>
+            <!--end::Card body-->
+        </div>
+        <!--end::Engage Widget 1-->
+    </div>
+    <!--end::Container-->
+</div>
+<!--end::Content-->
+
+<div th:replace="fragments/footer"></div>

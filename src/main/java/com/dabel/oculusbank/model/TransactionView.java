@@ -22,6 +22,8 @@ public class TransactionView {
     private String sourceType;
     private String sourceValue;
     private String reason;
+    private String customerIdentity;
+    private String customerFullName;
     private String failureReason;
     private String status;
     private String initiatedBy;

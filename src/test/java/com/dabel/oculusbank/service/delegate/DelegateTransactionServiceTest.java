@@ -195,7 +195,7 @@ class DelegateTransactionServiceTest {
     @Test
     void shouldApprovePendingSavedWithdrawDoneInATM() {
         //GIVEN
-        configSavedAccountAndTransactionDTO(true, SourceType.ATM.name(), 500, Currency.KMF.name());
+        configSavedAccountAndTransactionDTO(true, SourceType.Visa.name(), 500, Currency.KMF.name());
         TransactionDTO savedTransaction = basicDelegateTransactionService.withdraw(transactionDTO);
 
         //WHEN

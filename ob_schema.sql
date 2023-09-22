@@ -95,6 +95,8 @@ create table transactions(
     account_id int not null,
     amount decimal(10,2),
     currency varchar(50),
+    customer_identity varchar(50),
+    customer_full_name varchar(50)
     source_type varchar(50), -- Online/ATM(Visa,Mastercard)/Cheque
     source_value varchar(255), -- Branch 1/***2485 number of card/cheque
     reason varchar(255),
@@ -278,7 +280,8 @@ a.created_at,
 a.updated_at,
 t.trunk_id,
 t.customer_id,
-t.membership
+t.membership,
+c.identity_number as customer_identity_number
 from 
     accounts as a
 inner join trunks as t
@@ -298,6 +301,8 @@ t.currency,
 t.source_type,
 t.source_value,
 t.reason,
+t.customer_identity,
+t.customer_full_name,
 t.failure_reason,
 t.status,
 t.initiated_by,

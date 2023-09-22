@@ -9,8 +9,6 @@ public class AccountTypeValidator implements ConstraintValidator<AccountType, St
     @Override
     public boolean isValid(String accountType, ConstraintValidatorContext constraintValidatorContext) {
         return Arrays.stream(com.dabel.oculusbank.constant.AccountType.values())
-                .map(Enum::name)
-                .toList()
-                .contains(accountType);
+                .anyMatch(a -> a.name().equals(accountType));
     }
 }

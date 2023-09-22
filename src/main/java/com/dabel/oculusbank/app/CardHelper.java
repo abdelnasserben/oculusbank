@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.Year;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.IntStream;
 
 public class CardHelper {
@@ -16,13 +17,12 @@ public class CardHelper {
     public static boolean isValidYear(String year) {
         int parsedYear = Integer.parseInt(year);
         int actualYear = Year.now().getValue();
-        List<Integer> years = IntStream.range(actualYear, actualYear + 10).boxed().toList();
-        return years.contains(parsedYear);
+        return IntStream.range(actualYear, actualYear + 10).anyMatch(y -> y == parsedYear);
     }
 
     public static LocalDate setExpirationDate(String month, String year) {
         String date = year + "/" + month + "/" + 1;
-        LocalDate convertedDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy/M/d"));
+        LocalDate convertedDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy/M/d", Locale.US));
         return convertedDate.withDayOfMonth(convertedDate.getMonth().length(convertedDate.isLeapYear()));
     }
 

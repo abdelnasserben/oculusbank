@@ -1,0 +1,261 @@
+<div th:replace="fragments/header"></div>
+
+<!--begin::Content-->
+<div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+    <!--begin::Container-->
+    <div class="container" id="kt_content_container">
+
+        <div th:unless="${successMessage} == null">
+            <div class="alert alert-success" th:text="${successMessage}">
+                Successfully done !
+            </div>
+        </div>
+        <div th:unless="${errorMessage} == null">
+            <div class="alert alert-danger" th:text="${errorMessage}">
+                Something be wrong !
+            </div>
+        </div>
+        
+        <!--begin::Engage Widget 1-->
+        <div class="card card-xxl-stretch">
+            <!--begin::Card body-->
+            <div class="card-body d-flex flex-column justify-content-between h-100">
+
+                <form method="post" th:object="${transactionDTO}" th:action="@{/transactions/init}">
+                    <!--begin::Input group-->
+                    <div class="mb-3 fv-row col-lg-2">
+                        <!--begin::Label-->
+                        <label class="required form-label">Transaction Type</label>
+                        <!--end::Label-->
+
+                        <!--begin::Input-->
+                        <select th:field="*{transactionType}" class="form-select mb-3"
+                            th:classappend="${#fields.hasErrors('transactionType')} ? 'is-invalid' : ''"
+                            data-control="select2" data-hide-search="true" data-placeholder="Select an option">
+                            <option value=""></option>
+                            <option value="Deposit">Deposit</option>
+                            <option value="Withdraw">Withdraw</option>
+                        </select>
+                        <div class="invalid-feedback" th:errors="*{transactionType}"></div>
+                        <!--end::Input-->
+                    </div>
+                    <!--end::Input group-->
+
+                    <div class="separator separator-dashed mb-6"></div>
+
+                    <!--begin::Input group-->
+                    <div class="row mb-4">
+                        <!--begin::Label-->
+                        <label class="col-lg-2 col-form-label required fw-bold fs-6">Account</label>
+                        <!--end::Label-->
+
+                        <!--begin::Col-->
+                        <div class="col-lg-10">
+                            <!--begin::Row-->
+                            <div class="row">
+                                <!--begin::Col-->
+                                <div class="col-lg-6 fv-row">
+                                    <input type="text" th:field="*{accountNumber}" class="form-control mb-2"
+                                        th:classappend="${#fields.hasErrors('accountNumber')} ? 'is-invalid' : ''"
+                                        placeholder="Account number" />
+                                    <div class="invalid-feedback" th:errors="*{accountNumber}"></div>
+                                </div>
+                                <!--end::Col-->
+
+                                <!--begin::Col-->
+                                <div class="col-lg-6 fv-row">
+                                    <input type="text" th:field="*{accountName}" class="form-control mb-2"
+                                        placeholder="Account name unkown" disabled />
+                                </div>
+                                <!--end::Col-->
+                            </div>
+                            <!--end::Row-->
+                        </div>
+                        <!--end::Col-->
+                    </div>
+                    <!--end::Input group-->
+
+                    <!--begin::Input group-->
+                    <div class="row mb-4">
+                        <!--begin::Label-->
+                        <label class="col-lg-2 col-form-label fw-bold fs-6">Avalaible
+                            Balance</label>
+                        <!--end::Label-->
+
+                        <!--begin::Col-->
+                        <div class="col-lg-10">
+                            <!--begin::Row-->
+                            <div class="row">
+                                <!--begin::Col-->
+                                <div class="col-lg-auto fv-row">
+                                    <select name="accountCurrency" class="form-select form-select-solid mb-3"
+                                        data-control="select2" data-hide-search="true"
+                                        data-placeholder="Select an option" disabled>
+                                        <option value="KMF">KMF</option>
+                                    </select>
+                                </div>
+                                <!--end::Col-->
+
+                                <!--begin::Col-->
+                                <div class="col-lg-5 fv-row">
+                                    <input type="number" name="avalaibleBalance" class="form-control mb-2"
+                                        placeholder="0.00" disabled />
+                                </div>
+                                <!--end::Col-->
+                            </div>
+                            <!--end::Row-->
+                        </div>
+                        <!--end::Col-->
+                    </div>
+                    <!--end::Input group-->
+
+                    <!--begin::Input group-->
+                    <div class="row mb-4">
+                        <!--begin::Label-->
+                        <label class="col-lg-2 col-form-label required fw-bold fs-6">Self/Third
+                            party</label>
+                        <!--end::Label-->
+
+                        <!--begin::Col-->
+                        <div class="col-lg-10">
+                            <!--begin::Row-->
+                            <div class="row">
+                                <!--begin::Col-->
+                                <div class="col-lg-auto fv-row">
+                                    <select class="form-select mb-3" data-control="select2" data-hide-search="true"
+                                        data-placeholder="Select an option">
+                                        <option value="Self">Self.</option>
+                                        <option value="Third">Third</option>
+                                    </select>
+                                </div>
+                                <!--end::Col-->
+
+                                <!--begin::Col-->
+                                <div class="col-lg-5 fv-row">
+                                    <input type="text" th:field="*{customerIdentity}" class="form-control mb-2"
+                                        th:classappend="${#fields.hasErrors('customerIdentity')} ? 'is-invalid' : ''"
+                                        placeholder="Identity number of the person" />
+                                    <div class="invalid-feedback" th:errors="*{customerIdentity}"></div>
+                                </div>
+                                <!--end::Col-->
+
+                                <!--begin::Col-->
+                                <div class="col-lg-5 fv-row">
+                                    <input type="text" th:field="*{customerFullName}" class="form-control mb-2"
+                                        th:classappend="${#fields.hasErrors('customerFullName')} ? 'is-invalid' : ''"
+                                        placeholder="Full name of the person" />
+                                    <div class="invalid-feedback" th:errors="*{customerFullName}"></div>
+                                </div>
+                                <!--end::Col-->
+                            </div>
+                            <!--end::Row-->
+                        </div>
+                        <!--end::Col-->
+                    </div>
+                    <!--end::Input group-->
+
+                    <!--begin::Input group-->
+                    <div class="row mb-4">
+                        <!--begin::Label-->
+                        <label class="col-lg-2 col-form-label required fw-bold fs-6">Amount</label>
+                        <!--end::Label-->
+
+                        <!--begin::Col-->
+                        <div class="col-lg-10">
+                            <!--begin::Row-->
+                            <div class="row">
+                                <!--begin::Col-->
+                                <div class="col-lg-auto fv-row">
+                                    <select th:field="*{currency}" class="form-select mb-3"
+                                        th:classappend="${#fields.hasErrors('currency')} ? 'is-invalid' : ''"
+                                        data-control="select2" data-hide-search="true"
+                                        data-placeholder="Select an option">
+                                        <option value="KMF">KMF</option>
+                                        <option value="EUR">EUR</option>
+                                        <option value="USD">USD</option>
+                                    </select>
+                                    <div class="invalid-feedback" th:errors="*{currency}"></div>
+                                </div>
+                                <!--end::Col-->
+
+                                <!--begin::Col-->
+                                <div class="col-lg-5 fv-row">
+                                    <input type="number" th:field="*{amount}" class="form-control mb-2"
+                                        th:classappend="${#fields.hasErrors('amount')} ? 'is-invalid' : ''" step=".01"
+                                        placeholder="0.00" />
+                                    <div class="invalid-feedback" th:errors="*{amount}"></div>
+                                </div>
+                                <!--end::Col-->
+                            </div>
+                            <!--end::Row-->
+                        </div>
+                        <!--end::Col-->
+                    </div>
+                    <!--end::Input group-->
+
+                    <!--begin::Input group-->
+                    <div class="row mb-4">
+                        <!--begin::Label-->
+                        <label class="col-lg-2 col-form-label fw-bold fs-6">Base Curr Equiv</label>
+                        <!--end::Label-->
+
+                        <!--begin::Col-->
+                        <div class="col-lg-10">
+                            <!--begin::Row-->
+                            <div class="row">
+                                <!--begin::Col-->
+                                <div class="col-lg-auto fv-row">
+                                    <select class="form-select form-select-solid mb-3" data-control="select2"
+                                        data-hide-search="true" data-placeholder="Select an option" disabled>
+                                        <option value="KMF">KMF</option>
+                                    </select>
+                                </div>
+                                <!--end::Col-->
+
+                                <!--begin::Col-->
+                                <div class="col-lg-5 fv-row">
+                                    <input type="number" name="baseAmountEquivalent" class="form-control mb-2"
+                                        step=".01" placeholder="0.00" disabled />
+                                </div>
+                                <!--end::Col-->
+                            </div>
+                            <!--end::Row-->
+                        </div>
+                        <!--end::Col-->
+                    </div>
+                    <!--end::Input group-->
+
+                    <!--begin::Input group-->
+                    <div class="row align-items-end mb-4">
+                        <div class="col-lg-7 mb-3">
+                            <label for="exampleFormControlTextarea1"
+                                class="form-label required fw-bold fs-6">Remarks</label>
+                            <textarea th:field="*{reason}" class="form-control"
+                                th:classappend="${#fields.hasErrors('reason')} ? 'is-invalid' : ''"
+                                id="exampleFormControlTextarea1" rows="3"></textarea>
+                            <div class="invalid-feedback" th:errors="*{reason}"></div>
+                        </div>
+                        <div class="col-lg-5 mb-3">
+                            <!--begin::Button-->
+                            <a type="button" class="btn btn-danger me-2" href="transactions.html">Cancel</a>
+                            <button type="submit" id="kt_ecommerce_add_product_submit" class="btn btn-primary">
+                                <span class="indicator-label">
+                                    Save Changes
+                                </span>
+                            </button>
+                            <!--end::Button-->
+                        </div>
+                    </div>
+                    <!--end::Input group-->
+                </form>
+
+            </div>
+            <!--end::Card body-->
+        </div>
+        <!--end::Engage Widget 1-->
+    </div>
+    <!--end::Container-->
+</div>
+<!--end::Content-->
+
+<div th:replace="fragments/footer"></div>

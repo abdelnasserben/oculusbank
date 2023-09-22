@@ -29,4 +29,5 @@ public class TrunkView {
     private int trunkId;
     private int customerId;
     private String membership;
+    private String customerIdentityNumber;
 }

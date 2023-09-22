@@ -9,8 +9,6 @@ public class IdentityTypeValidator implements ConstraintValidator<IdentityType, 
     @Override
     public boolean isValid(String identityType, ConstraintValidatorContext constraintValidatorContext) {
         return Arrays.stream(com.dabel.oculusbank.constant.IdentityType.values())
-                .map(Enum::name)
-                .toList()
-                .contains(identityType);
+                .anyMatch(i -> i.name().equals(identityType));
     }
 }

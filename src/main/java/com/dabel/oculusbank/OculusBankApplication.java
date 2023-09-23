@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class OculusbankApplication {
+public class OculusBankApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(OculusbankApplication.class, args);
+		SpringApplication.run(OculusBankApplication.class, args);
 	}
 
 }

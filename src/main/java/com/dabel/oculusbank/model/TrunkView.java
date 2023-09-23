@@ -2,9 +2,7 @@ package com.dabel.oculusbank.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.CurrentTimestamp;
 import org.hibernate.annotations.Immutable;
-import org.hibernate.generator.EventType;
 
 import java.time.LocalDateTime;
 

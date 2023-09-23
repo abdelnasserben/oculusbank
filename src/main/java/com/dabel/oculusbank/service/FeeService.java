@@ -17,7 +17,7 @@ public class FeeService {
     @Autowired
     TransactionService transactionService;
 
-    public void apply(AccountDTO account, Fee fee, String source) {
+    public void apply(AccountDTO account, Fee fee) {
 
         transactionService.save(
                 TransactionDTO.builder()
@@ -26,9 +26,12 @@ public class FeeService {
                 .currency(Currency.KMF.name())
                 .amount(fee.value())
                 .sourceType(SourceType.Online.name())
-                .sourceValue(source)
+                .sourceValue("System")
                 .reason("ATS@" + fee.description() + " fee")
+                .customerFullName("OS Operator")
+                .customerIdentity("123456789")
                 .status(Status.Approved.code())
+                .initiatedBy("OS Operator")
                 .build());
         accountOperationService.debit(account, fee.value());
     }

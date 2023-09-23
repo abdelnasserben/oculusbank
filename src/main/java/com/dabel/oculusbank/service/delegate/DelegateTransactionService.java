@@ -1,9 +1,6 @@
 package com.dabel.oculusbank.service.delegate;
 
-import com.dabel.oculusbank.app.AccountChecker;
-import com.dabel.oculusbank.app.CurrencyExchanger;
-import com.dabel.oculusbank.app.Fee;
-import com.dabel.oculusbank.app.OperationAcknowledgment;
+import com.dabel.oculusbank.app.*;
 import com.dabel.oculusbank.constant.*;
 import com.dabel.oculusbank.dto.AccountDTO;
 import com.dabel.oculusbank.dto.TransactionDTO;
@@ -17,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -56,8 +54,8 @@ public class DelegateTransactionService implements OperationAcknowledgment<Trans
         transactionDTO.setAccountId(account.getAccountId());
         transactionDTO.setCurrency(Currency.KMF.name());
 
-        if((transactionDTO.getSourceType().equals(SourceType.Visa.name()) && account.getBalance() < transactionDTO.getAmount() + Fees.WITHDRAW_ON_ATM)
-            || (!transactionDTO.getSourceType().equals(SourceType.Visa.name()) && account.getBalance() < transactionDTO.getAmount() + Fees.WITHDRAW_IN_AGENCY)) {
+        if((!transactionDTO.getSourceType().equals(SourceType.Online.name()) && account.getBalance() < transactionDTO.getAmount() + Fees.WITHDRAW_ON_ATM)
+            || (transactionDTO.getSourceType().equals(SourceType.Online.name()) && account.getBalance() < transactionDTO.getAmount() + Fees.WITHDRAW_IN_AGENCY)) {
 
             transactionDTO.setStatus(Status.Failed.code());
             transactionDTO.setFailureReason("Insufficient balance");
@@ -76,18 +74,21 @@ public class DelegateTransactionService implements OperationAcknowledgment<Trans
         TransactionDTO transaction = transactionService.findById(operationId);
         AccountDTO account = accountService.findByNumber(transaction.getAccountNumber());
 
+        if(!transaction.getStatus().equals(Status.Pending.name()))
+            throw new IllegalOperationException("Cannot approve this transaction");
+
         if(transaction.getTransactionType().equals(TransactionType.Deposit.name())) {
             //TODO: exchange amount in given currency
             double amount = CurrencyExchanger.exchange(transaction.getCurrency(), account.getCurrency(), transaction.getAmount());
             accountOperationService.credit(account, amount);
         }
         else{
-            accountOperationService.debit(account, transaction.getAmount());
+            accountOperationService.debit(account, AmountFormatter.format(transaction.getAmount()));
 
-            if(transaction.getSourceType().equals(SourceType.Visa.name()))
-                feeService.apply(account, new Fee(Fees.WITHDRAW_ON_ATM, "Withdraw"), transaction.getSourceValue());
+            if(!transaction.getSourceType().equals(SourceType.Online.name()))
+                feeService.apply(account, new Fee(Fees.WITHDRAW_ON_ATM, "Withdraw"));
             else
-                feeService.apply(account, new Fee(Fees.WITHDRAW_IN_AGENCY, "Withdraw"), transaction.getSourceValue());
+                feeService.apply(account, new Fee(Fees.WITHDRAW_IN_AGENCY, "Withdraw"));
         }
 
         //TODO: update transaction info and save it
@@ -102,6 +103,10 @@ public class DelegateTransactionService implements OperationAcknowledgment<Trans
     public TransactionDTO reject(int operationId, String remarks) {
 
         TransactionDTO transaction = transactionService.findById(operationId);
+
+        if(!transaction.getStatus().equals(Status.Pending.name()))
+            throw new IllegalOperationException("Cannot reject this transaction");
+
         transaction.setStatus(Status.Rejected.code());
         transaction.setFailureReason(remarks);
         transaction.setUpdatedBy("Administrator");
@@ -112,6 +117,17 @@ public class DelegateTransactionService implements OperationAcknowledgment<Trans
 
     public List<TransactionDTO> findAll() {
         return transactionService.findAll();
+    }
+
+    public List<TransactionDTO> findAllByCustomerId(int customerId) {
+
+        List<TransactionDTO> transactions = new ArrayList<>();
+
+       accountService.findAllTrunksByCustomerId(customerId).stream()
+               .map(trunkDTO -> transactionService.findAllByAccountId(trunkDTO.getAccountId()))
+               .forEach(transactions::addAll);
+
+        return transactions;
     }
 
     public TransactionDTO findById(int transactionId) {

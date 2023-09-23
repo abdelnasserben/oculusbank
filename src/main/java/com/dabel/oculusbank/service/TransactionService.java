@@ -42,6 +42,12 @@ public class TransactionService {
         return formatStatusToNameAndGetDTO(transactionView);
     }
 
+    public List<TransactionDTO> findAllByAccountId(int accountId) {
+        return transactionViewRepository.findAllByAccountId(accountId).stream()
+                .map(TransactionService::formatStatusToNameAndGetDTO)
+                .collect(Collectors.toList());
+    }
+
     private static TransactionDTO formatStatusToNameAndGetDTO(TransactionView transactionView) {
         transactionView.setStatus(Status.nameOf(transactionView.getStatus()));
         if(!transactionView.getSourceType().equals(SourceType.Online.name()))

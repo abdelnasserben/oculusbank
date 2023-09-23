@@ -8,13 +8,11 @@ import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.constant.web.Countries;
 import com.dabel.oculusbank.constant.web.CurrentPageTitle;
 import com.dabel.oculusbank.constant.web.MessageTag;
-import com.dabel.oculusbank.dto.AccountDTO;
-import com.dabel.oculusbank.dto.CardDTO;
-import com.dabel.oculusbank.dto.CustomerDTO;
-import com.dabel.oculusbank.dto.TrunkDTO;
+import com.dabel.oculusbank.dto.*;
 import com.dabel.oculusbank.service.delegate.DelegateAccountService;
 import com.dabel.oculusbank.service.delegate.DelegateCardService;
 import com.dabel.oculusbank.service.delegate.DelegateCustomerService;
+import com.dabel.oculusbank.service.delegate.DelegateTransactionService;
 import jakarta.persistence.EntityManager;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class CustomerController implements PageTitleConfig {
@@ -38,6 +37,8 @@ public class CustomerController implements PageTitleConfig {
     DelegateAccountService delegateAccountService;
     @Autowired
     DelegateCardService delegateCardService;
+    @Autowired
+    DelegateTransactionService delegateTransactionService;
     @Autowired
     EntityManager entityManager;
 
@@ -58,7 +59,7 @@ public class CustomerController implements PageTitleConfig {
     }
 
     @PostMapping("/customers/add")
-    public String addNewCustomerPost(Model model, @Valid CustomerDTO customerDTO, BindingResult binding,
+    public String addNewCustomer(Model model, @Valid CustomerDTO customerDTO, BindingResult binding,
                                           @RequestParam(required = false) String accountName,
                                           @RequestParam(defaultValue = "Saving") String accountType,
                                           @RequestParam(required = false) boolean accountProfile,
@@ -103,6 +104,13 @@ public class CustomerController implements PageTitleConfig {
         boolean notifyNoActiveCreditCards = customerCards.stream()
                         .anyMatch(c -> c.getStatus().equals(Status.Active.name()));
 
+        //clear cache again
+        entityManager.clear();
+
+        List<TransactionDTO> lastTenCustomerTransactions = delegateTransactionService.findAllByCustomerId(customerId).stream()
+                .limit(10)
+                .toList();
+
         setPageTitle(model, "Customer Details", "Customers");
         model.addAttribute("customer", customer);
         model.addAttribute("accounts", customerAccounts);
@@ -110,12 +118,13 @@ public class CustomerController implements PageTitleConfig {
         model.addAttribute("cards", customerCards);
         model.addAttribute("countries", Countries.getNames());
         model.addAttribute("notifyNoActiveCreditCards", notifyNoActiveCreditCards);
+        model.addAttribute("transactions", lastTenCustomerTransactions);
 
         return "customers-details";
     }
 
     @PostMapping("/customers/{customerId}")
-    public String customerDetailsUpdateGeneralInfo(Model model, @Valid CustomerDTO customer, BindingResult binding, RedirectAttributes redirect) {
+    public String customerDetails(Model model, @Valid CustomerDTO customer, BindingResult binding, RedirectAttributes redirect) {
 
         setPageTitle(model, "Customer Details", "Customers");
 

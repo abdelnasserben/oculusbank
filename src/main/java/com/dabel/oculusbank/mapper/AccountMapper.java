@@ -1,9 +1,7 @@
 package com.dabel.oculusbank.mapper;
 
 import com.dabel.oculusbank.dto.AccountDTO;
-import com.dabel.oculusbank.dto.TrunkDTO;
 import com.dabel.oculusbank.model.Account;
-import com.dabel.oculusbank.model.Trunk;
 import org.modelmapper.ModelMapper;
 
 public class AccountMapper {

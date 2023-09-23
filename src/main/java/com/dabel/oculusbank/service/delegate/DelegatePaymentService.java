@@ -87,7 +87,7 @@ public class DelegatePaymentService implements OperationAcknowledgment<PaymentDT
         accountOperationService.credit(creditAccount, amount);
 
         //TODO: apply fees on debit account
-        feeService.apply(debitAccount, new Fee(feesAmount, "Payment"), "Branch 1");
+        feeService.apply(debitAccount, new Fee(feesAmount, "Payment"));
 
         payment.setStatus(Status.Approved.code());
         payment.setUpdatedBy("Administrator");

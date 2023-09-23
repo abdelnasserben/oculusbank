@@ -64,7 +64,7 @@ public class DelegateCardAppRequestService implements OperationAcknowledgment<Ca
         cardApp.setUpdatedAt(LocalDateTime.now());
 
         AccountDTO account = accountService.findByNumber(cardApp.getAccountNumber());
-        feeService.apply(account, new Fee(Fees.CARD_APP_REQUEST, "Card application request"), "Branch 1");
+        feeService.apply(account, new Fee(Fees.CARD_APP_REQUEST, "Card application request"));
 
         return cardAppRequestService.save(cardApp);
     }

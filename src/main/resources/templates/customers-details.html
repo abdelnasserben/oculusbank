@@ -992,56 +992,31 @@
                                     </tr>
                                 </thead>
                                 <tbody class="fw-6 fw-bold text-gray-600">
-                                    <tr>
+                                    <tr th:each="transaction: ${transactions}">
                                         <td>
-                                            <a href="#" class="text-hover-primary text-gray-600">14330</a>
+                                            <a th:text="${transaction.transactionId}"
+                                                th:href="@{/transactions/{id}(id=${transaction.transactionId})}"
+                                                class="text-hover-primary text-gray-600">14330</a>
                                         </td>
-                                        <td>Withdraw</td>
-                                        <td>0071001997</td>
-                                        <td>KMF</td>
-                                        <td>65000</td>
+                                        <td th:text="${transaction.transactionType}">Withdraw</td>
+                                        <td th:text="${transaction.accountNumber}">0071001997</td>
+                                        <td th:text="${transaction.currency}">KMF</td>
+                                        <td th:text="${transaction.amount}">65000</td>
                                         <td>
-                                            <img src="img/svg/card-logos/mastercard.svg" class="w-35px me-3" alt="" />
-                                            **** 3840
+                                            <img th:unless="${transaction.sourceType} == 'Online'"
+                                                th:src="${transaction.sourceType == 'Visa'} ? '/img/svg/card-logos/visa.svg' : '/img/svg/card-logos/mastercard.svg'"
+                                                class="w-35px me-3" alt="" />
+                                            <span th:text="${transaction.sourceValue}">**** 3840</span>
+
                                         </td>
                                         <td class="pe-0">
-                                            <div class="badge badge-light-danger">Failed</div>
+                                            <div th:text="${transaction.status}" class="badge"
+                                                th:classappend="${transaction.status} == 'Approved' ? 'badge-light-success' : (${transaction.status} == 'Pending' ? 'badge-light-warning' : 'badge-light-danger')">
+                                                Failed</div>
                                         </td>
-                                        <td>21/09/2023 15:56</td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="#" class="text-hover-primary text-gray-600">14330</a>
-                                        </td>
-                                        <td>Deposit</td>
-                                        <td>0071001997</td>
-                                        <td>KMF</td>
-                                        <td>65000</td>
-                                        <td>
-                                            <img src="img/svg/card-logos/bank.svg" class="w-35px me-3" alt="" />
-                                            HQ, Moroni Ngazidja
-                                        </td>
-                                        <td class="pe-0">
-                                            <div class="badge badge-light-success">Approved</div>
-                                        </td>
-                                        <td>21/09/2023 15:56</td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="#" class="text-hover-primary text-gray-600">14330</a>
-                                        </td>
-                                        <td>Witdraw</td>
-                                        <td>0071001997</td>
-                                        <td>KMF</td>
-                                        <td>65000</td>
-                                        <td>
-                                            <img src="img/svg/card-logos/visa.svg" class="w-35px me-3" alt="" />
-                                            **** 5879
-                                        </td>
-                                        <td class="pe-0">
-                                            <div class="badge badge-light-warning">Pending</div>
-                                        </td>
-                                        <td>21/09/2023 15:56</td>
+                                        <td th:text="${#temporals.format(transaction.createdAt, 'yyyy-MM-dd HH:mm')}">
+                                            21/09/2023
+                                            15:56</td>
                                     </tr>
                                 </tbody>
                                 <!--end::Tbody-->

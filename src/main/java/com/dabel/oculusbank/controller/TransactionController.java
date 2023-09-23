@@ -15,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -73,6 +74,28 @@ public class TransactionController implements PageTitleConfig {
 
         redirect.addFlashAttribute(MessageTag.SUCCESS, transactionDTO.getTransactionType() + " successfully initiated.");
         return "redirect:/transactions/init";
+    }
+
+    @GetMapping("/transactions/approve/{transactionId}")
+    public String approveTransaction(@PathVariable int transactionId, RedirectAttributes redirect) {
+
+        delegateTransactionService.approve(transactionId);
+        redirect.addFlashAttribute(MessageTag.SUCCESS, "Transaction successfully approved!");
+
+        return "redirect:/transactions/" + transactionId;
+    }
+
+    @PostMapping("/transactions/reject/{transactionId}")
+    public String rejectTransaction(@PathVariable int transactionId, @RequestParam String rejectReason, RedirectAttributes redirect) {
+
+        if(rejectReason.isBlank())
+            redirect.addFlashAttribute(MessageTag.ERROR, "Reject reason is mandatory!");
+        else {
+            redirect.addFlashAttribute(MessageTag.SUCCESS, "Transaction successfully rejected!");
+            delegateTransactionService.reject(transactionId, rejectReason);
+        }
+
+        return "redirect:/transactions/" + transactionId;
     }
 
     @Override

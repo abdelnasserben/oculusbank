@@ -41,7 +41,7 @@ class FeeServiceTest {
                 .build());
 
         //WHEN
-        feeService.apply(savedAccount, new Fee(200, "withdraw"), "ATM@HQ");
+        feeService.apply(savedAccount, new Fee(200, "withdraw"));
         TransactionDTO expectedTransaction = transactionService.findAll().get(0);
         AccountDTO expectedAccount = accountService.findByNumber(savedAccount.getAccountNumber());
 

@@ -1,10 +1,8 @@
 package com.dabel.oculusbank.mapper;
 
 import com.dabel.oculusbank.dto.PaymentDTO;
-import com.dabel.oculusbank.dto.TransactionDTO;
 import com.dabel.oculusbank.model.Payment;
 import com.dabel.oculusbank.model.PaymentView;
-import com.dabel.oculusbank.model.TransactionView;
 import org.modelmapper.ModelMapper;
 
 public class PaymentMapper {

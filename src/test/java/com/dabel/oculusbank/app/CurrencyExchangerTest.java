@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class AccountTypeExchangerTest {
+class CurrencyExchangerTest {
 
     @Test
     void shouldExchangeEurToKmf() {

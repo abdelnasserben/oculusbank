@@ -30,6 +30,6 @@ public class Loan {
     private String updatedBy;
     @CurrentTimestamp(event = EventType.INSERT)
     private LocalDateTime createdAt;
-    @CurrentTimestamp(event = {EventType.INSERT, EventType.UPDATE})
+    @CurrentTimestamp(event = EventType.UPDATE)
     private LocalDateTime updatedAt;
 }

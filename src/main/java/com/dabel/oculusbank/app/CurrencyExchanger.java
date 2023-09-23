@@ -3,11 +3,6 @@ package com.dabel.oculusbank.app;
 import com.dabel.oculusbank.constant.Currency;
 import com.dabel.oculusbank.constant.ExchangeCourse;
 
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.Locale;
-
 public final class CurrencyExchanger {
 
     public static double exchange(String receivedCurrency, String givenCurrency, double amount) {
@@ -24,10 +19,8 @@ public final class CurrencyExchanger {
         if(isUsd2Kmf(receivedCurrency, givenCurrency))
             amount *= ExchangeCourse.BUY_USD;
 
-        DecimalFormat decimalFormat = new DecimalFormat("#.##", new DecimalFormatSymbols(Locale.US));
-        decimalFormat.setRoundingMode(RoundingMode.FLOOR);
 
-        return Double.parseDouble(decimalFormat.format(amount));
+        return AmountFormatter.format(amount);
     }
 
     private static boolean isKmf2Eur(String currency1, String currency2) {

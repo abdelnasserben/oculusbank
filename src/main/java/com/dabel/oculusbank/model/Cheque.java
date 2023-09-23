@@ -2,8 +2,6 @@ package com.dabel.oculusbank.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CurrentTimestamp;
 import org.hibernate.generator.EventType;
 
@@ -25,6 +23,6 @@ public class Cheque {
     private String updatedBy;
     @CurrentTimestamp(event = EventType.INSERT)
     private LocalDateTime createdAt;
-    @CurrentTimestamp(event = {EventType.INSERT, EventType.UPDATE})
+    @CurrentTimestamp(event = EventType.UPDATE)
     private LocalDateTime updatedAt;
 }

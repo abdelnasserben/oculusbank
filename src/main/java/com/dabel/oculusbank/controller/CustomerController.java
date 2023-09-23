@@ -1,6 +1,7 @@
 package com.dabel.oculusbank.controller;
 
 import com.dabel.oculusbank.app.CardHelper;
+import com.dabel.oculusbank.app.web.Endpoint;
 import com.dabel.oculusbank.app.web.PageTitleConfig;
 import com.dabel.oculusbank.constant.AccountMemberShip;
 import com.dabel.oculusbank.constant.AccountProfile;
@@ -9,10 +10,7 @@ import com.dabel.oculusbank.constant.web.Countries;
 import com.dabel.oculusbank.constant.web.CurrentPageTitle;
 import com.dabel.oculusbank.constant.web.MessageTag;
 import com.dabel.oculusbank.dto.*;
-import com.dabel.oculusbank.service.delegate.DelegateAccountService;
-import com.dabel.oculusbank.service.delegate.DelegateCardService;
-import com.dabel.oculusbank.service.delegate.DelegateCustomerService;
-import com.dabel.oculusbank.service.delegate.DelegateTransactionService;
+import com.dabel.oculusbank.service.delegate.*;
 import jakarta.persistence.EntityManager;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 public class CustomerController implements PageTitleConfig {
@@ -40,9 +37,11 @@ public class CustomerController implements PageTitleConfig {
     @Autowired
     DelegateTransactionService delegateTransactionService;
     @Autowired
+    DelegateExchangeService delegateExchangeService;
+    @Autowired
     EntityManager entityManager;
 
-    @GetMapping("/customers")
+    @GetMapping(value = Endpoint.Customers.ROOT)
     public String customers(Model model) {
 
         setPageTitle(model, "Customers", null);
@@ -50,7 +49,7 @@ public class CustomerController implements PageTitleConfig {
         return "customers";
     }
 
-    @GetMapping("/customers/add")
+    @GetMapping(value = Endpoint.Customers.ADD)
     public String addNewCustomer(Model model, CustomerDTO customerDTO) {
 
         setPageTitle(model, "Add Customer", "Customers");
@@ -58,7 +57,7 @@ public class CustomerController implements PageTitleConfig {
         return "customers-add";
     }
 
-    @PostMapping("/customers/add")
+    @PostMapping(value = Endpoint.Customers.ADD)
     public String addNewCustomer(Model model, @Valid CustomerDTO customerDTO, BindingResult binding,
                                           @RequestParam(required = false) String accountName,
                                           @RequestParam(defaultValue = "Saving") String accountType,
@@ -79,10 +78,10 @@ public class CustomerController implements PageTitleConfig {
         delegateCustomerService.create(customerDTO, accountType, accountProfileValue, accountMembership);
 
         redirect.addFlashAttribute(MessageTag.SUCCESS, "Customer added successfully !");
-        return "redirect:/customers/add";
+        return "redirect:" + Endpoint.Customers.ADD;
     }
 
-    @GetMapping("/customers/{customerId}")
+    @GetMapping(value = Endpoint.Customers.ROOT + "/{customerId}")
     public String customerDetails(@PathVariable int customerId, Model model) {
 
         CustomerDTO customer = delegateCustomerService.findById(customerId);
@@ -111,6 +110,10 @@ public class CustomerController implements PageTitleConfig {
                 .limit(10)
                 .toList();
 
+        List<ExchangeDTO> lastTenCustomerExchanges = delegateExchangeService.findAllByCustomerIdentity(customer.getIdentityNumber()).stream()
+                .limit(10)
+                .toList();
+
         setPageTitle(model, "Customer Details", "Customers");
         model.addAttribute("customer", customer);
         model.addAttribute("accounts", customerAccounts);
@@ -119,12 +122,13 @@ public class CustomerController implements PageTitleConfig {
         model.addAttribute("countries", Countries.getNames());
         model.addAttribute("notifyNoActiveCreditCards", notifyNoActiveCreditCards);
         model.addAttribute("transactions", lastTenCustomerTransactions);
+        model.addAttribute("exchanges", lastTenCustomerExchanges);
 
         return "customers-details";
     }
 
-    @PostMapping("/customers/{customerId}")
-    public String customerDetails(Model model, @Valid CustomerDTO customer, BindingResult binding, RedirectAttributes redirect) {
+    @PostMapping(value = Endpoint.Customers.ROOT + "/{customerId}")
+    public String updateCustomerGeneralInfo(Model model, @Valid CustomerDTO customer, BindingResult binding, RedirectAttributes redirect) {
 
         setPageTitle(model, "Customer Details", "Customers");
 
@@ -137,18 +141,18 @@ public class CustomerController implements PageTitleConfig {
 
         delegateCustomerService.update(customer);
         redirect.addFlashAttribute(MessageTag.SUCCESS, "Customer information updated successfully !");
-        return "redirect:/customers/" + customer.getCustomerId();
+        return "redirect:" + Endpoint.Customers.ROOT + "/" + customer.getCustomerId();
     }
 
-    @PostMapping("customers/addCard/{customerId}")
-    public String addCardOnAccount(@PathVariable int customerId, @Valid CardDTO cardDTO, BindingResult binding,
+    @PostMapping("customers/add-card/{customerId}")
+    public String customerAddCardOnHisAccount(@PathVariable int customerId, @Valid CardDTO cardDTO, BindingResult binding,
                                    @RequestParam String cardExpiryMonth,
                                    @RequestParam String cardExpiryYear,
                                    RedirectAttributes redirect) {
 
         if(binding.hasErrors() || !CardHelper.isValidMonth(cardExpiryMonth) || !CardHelper.isValidYear(cardExpiryYear)) {
             redirect.addFlashAttribute(MessageTag.ERROR, "Invalid card information !");
-            return "redirect:/customers/" + customerId;
+            return "redirect:" + Endpoint.Customers.ROOT + "/" + customerId;
         }
 
         //we set the expiration date before saving
@@ -156,7 +160,7 @@ public class CustomerController implements PageTitleConfig {
         delegateCardService.add(cardDTO);
         redirect.addFlashAttribute(MessageTag.SUCCESS, "Card added successfully !");
 
-        return "redirect:/customers/" + customerId;
+        return "redirect:" + Endpoint.Customers.ROOT + "/" + customerId;
     }
 
     @Override

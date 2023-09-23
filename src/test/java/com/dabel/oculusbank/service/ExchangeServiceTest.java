@@ -36,8 +36,8 @@ class ExchangeServiceTest {
                 .customerName("John Doe")
                 .customerIdentity("NBE454532")
                 .status(Status.Pending.code())
-                .amount(500)
-                .buyCurrency(Currency.KMF.name())
+                .purchaseAmount(500)
+                .purchaseCurrency(Currency.KMF.name())
                 .saleCurrency(Currency.EUR.name())
                 .reason("Sample reason")
                 .build();
@@ -56,8 +56,8 @@ class ExchangeServiceTest {
                 .customerName("John Doe")
                 .customerIdentity("NBE454532")
                 .status(Status.Pending.code())
-                .amount(500)
-                .buyCurrency(Currency.KMF.name())
+                .purchaseAmount(500)
+                .purchaseCurrency(Currency.KMF.name())
                 .saleCurrency(Currency.EUR.name())
                 .reason("Sample reason")
                 .build();
@@ -79,8 +79,8 @@ class ExchangeServiceTest {
                 .customerName("John Doe")
                 .customerIdentity("NBE454532")
                 .status(Status.Pending.code())
-                .amount(500)
-                .buyCurrency(Currency.KMF.name())
+                .purchaseAmount(500)
+                .purchaseCurrency(Currency.KMF.name())
                 .saleCurrency(Currency.EUR.name())
                 .reason("Sample reason")
                 .build();
@@ -90,8 +90,31 @@ class ExchangeServiceTest {
         ExchangeDTO expected = exchangeService.findById(savedExchange.getExchangeId());
 
         //THEN
-        assertThat(expected.getAmount()).isEqualTo(500);
+        assertThat(expected.getPurchaseAmount()).isEqualTo(500);
         assertThat(expected.getStatus()).isEqualTo(Status.Pending.name());
+    }
+
+    @Test
+    void shouldRetrieveListOfExchangesByCustomerIdentity() {
+        //GIVEN
+        ExchangeDTO exchangeDTO = ExchangeDTO.builder()
+                .customerName("John Doe")
+                .customerIdentity("NBE454532")
+                .status(Status.Pending.code())
+                .purchaseAmount(500)
+                .purchaseCurrency(Currency.KMF.name())
+                .saleCurrency(Currency.EUR.name())
+                .reason("Sample reason")
+                .build();
+        exchangeService.save(exchangeDTO);
+
+        //WHEN
+        List<ExchangeDTO> expected = exchangeService.findAllByCustomerIdentity("NBE454532");
+
+        //THEN
+        assertThat(expected.size()).isEqualTo(1);
+        assertThat(expected.get(0).getPurchaseAmount()).isEqualTo(500);
+        assertThat(expected.get(0).getStatus()).isEqualTo(Status.Pending.name());
     }
 
     @Test

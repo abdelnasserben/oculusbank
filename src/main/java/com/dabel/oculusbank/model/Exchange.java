@@ -17,9 +17,10 @@ public class Exchange {
     private int exchangeId;
     private String customerName;
     private String customerIdentity;
+    private String purchaseCurrency;
+    private double purchaseAmount;
     private String saleCurrency;
-    private String buyCurrency;
-    private double amount;
+    private double saleAmount;
     private String reason;
     private String failureReason;
     private String status;

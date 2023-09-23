@@ -32,9 +32,9 @@ class DelegateExchangeServiceTest {
         ExchangeDTO exchangeDTO = ExchangeDTO.builder()
                 .customerName("John Doe")
                 .customerIdentity("NBE454532")
-                .buyCurrency(Currency.EUR.name())
+                .purchaseCurrency(Currency.EUR.name())
                 .saleCurrency(Currency.KMF.name())
-                .amount(20)
+                .purchaseAmount(20)
                 .reason("Sample reason")
                 .build();
 
@@ -44,7 +44,7 @@ class DelegateExchangeServiceTest {
         //THEN
         //1£ = 490.31KMF => 20£ = 9806.2KMF | Note that this is a purchase
         assertThat(expected.getStatus()).isEqualTo(Status.Pending.code());
-        assertThat(expected.getAmount()).isEqualTo(9806.2);
+        assertThat(expected.getSaleAmount()).isEqualTo(9806.2);
     }
 
     @Test
@@ -53,9 +53,9 @@ class DelegateExchangeServiceTest {
         ExchangeDTO exchangeDTO = ExchangeDTO.builder()
                 .customerName("John Doe")
                 .customerIdentity("NBE454532")
-                .buyCurrency(Currency.KMF.name())
+                .purchaseCurrency(Currency.KMF.name())
                 .saleCurrency(Currency.USD.name())
-                .amount(10000)
+                .purchaseAmount(10000)
                 .reason("Sample reason")
                 .build();
 
@@ -65,7 +65,7 @@ class DelegateExchangeServiceTest {
         //THEN
         //1$ = 462.12KMF => 10 000KMF = 21.63$ | note that this is a sale
         assertThat(expected.getStatus()).isEqualTo(Status.Pending.code());
-        assertThat(expected.getAmount()).isEqualTo(21.63);
+        assertThat(expected.getSaleAmount()).isEqualTo(21.63);
     }
 
     @Test
@@ -74,9 +74,9 @@ class DelegateExchangeServiceTest {
         ExchangeDTO exchangeDTO = ExchangeDTO.builder()
                 .customerName("John Doe")
                 .customerIdentity("NBE454532")
-                .buyCurrency(Currency.KMF.name())
+                .purchaseCurrency(Currency.KMF.name())
                 .saleCurrency(Currency.USD.name())
-                .amount(10000)
+                .purchaseAmount(10000)
                 .reason("Sample reason")
                 .build();
         ExchangeDTO savedExchange = delegateExchangeService.exchange(exchangeDTO);
@@ -87,7 +87,7 @@ class DelegateExchangeServiceTest {
         //THEN
         //1$ = 462.12KMF => 10 000KMF = 21.63$ | note that this is a sale
         assertThat(expected.getStatus()).isEqualTo(Status.Approved.code());
-        assertThat(expected.getAmount()).isEqualTo(21.63);
+        assertThat(expected.getSaleAmount()).isEqualTo(21.63);
     }
 
     @Test
@@ -96,9 +96,9 @@ class DelegateExchangeServiceTest {
         ExchangeDTO exchangeDTO = ExchangeDTO.builder()
                 .customerName("John Doe")
                 .customerIdentity("NBE454532")
-                .buyCurrency(Currency.KMF.name())
+                .purchaseCurrency(Currency.KMF.name())
                 .saleCurrency(Currency.USD.name())
-                .amount(10000)
+                .purchaseAmount(10000)
                 .reason("Sample reason")
                 .build();
         ExchangeDTO savedExchange = delegateExchangeService.exchange(exchangeDTO);
@@ -110,7 +110,7 @@ class DelegateExchangeServiceTest {
         //1$ = 462.12KMF => 10 000KMF = 21.63$ | note that this is a sale
         assertThat(expected.getStatus()).isEqualTo(Status.Rejected.code());
         assertThat(expected.getFailureReason()).isEqualTo("Sample remark");
-        assertThat(expected.getAmount()).isEqualTo(21.63);
+        assertThat(expected.getSaleAmount()).isEqualTo(21.63);
     }
 
     @Test
@@ -119,9 +119,9 @@ class DelegateExchangeServiceTest {
         ExchangeDTO exchangeDTO = ExchangeDTO.builder()
                 .customerName("John Doe")
                 .customerIdentity("NBE454532")
-                .buyCurrency(Currency.KMF.name())
+                .purchaseCurrency(Currency.KMF.name())
                 .saleCurrency(Currency.KMF.name())
-                .amount(20)
+                .purchaseAmount(20)
                 .reason("Sample reason")
                 .build();
 

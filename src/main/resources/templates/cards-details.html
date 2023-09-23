@@ -4,6 +4,16 @@
 <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
     <!--begin::Container-->
     <div class="container" id="kt_content_container">
+
+        <div th:unless="${successMessage} == null" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${successMessage}">Successfully done !</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:unless="${errorMessage} == null" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${errorMessage}">Something be wrong !</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
         <!--begin::Engage Widget 1-->
         <div class="card card-xxl-stretch">
             <!--begin::Card body-->
@@ -191,7 +201,8 @@
 
                             <!--begin::Col-->
                             <div class="col-lg-auto">
-                                <span class="fw-bolder fs-6 text-gray-800">Mark Smith</span>
+                                <span th:text="${card.initiatedBy}" class="fw-bolder fs-6 text-gray-800">Mark
+                                    Smith</span>
                             </div>
                             <!--end::Col-->
                         </div>
@@ -220,7 +231,8 @@
 
                             <!--begin::Col-->
                             <div class="col-lg-auto">
-                                <span class="fw-bolder fs-6 text-gray-800">Sarah Hunt</span>
+                                <span th:text="${card.updatedBy}" class="fw-bolder fs-6 text-gray-800">Sarah
+                                    Hunt</span>
                             </div>
                             <!--end::Col-->
                         </div>
@@ -242,14 +254,15 @@
                         <!--end::Row-->
 
                         <!--begin::Row-->
-                        <div class="row mb-4">
+                        <div th:unless="${card.status} != 'Rejected'" class="row mb-4">
                             <!--begin::Label-->
-                            <label class="col-lg-3 fw-bold text-muted">Reject reason :</label>
+                            <label class="col-lg-3 fw-bold text-muted">Failed reason :</label>
                             <!--end::Label-->
 
                             <!--begin::Col-->
                             <div class="col-lg-auto">
-                                <span class="fw-bolder fs-6 text-gray-800">Amount incorrect</span>
+                                <span th:text="${card.failureReason}" class="fw-bolder fs-6 text-gray-800">Amount
+                                    incorrect</span>
                             </div>
                             <!--end::Col-->
                         </div>
@@ -257,16 +270,11 @@
 
                         <div class="separator separator-dashed mb-5"></div>
 
-                        <div>
-                            <div th:unless="${card.status} != 'Pending'">
-                                <a th:href="@{/cards/reject/{id}(id=${card.cardId})}" class="btn btn-danger">Reject</a>
-                                <a th:href="@{/cards/approve/{id}(id=${card.cardId})}"
-                                    class="btn btn-primary">Approve</a>
-                            </div>
-                            <a th:unless="${card.status} != 'Active'"
-                                th:href="@{/cards/deactive/{id}(id=${card.cardId})}"
-                                class="btn btn-warning">Deactivate</a>
-                        </div>
+                        <button th:unless="${card.status} == 'Deactivated'" type="button" class="btn btn-danger" data-bs-toggle="modal"
+                            data-bs-target="#kt_modal_reject_operation">
+                            Deactive
+                        </button>
+                        <a th:unless="${card.status} == 'Active'" th:href="@{/cards/activate/{id}(id=${card.cardId})}" class="btn btn-primary">Active</a>
 
                     </div>
                     <!--end::Right column-->
@@ -280,6 +288,75 @@
     </div>
     <!--end::Container-->
 </div>
+
+<!--begin::Modals-->
+<div class="modal fade" id="kt_modal_reject_operation" tabindex="-1" aria-hidden="true">
+    <!--begin::Modal dialog-->
+    <div class="modal-dialog modal-dialog-centered mw-650px">
+        <!--begin::Modal content-->
+        <div class="modal-content">
+            <!--begin::Modal header-->
+            <div class="modal-header">
+                <!--begin::Modal title-->
+                <h2>Deactivate Card</h2>
+                <!--end::Modal title-->
+
+                <!--begin::Close-->
+                <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
+                    <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
+                    <span class="svg-icon svg-icon-1"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                            viewBox="0 0 24 24" fill="none">
+                            <rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1"
+                                transform="rotate(-45 6 17.3137)" fill="currentColor" />
+                            <rect x="7.41422" y="6" width="16" height="2" rx="1" transform="rotate(45 7.41422 6)"
+                                fill="currentColor" />
+                        </svg></span>
+                    <!--end::Svg Icon-->
+                </div>
+                <!--end::Close-->
+            </div>
+            <!--end::Modal header-->
+
+            <!--begin::Modal body-->
+            <div class="modal-body scroll-y mx-5 my-7">
+                <!--begin::Form-->
+                <form method="post" class="form" th:action="@{/cards/deactivate/{id}(id=${card.cardId})}">
+
+                    <!--begin::Input group-->
+                    <div class="mx-5">
+
+                        <div class="mb-4 fv-row">
+                            <label class="required form-label">Reason</label>
+                            <textarea name="rejectReason" class="form-control" rows="3"></textarea>
+                        </div>
+
+                    </div>
+                    <!--end::Input group-->
+
+                    <!--begin::Actions-->
+                    <div class="text-center pt-15">
+                        <button type="button" class="btn btn-light me-3" data-bs-dismiss="modal">
+                            Discard
+                        </button>
+
+                        <button type="submit" class="btn btn-primary">
+                            <span class="indicator-label">
+                                Submit
+                            </span>
+                        </button>
+                    </div>
+                    <!--end::Actions-->
+                </form>
+                <!--end::Form-->
+            </div>
+            <!--end::Modal body-->
+        </div>
+        <!--end::Modal content-->
+    </div>
+    <!--end::Modal dialog-->
+</div>
+<!--end::Modals-->
+
 <!--end::Content-->
 
 <div th:replace="fragments/footer"></div>

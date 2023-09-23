@@ -155,7 +155,7 @@ class DelegateCardServiceTest {
     }
 
     @Test
-    void shouldApprovePendingSavedCard() {
+    void shouldActivatePendingSavedCard() {
         //GIVEN
         AccountDTO savedAccount = getSavedTrunk(true, false);
         CardDTO cardDTO = CardDTO.builder()
@@ -168,14 +168,14 @@ class DelegateCardServiceTest {
         CardDTO savedCard = delegateCardService.add(cardDTO);
 
         //WHEN
-        CardDTO expected = delegateCardService.approve(savedCard.getCardId());
+        CardDTO expected = delegateCardService.activate(savedCard.getCardId());
 
         //THEN
         assertThat(expected.getStatus()).isEqualTo(Status.Approved.code());
     }
 
     @Test
-    void shouldRejectPendingSavedCard() {
+    void shouldDeactivatePendingSavedCard() {
         //GIVEN
         AccountDTO savedAccount = getSavedTrunk(true, false);
         CardDTO cardDTO = CardDTO.builder()
@@ -188,7 +188,7 @@ class DelegateCardServiceTest {
         CardDTO savedCard = delegateCardService.add(cardDTO);
 
         //WHEN
-        CardDTO expected = delegateCardService.reject(savedCard.getCardId(), "Sample remark");
+        CardDTO expected = delegateCardService.deactivate(savedCard.getCardId(), "Sample remark");
 
         //THEN
         assertThat(expected.getStatus()).isEqualTo(Status.Rejected.code());

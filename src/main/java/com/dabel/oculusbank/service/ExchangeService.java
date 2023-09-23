@@ -36,6 +36,13 @@ public class ExchangeService {
         return formatStatusToNameAndGetDTO(exchange);
     }
 
+    public List<ExchangeDTO> findAllByCustomerIdentity(String customerIdentity) {
+        return exchangeRepository.findAllByCustomerIdentity(customerIdentity).stream()
+                .map(ExchangeService::formatStatusToNameAndGetDTO)
+                .collect(Collectors.toList());
+
+    }
+
     private static ExchangeDTO formatStatusToNameAndGetDTO(Exchange exchange) {
         exchange.setStatus(Status.nameOf(exchange.getStatus()));
         return ExchangeMapper.toDTO(exchange);

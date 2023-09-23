@@ -5,15 +5,13 @@
     <!--begin::Container-->
     <div class="container" id="kt_content_container">
 
-        <div th:unless="${successMessage} == null">
-            <div class="alert alert-success" th:text="${successMessage}">
-                Successfully done !
-            </div>
+        <div th:unless="${successMessage} == null" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${successMessage}">Successfully done !</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-        <div th:unless="${errorMessage} == null">
-            <div class="alert alert-danger" th:text="${errorMessage}">
-                Something be wrong !
-            </div>
+        <div th:unless="${errorMessage} == null" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${errorMessage}">Something be wrong !</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
         
         <!--begin::Engage Widget 1-->

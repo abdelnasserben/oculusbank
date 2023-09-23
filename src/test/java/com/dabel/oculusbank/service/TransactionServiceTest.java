@@ -1,10 +1,7 @@
 package com.dabel.oculusbank.service;
 
 import com.dabel.oculusbank.DatabaseSettingsForTests;
-import com.dabel.oculusbank.constant.AccountType;
-import com.dabel.oculusbank.constant.Currency;
-import com.dabel.oculusbank.constant.Status;
-import com.dabel.oculusbank.constant.TransactionType;
+import com.dabel.oculusbank.constant.*;
 import com.dabel.oculusbank.dto.AccountDTO;
 import com.dabel.oculusbank.dto.TransactionDTO;
 import com.dabel.oculusbank.exception.TransactionNotFoundException;
@@ -75,6 +72,7 @@ public class TransactionServiceTest {
                 .amount(500)
                 .currency(Currency.KMF.name())
                 .reason("Just for test")
+                .sourceType(SourceType.Online.name())
                 .status(Status.Pending.code())
                 .build());
 
@@ -93,6 +91,7 @@ public class TransactionServiceTest {
                 .transactionType(TransactionType.Deposit.name())
                 .accountId(savedAccount.getAccountId())
                 .amount(500)
+                .sourceType(SourceType.Online.name())
                 .currency(Currency.KMF.name())
                 .reason("Just for test")
                 .status(Status.Pending.code())

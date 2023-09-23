@@ -96,7 +96,7 @@ create table transactions(
     amount decimal(10,2),
     currency varchar(50),
     customer_identity varchar(50),
-    customer_full_name varchar(50)
+    customer_full_name varchar(50),
     source_type varchar(50), -- Online/ATM(Visa,Mastercard)/Cheque
     source_value varchar(255), -- Branch 1/***2485 number of card/cheque
     reason varchar(255),
@@ -136,9 +136,10 @@ create table exchanges(
     exchange_id int not null auto_increment,
     customer_name varchar(255),
     customer_identity varchar(255),
+    purchase_currency varchar(50),
+    purchase_amount decimal(10,2),
     sale_currency varchar(50),
-    buy_currency varchar(50),
-    amount decimal(10,2),
+    sale_amount decimal(10,2),
     reason varchar(255),
     failure_reason varchar(255),
     status int default 0,

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Service
@@ -20,15 +21,15 @@ public class DelegateExchangeService implements OperationAcknowledgment<Exchange
 
     public ExchangeDTO exchange(ExchangeDTO exchangeDTO) {
 
-        String buyCurrency = exchangeDTO.getBuyCurrency();
+        String purchaseCurrency = exchangeDTO.getPurchaseCurrency();
         String saleCurrency = exchangeDTO.getSaleCurrency();
 
-        if(buyCurrency.equalsIgnoreCase(saleCurrency))
+        if(purchaseCurrency.equalsIgnoreCase(saleCurrency))
             throw new IllegalOperationException("Currencies must be different");
 
         //TODO: convert amount and set status of exchange before saving
-        double amount = CurrencyExchanger.exchange(buyCurrency, saleCurrency, exchangeDTO.getAmount());
-        exchangeDTO.setAmount(amount);
+        double saleAmount = CurrencyExchanger.exchange(purchaseCurrency, saleCurrency, exchangeDTO.getPurchaseAmount());
+        exchangeDTO.setSaleAmount(saleAmount);
         exchangeDTO.setStatus(Status.Pending.code());
         return exchangeService.save(exchangeDTO);
     }
@@ -37,6 +38,10 @@ public class DelegateExchangeService implements OperationAcknowledgment<Exchange
     public ExchangeDTO approve(int operationId) {
 
         ExchangeDTO exchange = exchangeService.findById(operationId);
+
+        if(!exchange.getStatus().equals(Status.Pending.name()))
+            throw new IllegalOperationException("Cannot approve this exchange");
+
         exchange.setStatus(Status.Approved.code());
         exchange.setUpdatedBy("Administrator");
         exchange.setUpdatedAt(LocalDateTime.now());
@@ -46,12 +51,29 @@ public class DelegateExchangeService implements OperationAcknowledgment<Exchange
 
     @Override
     public ExchangeDTO reject(int operationId, String remarks) {
+
         ExchangeDTO exchange = exchangeService.findById(operationId);
+
+        if(!exchange.getStatus().equals(Status.Pending.name()))
+            throw new IllegalOperationException("Cannot reject this exchange");
+
         exchange.setStatus(Status.Rejected.code());
         exchange.setFailureReason(remarks);
         exchange.setUpdatedBy("Administrator");
         exchange.setUpdatedAt(LocalDateTime.now());
 
         return exchangeService.save(exchange);
+    }
+
+    public List<ExchangeDTO> findAll() {
+        return exchangeService.findAll();
+    }
+
+    public ExchangeDTO findById(int exchangeId) {
+        return exchangeService.findById(exchangeId);
+    }
+
+    public List<ExchangeDTO> findAllByCustomerIdentity(String customerIdentity) {
+        return exchangeService.findAllByCustomerIdentity(customerIdentity);
     }
 }

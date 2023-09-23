@@ -1,5 +1,8 @@
 package com.dabel.oculusbank.dto;
 
+import com.dabel.oculusbank.app.validation.Currency;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -12,11 +15,18 @@ import java.time.LocalDateTime;
 public class ExchangeDTO {
 
     private int exchangeId;
+    @NotBlank
     private String customerName;
+    @NotBlank
     private String customerIdentity;
+    @Currency
+    private String purchaseCurrency;
+    @Positive
+    private double purchaseAmount;
+    @Currency
     private String saleCurrency;
-    private String buyCurrency;
-    private double amount;
+    private double saleAmount;
+    @NotBlank
     private String reason;
     private String failureReason;
     private String status;

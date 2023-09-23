@@ -1,5 +1,6 @@
 package com.dabel.oculusbank.controller;
 
+import com.dabel.oculusbank.app.web.Endpoint;
 import com.dabel.oculusbank.app.web.PageTitleConfig;
 import com.dabel.oculusbank.constant.SourceType;
 import com.dabel.oculusbank.constant.TransactionType;
@@ -26,7 +27,7 @@ public class TransactionController implements PageTitleConfig {
     @Autowired
     DelegateTransactionService delegateTransactionService;
 
-    @GetMapping("/transactions")
+    @GetMapping(value = Endpoint.Transactions.ROOT)
     public String dashboard(Model model) {
 
         List<TransactionDTO> transactions = delegateTransactionService.findAll();
@@ -36,24 +37,14 @@ public class TransactionController implements PageTitleConfig {
         return "transactions";
     }
 
-    @GetMapping("/transactions/init")
+    @GetMapping(value = Endpoint.Transactions.INIT)
     public String initBasicTransaction(Model model, TransactionDTO transactionDTO) {
 
         setPageTitle(model, "Transaction Init", "Transactions");
         return "transactions-init";
     }
 
-    @GetMapping("/transactions/{transactionId}")
-    public String transactionDetails(@PathVariable int transactionId, Model model) {
-
-        TransactionDTO transactionDTO = delegateTransactionService.findById(transactionId);
-
-        model.addAttribute("transaction", transactionDTO);
-        setPageTitle(model, "Transaction Details", "Transactions");
-        return "transactions-details";
-    }
-
-    @PostMapping("/transactions/init")
+    @PostMapping(value = Endpoint.Transactions.INIT)
     public String initBasicTransaction(Model model, @Valid TransactionDTO transactionDTO, BindingResult binding, RedirectAttributes redirect) {
 
         setPageTitle(model, "Transaction Init", "Transactions");
@@ -73,19 +64,29 @@ public class TransactionController implements PageTitleConfig {
             delegateTransactionService.withdraw(transactionDTO);
 
         redirect.addFlashAttribute(MessageTag.SUCCESS, transactionDTO.getTransactionType() + " successfully initiated.");
-        return "redirect:/transactions/init";
+        return "redirect:" + Endpoint.Transactions.INIT;
     }
 
-    @GetMapping("/transactions/approve/{transactionId}")
+    @GetMapping(value = Endpoint.Transactions.ROOT + "/{transactionId}")
+    public String transactionDetails(@PathVariable int transactionId, Model model) {
+
+        TransactionDTO transactionDTO = delegateTransactionService.findById(transactionId);
+
+        model.addAttribute("transaction", transactionDTO);
+        setPageTitle(model, "Transaction Details", "Transactions");
+        return "transactions-details";
+    }
+
+    @GetMapping(value = Endpoint.Transactions.APPROVE + "/{transactionId}")
     public String approveTransaction(@PathVariable int transactionId, RedirectAttributes redirect) {
 
         delegateTransactionService.approve(transactionId);
         redirect.addFlashAttribute(MessageTag.SUCCESS, "Transaction successfully approved!");
 
-        return "redirect:/transactions/" + transactionId;
+        return "redirect:" + Endpoint.Transactions.ROOT + "/" + transactionId;
     }
 
-    @PostMapping("/transactions/reject/{transactionId}")
+    @PostMapping(value = Endpoint.Transactions.REJECT + "/{transactionId}")
     public String rejectTransaction(@PathVariable int transactionId, @RequestParam String rejectReason, RedirectAttributes redirect) {
 
         if(rejectReason.isBlank())
@@ -95,7 +96,7 @@ public class TransactionController implements PageTitleConfig {
             delegateTransactionService.reject(transactionId, rejectReason);
         }
 
-        return "redirect:/transactions/" + transactionId;
+        return "redirect:" + Endpoint.Transactions.ROOT + "/" + transactionId;
     }
 
     @Override

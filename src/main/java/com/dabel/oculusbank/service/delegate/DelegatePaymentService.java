@@ -1,14 +1,13 @@
 package com.dabel.oculusbank.service.delegate;
 
 import com.dabel.oculusbank.app.AccountChecker;
-import com.dabel.oculusbank.app.CurrencyExchanger;
 import com.dabel.oculusbank.app.Fee;
 import com.dabel.oculusbank.app.OperationAcknowledgment;
-import com.dabel.oculusbank.constant.Currency;
 import com.dabel.oculusbank.constant.Fees;
 import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.dto.AccountDTO;
 import com.dabel.oculusbank.dto.PaymentDTO;
+import com.dabel.oculusbank.dto.TrunkDTO;
 import com.dabel.oculusbank.exception.BalanceInsufficientException;
 import com.dabel.oculusbank.exception.IllegalOperationException;
 import com.dabel.oculusbank.service.AccountOperationService;
@@ -19,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class DelegatePaymentService implements OperationAcknowledgment<PaymentDTO> {
@@ -36,6 +37,12 @@ public class DelegatePaymentService implements OperationAcknowledgment<PaymentDT
 
         AccountDTO debitAccount = accountService.findByNumber(paymentDTO.getDebitAccountNumber());
         AccountDTO creditAccount = accountService.findByNumber(paymentDTO.getCreditAccountNumber());
+
+        if(debitAccount.getAccountNumber().equals(creditAccount.getAccountNumber()))
+            throw new IllegalOperationException("Self-payment is not possible");
+
+        if(!debitAccount.getCurrency().equals(creditAccount.getCurrency()))
+            throw new IllegalOperationException("Accounts must have the same currency");
 
         if(!AccountChecker.isActive(debitAccount) || !AccountChecker.isActive(creditAccount)) {
 
@@ -79,15 +86,11 @@ public class DelegatePaymentService implements OperationAcknowledgment<PaymentDT
         AccountDTO debitAccount = accountService.findByNumber(payment.getDebitAccountNumber());
         AccountDTO creditAccount = accountService.findByNumber(payment.getCreditAccountNumber());
 
-        //TODO: convert amount and fees when credit and debit account are different currencies
-        double amount = CurrencyExchanger.exchange(debitAccount.getCurrency(), creditAccount.getCurrency(), payment.getAmount());
-        double feesAmount = CurrencyExchanger.exchange(debitAccount.getCurrency(), Currency.KMF.name(), Fees.PAYMENT);
-
         accountOperationService.debit(debitAccount, payment.getAmount());
-        accountOperationService.credit(creditAccount, amount);
+        accountOperationService.credit(creditAccount, payment.getAmount());
 
         //TODO: apply fees on debit account
-        feeService.apply(debitAccount, new Fee(feesAmount, "Payment"));
+        feeService.apply(debitAccount, new Fee(Fees.PAYMENT, "Payment"));
 
         payment.setStatus(Status.Approved.code());
         payment.setUpdatedBy("Administrator");
@@ -107,5 +110,25 @@ public class DelegatePaymentService implements OperationAcknowledgment<PaymentDT
         payment.setUpdatedAt(LocalDateTime.now());
 
         return paymentService.save(payment);
+    }
+
+    public List<PaymentDTO> findAll() {
+        return paymentService.findAll();
+    }
+
+    public PaymentDTO findById(int paymentId) {
+        return paymentService.findById(paymentId);
+    }
+
+    public List<PaymentDTO> findAllByCustomerId(int customerId) {
+
+        List<PaymentDTO> payments = new ArrayList<>();
+        List<TrunkDTO> customerAccounts = accountService.findAllTrunksByCustomerId(customerId);
+
+        customerAccounts.stream()
+                .map(trunkDTO -> paymentService.findAllByAccountId(trunkDTO.getAccountId()))
+                .forEach(payments::addAll);
+
+        return payments;
     }
 }

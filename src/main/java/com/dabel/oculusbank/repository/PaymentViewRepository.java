@@ -8,4 +8,5 @@ import java.util.Optional;
 public interface PaymentViewRepository extends ReadOnlyRepository<PaymentView, Integer> {
     List<PaymentView> findAll();
     Optional<PaymentView> findById(int paymentId);
+    List<PaymentView> findAllByDebitAccountIdOrCreditAccountId(int accountId, int accountId2);
 }

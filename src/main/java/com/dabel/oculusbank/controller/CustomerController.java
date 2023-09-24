@@ -37,6 +37,8 @@ public class CustomerController implements PageTitleConfig {
     @Autowired
     DelegateTransactionService delegateTransactionService;
     @Autowired
+    DelegatePaymentService delegatePaymentService;
+    @Autowired
     DelegateExchangeService delegateExchangeService;
     @Autowired
     EntityManager entityManager;
@@ -110,6 +112,13 @@ public class CustomerController implements PageTitleConfig {
                 .limit(10)
                 .toList();
 
+        //clear cache again
+        entityManager.clear();
+
+        List<PaymentDTO> lastTenCustomerPayments = delegatePaymentService.findAllByCustomerId(customerId).stream()
+                .limit(10)
+                .toList();
+
         List<ExchangeDTO> lastTenCustomerExchanges = delegateExchangeService.findAllByCustomerIdentity(customer.getIdentityNumber()).stream()
                 .limit(10)
                 .toList();
@@ -122,6 +131,7 @@ public class CustomerController implements PageTitleConfig {
         model.addAttribute("countries", Countries.getNames());
         model.addAttribute("notifyNoActiveCreditCards", notifyNoActiveCreditCards);
         model.addAttribute("transactions", lastTenCustomerTransactions);
+        model.addAttribute("payments", lastTenCustomerPayments);
         model.addAttribute("exchanges", lastTenCustomerExchanges);
 
         return "customers-details";

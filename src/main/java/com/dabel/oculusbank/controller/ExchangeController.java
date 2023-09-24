@@ -1,8 +1,7 @@
 package com.dabel.oculusbank.controller;
 
 import com.dabel.oculusbank.app.web.Endpoint;
-import com.dabel.oculusbank.app.web.PageTitleConfig;
-import com.dabel.oculusbank.constant.web.CurrentPageTitle;
+import com.dabel.oculusbank.app.web.TransactionSubPageTitleConfig;
 import com.dabel.oculusbank.constant.web.MessageTag;
 import com.dabel.oculusbank.dto.ExchangeDTO;
 import com.dabel.oculusbank.service.delegate.DelegateExchangeService;
@@ -20,9 +19,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 
 @Controller
-public class ExchangeController implements PageTitleConfig {
+public class ExchangeController implements TransactionSubPageTitleConfig {
 
-    private static final String USEFUL_BREADCRUMB = "Transactions / Exchanges";
+    private static final String USEFUL_BREADCRUMB = " / Exchanges";
 
     @Autowired
     DelegateExchangeService delegateExchangeService;
@@ -30,7 +29,7 @@ public class ExchangeController implements PageTitleConfig {
     @GetMapping(value = Endpoint.Exchanges.ROOT)
     public String exchangesListing(Model model) {
 
-        setPageTitle(model, "Exchanges", "Transactions");
+        setPageTitle(model, "Exchanges", null);
 
         List<ExchangeDTO> exchanges = delegateExchangeService.findAll();
         model.addAttribute("exchanges", exchanges);
@@ -91,10 +90,4 @@ public class ExchangeController implements PageTitleConfig {
         return "redirect:" + Endpoint.Exchanges.ROOT + "/" + exchangeId;
     }
 
-    @Override
-    public void setPageTitle(Model model, String pageTitle, String breadcrumb) {
-        model.addAttribute("pageTitle", pageTitle);
-        model.addAttribute("pageBreadcrumb", breadcrumb);
-        model.addAttribute("currentPage", CurrentPageTitle.TRANSACTIONS);
-    }
 }

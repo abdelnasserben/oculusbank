@@ -992,7 +992,8 @@
                                     </tr>
                                 </thead>
                                 <tbody class="fw-6 fw-bold text-gray-600">
-                                    <td th:if="${#lists.isEmpty(transactions)}" class="text-center" colspan="7">No data avalaible</td>
+                                    <td th:if="${#lists.isEmpty(transactions)}" class="text-center" colspan="7">No data
+                                        avalaible</td>
                                     <tr th:each="transaction: ${transactions}">
                                         <td>
                                             <a th:text="${transaction.transactionId}"
@@ -1073,44 +1074,26 @@
                                     </tr>
                                 </thead>
                                 <tbody class="fw-6 fw-bold text-gray-600">
-                                    <tr>
+                                    <td th:if="${#lists.isEmpty(payments)}" class="text-center" colspan="7">No data
+                                        avalaible</td>
+                                    <tr th:each="payment: ${payments}">
                                         <td>
-                                            <a href="#" class="text-hover-primary text-gray-600">14330</a>
+                                            <a th:text="${payment.paymentId}"
+                                                th:href="@{/transactions/payments/{id}(id=${payment.paymentId})}"
+                                                class="text-hover-primary text-gray-600">14330</a>
                                         </td>
-                                        <td>0071001997</td>
-                                        <td>2587979770</td>
-                                        <td>KMF</td>
-                                        <td>65000</td>
+                                        <td th:text="${payment.debitAccountNumber}">0071001997</td>
+                                        <td th:text="${payment.creditAccountNumber}">0071001997</td>
+                                        <td th:text="${payment.currency}">KMF</td>
+                                        <td th:text="${payment.amount}">65000</td>
                                         <td class="pe-0">
-                                            <div class="badge badge-light-danger">Failed</div>
+                                            <div th:text="${payment.status}" class="badge"
+                                                th:classappend="${payment.status} == 'Approved' ? 'badge-light-success' : (${payment.status} == 'Pending' ? 'badge-light-warning' : 'badge-light-danger')">
+                                                Failed</div>
                                         </td>
-                                        <td>21/09/2023 15:56</td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="#" class="text-hover-primary text-gray-600">14330</a>
-                                        </td>
-                                        <td>8950032100</td>
-                                        <td>0071001997</td>
-                                        <td>KMF</td>
-                                        <td>65000</td>
-                                        <td class="pe-0">
-                                            <div class="badge badge-light-success">Approved</div>
-                                        </td>
-                                        <td>21/09/2023 15:56</td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="#" class="text-hover-primary text-gray-600">14330</a>
-                                        </td>
-                                        <td>9875330218</td>
-                                        <td>0071001997</td>
-                                        <td>KMF</td>
-                                        <td>65000</td>
-                                        <td class="pe-0">
-                                            <div class="badge badge-light-warning">Pending</div>
-                                        </td>
-                                        <td>21/09/2023 15:56</td>
+                                        <td th:text="${#temporals.format(payment.createdAt, 'yyyy-MM-dd HH:mm')}">
+                                            21/09/2023
+                                            15:56</td>
                                     </tr>
                                 </tbody>
                                 <!--end::Tbody-->
@@ -1166,7 +1149,8 @@
                                     </tr>
                                 </thead>
                                 <tbody class="fw-6 fw-bold text-gray-600">
-                                    <td th:if="${#lists.isEmpty(exchanges)}" class="text-center" colspan="7">No data avalaible</td>
+                                    <td th:if="${#lists.isEmpty(exchanges)}" class="text-center" colspan="7">No data
+                                        avalaible</td>
                                     <tr th:each="exchange: ${exchanges}">
                                         <td>
                                             <a th:text="${exchange.exchangeId}"

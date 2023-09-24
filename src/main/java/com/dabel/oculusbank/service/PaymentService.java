@@ -39,6 +39,12 @@ public class PaymentService {
         return formatStatusToNameAndGetDTO(payment);
     }
 
+    public List<PaymentDTO> findAllByAccountId(int accountId) {
+        return paymentViewRepository.findAllByDebitAccountIdOrCreditAccountId(accountId, accountId).stream()
+                .map(PaymentService::formatStatusToNameAndGetDTO)
+                .collect(Collectors.toList());
+    }
+
     private static PaymentDTO formatStatusToNameAndGetDTO(PaymentView payment) {
         payment.setStatus(Status.nameOf(payment.getStatus()));
         return PaymentMapper.viewToDTO(payment);

@@ -12,6 +12,13 @@ public class Endpoint {
         public String REJECT = ROOT + Endpoint.REJECT;
     }
 
+    public interface Payments {
+        public String ROOT = Transactions.ROOT + "/payments";
+        public String INIT = ROOT + "/init";
+        public String APPROVE = ROOT + Endpoint.APPROVE;
+        public String REJECT = ROOT + Endpoint.REJECT;
+    }
+
     public interface Exchanges {
         public String ROOT = Transactions.ROOT + "/exchanges";
         public String INIT = ROOT + "/init";

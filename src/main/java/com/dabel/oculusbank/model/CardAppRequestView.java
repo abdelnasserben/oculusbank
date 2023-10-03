@@ -25,4 +25,7 @@ public class CardAppRequestView {
     private LocalDateTime updatedAt;
     private String accountName;
     private String accountNumber;
+    private String customerFirstName;
+    private String customerLastName;
+    private String customerIdentityNumber;
 }

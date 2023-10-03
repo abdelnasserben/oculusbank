@@ -102,6 +102,13 @@ public class AccountService {
         return formatTrunkStatusToNameAndGetDTO(trunkView);
     }
 
+    public TrunkDTO findTrunkByNumberAndCustomerIdentity(String accountNumber, String customerIdentity) {
+        TrunkView trunkView = trunkViewRepository.findByAccountNumberAndCustomerIdentityNumber(accountNumber, customerIdentity)
+                .orElseThrow(AccountNotFoundException::new);
+
+        return formatTrunkStatusToNameAndGetDTO(trunkView);
+    }
+
     private static VaultDTO formatVaultStatusToNameAndGetDTO(VaultView vaultView) {
         vaultView.setStatus(Status.nameOf(vaultView.getStatus()));
         return VaultMapper.toDTO(vaultView);

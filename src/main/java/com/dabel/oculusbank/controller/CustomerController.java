@@ -154,25 +154,6 @@ public class CustomerController implements PageTitleConfig {
         return "redirect:" + Endpoint.Customers.ROOT + "/" + customer.getCustomerId();
     }
 
-    @PostMapping("customers/add-card/{customerId}")
-    public String customerAddCardOnHisAccount(@PathVariable int customerId, @Valid CardDTO cardDTO, BindingResult binding,
-                                   @RequestParam String cardExpiryMonth,
-                                   @RequestParam String cardExpiryYear,
-                                   RedirectAttributes redirect) {
-
-        if(binding.hasErrors() || !CardHelper.isValidMonth(cardExpiryMonth) || !CardHelper.isValidYear(cardExpiryYear)) {
-            redirect.addFlashAttribute(MessageTag.ERROR, "Invalid card information !");
-            return "redirect:" + Endpoint.Customers.ROOT + "/" + customerId;
-        }
-
-        //we set the expiration date before saving
-        cardDTO.setExpirationDate(CardHelper.setExpirationDate(cardExpiryMonth, cardExpiryYear));
-        delegateCardService.add(cardDTO);
-        redirect.addFlashAttribute(MessageTag.SUCCESS, "Card added successfully !");
-
-        return "redirect:" + Endpoint.Customers.ROOT + "/" + customerId;
-    }
-
     @Override
     public void setPageTitle(Model model, String pageTitle, String breadcrumb) {
 

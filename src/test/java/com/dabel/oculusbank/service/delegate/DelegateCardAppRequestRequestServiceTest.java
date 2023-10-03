@@ -34,6 +34,7 @@ class DelegateCardAppRequestRequestServiceTest {
     @Autowired
     DatabaseSettingsForTests databaseSettingsForTests;
 
+
     private AccountDTO getSavedTrunk(boolean isActive, boolean isAssociative, double balance) {
 
         String accountStatus = isActive ? Status.Active.code() : Status.Pending.code();
@@ -80,6 +81,7 @@ class DelegateCardAppRequestRequestServiceTest {
                 .cardType(CardType.Visa.name())
                 .accountId(savedAccount.getAccountId())
                 .accountNumber(savedAccount.getAccountNumber())
+                .customerIdentityNumber("NBE466754")
                 .build();
 
         //WHEN
@@ -124,6 +126,7 @@ class DelegateCardAppRequestRequestServiceTest {
                 .cardType(CardType.Visa.name())
                 .accountId(savedAccount.getAccountId())
                 .accountNumber(savedAccount.getAccountNumber())
+                .customerIdentityNumber("NBE466754")
                 .build();
 
         //WHEN
@@ -142,6 +145,7 @@ class DelegateCardAppRequestRequestServiceTest {
                 .cardType(CardType.Visa.name())
                 .accountId(savedAccount.getAccountId())
                 .accountNumber(savedAccount.getAccountNumber())
+                .customerIdentityNumber("NBE466754")
                 .build();
 
         //WHEN
@@ -160,6 +164,7 @@ class DelegateCardAppRequestRequestServiceTest {
                 .cardType(CardType.Visa.name())
                 .accountId(savedAccount.getAccountId())
                 .accountNumber(savedAccount.getAccountNumber())
+                .customerIdentityNumber("NBE466754")
                 .build();
 
         //WHEN
@@ -178,6 +183,7 @@ class DelegateCardAppRequestRequestServiceTest {
                 .cardType(CardType.Visa.name())
                 .accountId(savedAccount.getAccountId())
                 .accountNumber(savedAccount.getAccountNumber())
+                .customerIdentityNumber("NBE466754")
                 .build();
         CardAppRequestDTO savedRequestApp = delegateCardAppRequestService.sendRequest(cardAppRequestDTO);
 
@@ -199,6 +205,7 @@ class DelegateCardAppRequestRequestServiceTest {
                 .cardType(CardType.Visa.name())
                 .accountId(savedAccount.getAccountId())
                 .accountNumber(savedAccount.getAccountNumber())
+                .customerIdentityNumber("NBE466754")
                 .build();
         CardAppRequestDTO savedRequestApp = delegateCardAppRequestService.sendRequest(cardAppRequestDTO);
 

@@ -33,7 +33,9 @@ public class Endpoint {
 
     public interface Cards {
         public String ROOT = "/cards";
-        public String ADD = ROOT + "/add";
+        public String APP_REQUEST = ROOT + "/application-requests";
+        public String APP_REQUEST_APPROVE = APP_REQUEST + "/approve";
+        public String APP_REQUEST_REJECT = APP_REQUEST + "/reject";
         public String ACTIVATE = ROOT + "/activate";
         public String DEACTIVATE = ROOT + "/deactivate";
     }

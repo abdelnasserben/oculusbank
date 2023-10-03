@@ -213,6 +213,7 @@ create table cards(
 create table card_applications(
     request_id int not null auto_increment,
     account_id int not null,
+    customer_id int not null,
     card_type varchar(50),
     status int default 0,
     failure_reason varchar(255),
@@ -222,7 +223,8 @@ create table card_applications(
     updated_at datetime default now(),
 
     primary key(request_id),
-    foreign key(account_id) references accounts(account_id)
+    foreign key(account_id) references accounts(account_id),
+    foreign key(customer_id) references customers(customer_id)
 );
 
 -- table cheques structure --
@@ -445,9 +447,16 @@ c.updated_by,
 c.created_at,
 c.updated_at,
 a.account_name,
-a.account_number
+a.account_number,
+b.first_name as customer_first_name,
+b.last_name as customer_last_name,
+b.identity_number as customer_identity_number
 from
     card_applications as c
 inner join accounts as a
     on a.account_id = c.account_id
+inner join trunks as t
+    on t.account_id = c.account_id
+inner join customers as b
+    on b.customer_id = t.customer_id
 order by created_at desc;

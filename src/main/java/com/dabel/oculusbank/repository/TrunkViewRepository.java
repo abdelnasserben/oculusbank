@@ -9,4 +9,5 @@ public interface TrunkViewRepository extends ReadOnlyRepository<TrunkView, Integ
     List<TrunkView> findAllByCustomerId(int customerId);
     Optional<TrunkView> findByCustomerId(int customerId);
     Optional<TrunkView> findByAccountNumber(String accountNumber);
+    Optional<TrunkView> findByAccountNumberAndCustomerIdentityNumber(String accountNumber, String customerIdentity);
 }

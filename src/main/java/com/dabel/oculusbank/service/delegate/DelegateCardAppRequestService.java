@@ -7,6 +7,7 @@ import com.dabel.oculusbank.constant.Fees;
 import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.dto.AccountDTO;
 import com.dabel.oculusbank.dto.CardAppRequestDTO;
+import com.dabel.oculusbank.dto.TrunkDTO;
 import com.dabel.oculusbank.exception.BalanceInsufficientException;
 import com.dabel.oculusbank.exception.IllegalOperationException;
 import com.dabel.oculusbank.service.AccountService;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class DelegateCardAppRequestService implements OperationAcknowledgment<CardAppRequestDTO> {
@@ -29,7 +31,7 @@ public class DelegateCardAppRequestService implements OperationAcknowledgment<Ca
 
     public CardAppRequestDTO sendRequest(CardAppRequestDTO cardAppRequestDTO) {
 
-        AccountDTO account = accountService.findTrunkByNumber(cardAppRequestDTO.getAccountNumber());
+        TrunkDTO account = accountService.findTrunkByNumberAndCustomerIdentity(cardAppRequestDTO.getAccountNumber(), cardAppRequestDTO.getCustomerIdentityNumber());
 
         if(!AccountChecker.isActive(account) || AccountChecker.isAssociative(account))
             throw new IllegalOperationException("The account is not eligible for this operation");
@@ -38,6 +40,7 @@ public class DelegateCardAppRequestService implements OperationAcknowledgment<Ca
 
             CardAppRequestDTO failedCardApp = CardAppRequestDTO.builder()
                     .accountId(account.getAccountId())
+                    .customerId(account.getCustomerId())
                     .cardType(cardAppRequestDTO.getCardType())
                     .status(Status.Failed.code())
                     .failure_reason("Account balance is insufficient for card application request fees")
@@ -78,4 +81,10 @@ public class DelegateCardAppRequestService implements OperationAcknowledgment<Ca
 
         return cardAppRequestService.save(cardApp);
     }
+
+    public List<CardAppRequestDTO> findAll() {
+        return cardAppRequestService.findAll();
+    }
+
+    public CardAppRequestDTO findById(int requestId) {return cardAppRequestService.findById(requestId);}
 }

@@ -16,6 +16,7 @@ public class CardAppRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int requestId;
     private int accountId;
+    private int customerId;
     private String cardType;
     private String status;
     private String failure_reason;

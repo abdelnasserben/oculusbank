@@ -11,6 +11,8 @@ import com.dabel.oculusbank.repository.CardAppRequestViewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CardAppRequestService {
 
@@ -30,6 +32,11 @@ public class CardAppRequestService {
         return formatStatusToNameAndGetDTO(cardView);
     }
 
+    public List<CardAppRequestDTO> findAll() {
+        return cardAppRequestViewRepository.findAll().stream()
+                .map(CardAppRequestService::formatStatusToNameAndGetDTO)
+                .toList();
+    }
 
     private static CardAppRequestDTO formatStatusToNameAndGetDTO(CardAppRequestView cardAppRequestView) {
         cardAppRequestView.setStatus(Status.nameOf(cardAppRequestView.getStatus()));

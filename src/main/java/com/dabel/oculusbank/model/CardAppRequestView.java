@@ -18,7 +18,7 @@ public class CardAppRequestView {
     private int accountId;
     private String cardType;
     private String status;
-    private String failure_reason;
+    private String failureReason;
     private String initiatedBy;
     private String updatedBy;
     private LocalDateTime createdAt;

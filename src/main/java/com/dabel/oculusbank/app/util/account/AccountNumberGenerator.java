@@ -1,10 +1,10 @@
-package com.dabel.oculusbank.app;
+package com.dabel.oculusbank.app.util.account;
 
 import java.util.Random;
 
-public final class Generator {
+public final class AccountNumberGenerator {
 
-    public static String generateAccountNumber() {
+    public static String generate() {
         Random random = new Random();
         int part1 = random.nextInt(1000);
         int part2 = random.nextInt(1,10000);

@@ -46,9 +46,8 @@ public class PaymentController implements TransactionSubPageTitleConfig {
     @PostMapping(value = Endpoint.Payments.INIT)
     public String initExchange(Model model, @Valid PaymentDTO paymentDTO, BindingResult binding, RedirectAttributes redirect) {
 
-        setPageTitle(model, "Payments", USEFUL_BREADCRUMB);
-
         if(binding.hasErrors()) {
+            setPageTitle(model, "Payments", USEFUL_BREADCRUMB);
             return "payments-init";
         }
 

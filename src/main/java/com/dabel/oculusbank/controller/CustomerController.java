@@ -1,6 +1,6 @@
 package com.dabel.oculusbank.controller;
 
-import com.dabel.oculusbank.app.CardHelper;
+import com.dabel.oculusbank.app.util.card.CardNumberFormatter;
 import com.dabel.oculusbank.app.web.Endpoint;
 import com.dabel.oculusbank.app.web.PageTitleConfig;
 import com.dabel.oculusbank.constant.AccountMemberShip;
@@ -66,11 +66,10 @@ public class CustomerController implements PageTitleConfig {
                                           @RequestParam(required = false) boolean accountProfile,
                                           RedirectAttributes redirect) {
 
-        setPageTitle(model, "Add Customer", "Customers");
-
         if(binding.hasErrors()) {
-            model.addAttribute(MessageTag.ERROR, "Invalid information !");
+            setPageTitle(model, "Add Customer", "Customers");
             model.addAttribute("countries", Countries.getNames());
+            model.addAttribute(MessageTag.ERROR, "Invalid information !");
             return "customers-add";
         }
 
@@ -100,7 +99,7 @@ public class CustomerController implements PageTitleConfig {
 
         List<CardDTO> customerCards = delegateCardService.findAllByCustomerId(customerId)
                 .stream()
-                .peek(c -> c.setCardNumber(CardHelper.hideCardNumber(c.getCardNumber())))
+                .peek(c -> c.setCardNumber(CardNumberFormatter.hide(c.getCardNumber())))
                 .toList();
         boolean notifyNoActiveCreditCards = customerCards.stream()
                         .anyMatch(c -> c.getStatus().equals(Status.Active.name()));
@@ -140,12 +139,11 @@ public class CustomerController implements PageTitleConfig {
     @PostMapping(value = Endpoint.Customers.ROOT + "/{customerId}")
     public String updateCustomerGeneralInfo(Model model, @Valid CustomerDTO customer, BindingResult binding, RedirectAttributes redirect) {
 
-        setPageTitle(model, "Customer Details", "Customers");
-
         if(binding.hasErrors()) {
+            setPageTitle(model, "Customer Details", "Customers");
+            model.addAttribute("countries", Countries.getNames());
             model.addAttribute("customer", customer);
             model.addAttribute(MessageTag.ERROR, "Invalid information !");
-            model.addAttribute("countries", Countries.getNames());
             return "customers-details";
         }
 

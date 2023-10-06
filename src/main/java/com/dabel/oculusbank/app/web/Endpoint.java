@@ -6,38 +6,38 @@ public class Endpoint {
     private static final String REJECT = "/reject";
 
     public interface Transactions {
-        public String ROOT = "/transactions";
-        public String INIT = ROOT + "/init";
-        public String APPROVE = ROOT + Endpoint.APPROVE;
-        public String REJECT = ROOT + Endpoint.REJECT;
+        String ROOT = "/transactions";
+        String INIT = ROOT + "/init";
+        String APPROVE = ROOT + Endpoint.APPROVE;
+        String REJECT = ROOT + Endpoint.REJECT;
     }
 
     public interface Payments {
-        public String ROOT = Transactions.ROOT + "/payments";
-        public String INIT = ROOT + "/init";
-        public String APPROVE = ROOT + Endpoint.APPROVE;
-        public String REJECT = ROOT + Endpoint.REJECT;
+        String ROOT = Transactions.ROOT + "/payments";
+        String INIT = ROOT + "/init";
+        String APPROVE = ROOT + Endpoint.APPROVE;
+        String REJECT = ROOT + Endpoint.REJECT;
     }
 
     public interface Exchanges {
-        public String ROOT = Transactions.ROOT + "/exchanges";
-        public String INIT = ROOT + "/init";
-        public String APPROVE = ROOT + Endpoint.APPROVE;
-        public String REJECT = ROOT + Endpoint.REJECT;
+        String ROOT = Transactions.ROOT + "/exchanges";
+        String INIT = ROOT + "/init";
+        String APPROVE = ROOT + Endpoint.APPROVE;
+        String REJECT = ROOT + Endpoint.REJECT;
     }
 
     public interface Customers {
-        public String ROOT = "/customers";
-        public String ADD = ROOT + "/add";
+        String ROOT = "/customers";
+        String ADD = ROOT + "/add";
     }
 
     public interface Cards {
-        public String ROOT = "/cards";
-        public String APP_REQUEST = ROOT + "/application-requests";
-        public String APP_REQUEST_APPROVE = APP_REQUEST + "/approve";
-        public String APP_REQUEST_REJECT = APP_REQUEST + "/reject";
-        public String ACTIVATE = ROOT + "/activate";
-        public String DEACTIVATE = ROOT + "/deactivate";
+        String ROOT = "/cards";
+        String APP_REQUEST = ROOT + "/application-requests";
+        String APP_REQUEST_APPROVE = APP_REQUEST + "/approve";
+        String APP_REQUEST_REJECT = APP_REQUEST + "/reject";
+        String ACTIVATE = ROOT + "/activate";
+        String DEACTIVATE = ROOT + "/deactivate";
     }
 
 }

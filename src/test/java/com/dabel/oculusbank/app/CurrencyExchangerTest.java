@@ -1,5 +1,6 @@
 package com.dabel.oculusbank.app;
 
+import com.dabel.oculusbank.app.util.CurrencyExchanger;
 import com.dabel.oculusbank.constant.Currency;
 import org.junit.jupiter.api.Test;
 

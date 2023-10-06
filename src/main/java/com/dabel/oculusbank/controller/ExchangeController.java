@@ -46,9 +46,8 @@ public class ExchangeController implements TransactionSubPageTitleConfig {
     @PostMapping(value = Endpoint.Exchanges.INIT)
     public String initExchange(Model model, @Valid ExchangeDTO exchangeDTO, BindingResult binding, RedirectAttributes redirect) {
 
-        setPageTitle(model, "Exchange init", USEFUL_BREADCRUMB);
-
         if(binding.hasErrors()) {
+            setPageTitle(model, "Exchange init", USEFUL_BREADCRUMB);
             return "exchanges-init";
         }
 

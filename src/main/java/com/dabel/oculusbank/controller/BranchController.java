@@ -24,8 +24,7 @@ public class BranchController implements PageTitleConfig {
     @GetMapping("/branches")
     public String branches(Model model, BranchDTO branchDTO) {
 
-        setPageTitle(model, "Branches", "Settings");
-        model.addAttribute("branches", delegateBranchService.findAll());
+        setTitleAndAddListOfALlBranchesAttribute(model);
         return "branches";
     }
 
@@ -36,9 +35,8 @@ public class BranchController implements PageTitleConfig {
                                @RequestParam(required = false, defaultValue = "0") double assetUSD,
                                RedirectAttributes redirect) {
 
-        setPageTitle(model, "Branches", "Settings");
-
         if(binding.hasErrors() || assetKMF < 0 || assetEUR < 0 || assetUSD < 0) {
+            setTitleAndAddListOfALlBranchesAttribute(model);
             model.addAttribute(MessageTag.ERROR, "Invalid information !");
             return "branches";
         }
@@ -48,6 +46,11 @@ public class BranchController implements PageTitleConfig {
         redirect.addFlashAttribute(MessageTag.SUCCESS, "New branch added successfully !");
 
         return "redirect:/branches";
+    }
+
+    private void setTitleAndAddListOfALlBranchesAttribute(Model model) {
+        setPageTitle(model, "Branches", "Settings");
+        model.addAttribute("branches", delegateBranchService.findAll());
     }
 
     @Override

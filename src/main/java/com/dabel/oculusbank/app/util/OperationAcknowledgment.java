@@ -1,4 +1,4 @@
-package com.dabel.oculusbank.app;
+package com.dabel.oculusbank.app.util;
 
 public interface OperationAcknowledgment<T> {
     T approve(int operationId);

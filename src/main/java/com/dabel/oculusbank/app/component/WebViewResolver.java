@@ -1,4 +1,4 @@
-package com.dabel.oculusbank.app.components;
+package com.dabel.oculusbank.app.component;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorViewResolver;

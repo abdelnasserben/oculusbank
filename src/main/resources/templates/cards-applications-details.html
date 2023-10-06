@@ -184,7 +184,7 @@
                         <!--end::Row-->
 
                         <!--begin::Row-->
-                        <div th:unless="${requestDTO.status} != 'Rejected'" class="row mb-4">
+                        <div th:if="${#arrays.contains({'Rejected', 'Failed'}, requestDTO.status)}" class="row mb-4">
                             <!--begin::Label-->
                             <label class="col-lg-3 fw-bold text-muted">Failed reason :</label>
                             <!--end::Label-->

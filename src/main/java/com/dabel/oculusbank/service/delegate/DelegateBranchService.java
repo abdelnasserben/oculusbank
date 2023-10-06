@@ -1,6 +1,6 @@
 package com.dabel.oculusbank.service.delegate;
 
-import com.dabel.oculusbank.app.Generator;
+import com.dabel.oculusbank.app.util.account.AccountNumberGenerator;
 import com.dabel.oculusbank.constant.AccountProfile;
 import com.dabel.oculusbank.constant.AccountType;
 import com.dabel.oculusbank.constant.Currency;
@@ -31,7 +31,7 @@ public class DelegateBranchService {
         AccountDTO savedAccountKmf = accountService.save(
                 AccountDTO.builder()
                 .accountName(savedBranch.getBranchName())
-                .accountNumber(Generator.generateAccountNumber())
+                .accountNumber(AccountNumberGenerator.generate())
                 .accountType(AccountType.Business.name())
                 .accountProfile(AccountProfile.System.name())
                 .currency(Currency.KMF.name())
@@ -44,7 +44,7 @@ public class DelegateBranchService {
         AccountDTO savedAccountEur = accountService.save(
                 AccountDTO.builder()
                 .accountName(savedBranch.getBranchName())
-                .accountNumber(Generator.generateAccountNumber())
+                .accountNumber(AccountNumberGenerator.generate())
                 .accountType(AccountType.Business.name())
                 .accountProfile(AccountProfile.System.name())
                 .currency(Currency.EUR.name())
@@ -57,7 +57,7 @@ public class DelegateBranchService {
         AccountDTO savedAccountUsd = accountService.save(
                 AccountDTO.builder()
                         .accountName(savedBranch.getBranchName())
-                        .accountNumber(Generator.generateAccountNumber())
+                        .accountNumber(AccountNumberGenerator.generate())
                         .accountType(AccountType.Business.name())
                         .accountProfile(AccountProfile.System.name())
                         .currency(Currency.USD.name())

@@ -1,9 +1,9 @@
 package com.dabel.oculusbank.service.delegate;
 
-import com.dabel.oculusbank.app.CustomerChecker;
-import com.dabel.oculusbank.app.Generator;
-import com.dabel.oculusbank.app.LoanCalculator;
-import com.dabel.oculusbank.app.OperationAcknowledgment;
+import com.dabel.oculusbank.app.util.CustomerChecker;
+import com.dabel.oculusbank.app.util.account.AccountNumberGenerator;
+import com.dabel.oculusbank.app.util.LoanCalculator;
+import com.dabel.oculusbank.app.util.OperationAcknowledgment;
 import com.dabel.oculusbank.constant.AccountType;
 import com.dabel.oculusbank.constant.Currency;
 import com.dabel.oculusbank.constant.Status;
@@ -40,7 +40,7 @@ public class DelegateLoanService implements OperationAcknowledgment<LoanDTO> {
         AccountDTO account = accountService.save(
                 AccountDTO.builder()
                 .accountName(customer.getFirstName() + " " + customer.getLastName())
-                .accountNumber(Generator.generateAccountNumber())
+                .accountNumber(AccountNumberGenerator.generate())
                 .accountType(AccountType.Loan.name())
                 .currency(Currency.KMF.name())
                 .balance(-loanCalculator.getTotalAmountDue())

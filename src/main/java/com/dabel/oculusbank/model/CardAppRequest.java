@@ -19,7 +19,7 @@ public class CardAppRequest {
     private int customerId;
     private String cardType;
     private String status;
-    private String failure_reason;
+    private String failureReason;
     private String initiatedBy;
     private String updatedBy;
     @CurrentTimestamp(event = EventType.INSERT)

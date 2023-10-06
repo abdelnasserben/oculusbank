@@ -1,4 +1,4 @@
-package com.dabel.oculusbank.app;
+package com.dabel.oculusbank.app.util;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;

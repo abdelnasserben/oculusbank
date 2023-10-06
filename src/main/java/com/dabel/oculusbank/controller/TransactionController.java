@@ -47,9 +47,8 @@ public class TransactionController implements PageTitleConfig {
     @PostMapping(value = Endpoint.Transactions.INIT)
     public String initBasicTransaction(Model model, @Valid TransactionDTO transactionDTO, BindingResult binding, RedirectAttributes redirect) {
 
-        setPageTitle(model, "Transaction Init", "Transactions");
-
         if(binding.hasErrors()) {
+            setPageTitle(model, "Transaction Init", "Transactions");
             model.addAttribute(MessageTag.ERROR, "Invalid information!");
             return "transactions-init";
         }

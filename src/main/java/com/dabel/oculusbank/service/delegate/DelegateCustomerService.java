@@ -1,6 +1,6 @@
 package com.dabel.oculusbank.service.delegate;
 
-import com.dabel.oculusbank.app.Generator;
+import com.dabel.oculusbank.app.util.account.AccountNumberGenerator;
 import com.dabel.oculusbank.constant.Currency;
 import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.dto.AccountDTO;
@@ -35,7 +35,7 @@ public class DelegateCustomerService {
         AccountDTO savedAccount = accountService.save(
                 AccountDTO.builder()
                 .accountName(savedCustomer.getFirstName() + " " + savedCustomer.getLastName())
-                .accountNumber(Generator.generateAccountNumber())
+                .accountNumber(AccountNumberGenerator.generate())
                 .accountType(accountType)
                 .accountProfile(accountProfile)
                 .currency(Currency.KMF.name())

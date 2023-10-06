@@ -1,4 +1,4 @@
-package com.dabel.oculusbank.app;
+package com.dabel.oculusbank.app.util.account;
 
 import com.dabel.oculusbank.constant.AccountProfile;
 import com.dabel.oculusbank.constant.Status;

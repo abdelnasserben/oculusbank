@@ -1,7 +1,7 @@
 package com.dabel.oculusbank.service.delegate;
 
-import com.dabel.oculusbank.app.CurrencyExchanger;
-import com.dabel.oculusbank.app.OperationAcknowledgment;
+import com.dabel.oculusbank.app.util.CurrencyExchanger;
+import com.dabel.oculusbank.app.util.OperationAcknowledgment;
 import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.dto.ExchangeDTO;
 import com.dabel.oculusbank.exception.IllegalOperationException;

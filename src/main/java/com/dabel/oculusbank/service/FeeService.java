@@ -1,6 +1,6 @@
 package com.dabel.oculusbank.service;
 
-import com.dabel.oculusbank.app.Fee;
+import com.dabel.oculusbank.app.util.Fee;
 import com.dabel.oculusbank.constant.Currency;
 import com.dabel.oculusbank.constant.SourceType;
 import com.dabel.oculusbank.constant.Status;

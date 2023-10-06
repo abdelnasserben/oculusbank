@@ -1,5 +1,6 @@
 package com.dabel.oculusbank.app;
 
+import com.dabel.oculusbank.app.util.LoanCalculator;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

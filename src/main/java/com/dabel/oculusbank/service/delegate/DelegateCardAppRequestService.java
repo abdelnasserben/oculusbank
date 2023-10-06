@@ -1,8 +1,8 @@
 package com.dabel.oculusbank.service.delegate;
 
-import com.dabel.oculusbank.app.AccountChecker;
-import com.dabel.oculusbank.app.Fee;
-import com.dabel.oculusbank.app.OperationAcknowledgment;
+import com.dabel.oculusbank.app.util.account.AccountChecker;
+import com.dabel.oculusbank.app.util.Fee;
+import com.dabel.oculusbank.app.util.OperationAcknowledgment;
 import com.dabel.oculusbank.constant.Fees;
 import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.dto.AccountDTO;
@@ -43,7 +43,7 @@ public class DelegateCardAppRequestService implements OperationAcknowledgment<Ca
                     .customerId(account.getCustomerId())
                     .cardType(cardAppRequestDTO.getCardType())
                     .status(Status.Failed.code())
-                    .failure_reason("Account balance is insufficient for card application request fees")
+                    .failureReason("Account balance is insufficient for card application request fees")
                     .build();
 
             cardAppRequestService.save(failedCardApp);
@@ -76,7 +76,7 @@ public class DelegateCardAppRequestService implements OperationAcknowledgment<Ca
     public CardAppRequestDTO reject(int operationId, String remarks) {
         CardAppRequestDTO cardApp = cardAppRequestService.findById(operationId);
         cardApp.setStatus(Status.Rejected.code());
-        cardApp.setFailure_reason(remarks);
+        cardApp.setFailureReason(remarks);
         cardApp.setUpdatedAt(LocalDateTime.now());
 
         return cardAppRequestService.save(cardApp);

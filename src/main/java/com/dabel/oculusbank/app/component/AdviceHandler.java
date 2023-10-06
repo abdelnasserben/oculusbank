@@ -1,4 +1,4 @@
-package com.dabel.oculusbank.app.components;
+package com.dabel.oculusbank.app.component;
 
 import com.dabel.oculusbank.constant.web.MessageTag;
 import com.dabel.oculusbank.exception.AccountNotFoundException;

@@ -1,7 +1,7 @@
 package com.dabel.oculusbank.service;
 
 import com.dabel.oculusbank.DatabaseSettingsForTests;
-import com.dabel.oculusbank.app.Fee;
+import com.dabel.oculusbank.app.util.Fee;
 import com.dabel.oculusbank.constant.AccountType;
 import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.dto.AccountDTO;

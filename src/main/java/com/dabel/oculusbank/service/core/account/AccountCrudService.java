@@ -5,7 +5,7 @@ import com.dabel.oculusbank.service.support.account.AccountReadService;
 import org.springframework.stereotype.Service;
 
 @Service
-public interface AccountCruService extends AccountReadService<AccountDTO> {
+public interface AccountCrudService extends AccountReadService<AccountDTO> {
 
     AccountDTO save(AccountDTO accountDTO);
 }

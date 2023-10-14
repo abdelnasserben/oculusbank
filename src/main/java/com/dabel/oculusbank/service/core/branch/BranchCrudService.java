@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public interface BranchCruService {
+public interface BranchCrudService {
 
     BranchDTO save(BranchDTO branchDTO);
 

@@ -5,12 +5,12 @@ import com.dabel.oculusbank.exception.AccountNotFoundException;
 import com.dabel.oculusbank.mapper.AccountMapper;
 import com.dabel.oculusbank.model.Account;
 import com.dabel.oculusbank.repository.AccountRepository;
-import com.dabel.oculusbank.service.core.account.AccountCruService;
+import com.dabel.oculusbank.service.core.account.AccountCrudService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SampleAccountService implements AccountCruService {
+public class AccountCrudServiceImpl implements AccountCrudService {
 
     @Autowired
     AccountRepository accountRepository;

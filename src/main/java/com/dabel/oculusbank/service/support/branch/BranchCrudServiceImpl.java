@@ -6,7 +6,7 @@ import com.dabel.oculusbank.exception.BranchNotFoundException;
 import com.dabel.oculusbank.mapper.BranchMapper;
 import com.dabel.oculusbank.model.Branch;
 import com.dabel.oculusbank.repository.BranchRepository;
-import com.dabel.oculusbank.service.core.branch.BranchCruService;
+import com.dabel.oculusbank.service.core.branch.BranchCrudService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class SampleBranchService implements BranchCruService {
+public class BranchCrudServiceImpl implements BranchCrudService {
 
     @Autowired
     BranchRepository branchRepository;

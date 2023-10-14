@@ -31,7 +31,7 @@ public class DelegateLoanService implements OperationAcknowledgment<LoanDTO> {
 
     public LoanDTO loan(LoanDTO loanDTO) {
 
-        CustomerDTO customer = customerService.findById(loanDTO.getCustomerId());
+        CustomerDTO customer = customerService.findByIdentityNumber(loanDTO.getIdentityNumber());
         if(!CustomerChecker.isActive(customer))
             throw new IllegalOperationException("Customer must be active");
 
@@ -48,6 +48,7 @@ public class DelegateLoanService implements OperationAcknowledgment<LoanDTO> {
                 .build());
 
         //TODO: Update loan information before saving
+        loanDTO.setCustomerId(customer.getCustomerId());
         loanDTO.setAccountId(account.getAccountId());
         loanDTO.setCurrency(Currency.KMF.name());
         loanDTO.setTotalAmount(loanCalculator.getTotalAmountDue());
@@ -62,11 +63,11 @@ public class DelegateLoanService implements OperationAcknowledgment<LoanDTO> {
         LoanDTO loan = loanService.findLoanById(operationId);
         AccountDTO account = accountService.findByNumber(loan.getAccountNumber());
 
-        loan.setStatus(Status.Approved.code());
+        loan.setStatus(Status.Active.code());
         loan.setUpdatedBy("Administrator");
         loan.setUpdatedAt(LocalDateTime.now());
 
-        account.setStatus(Status.Approved.code());
+        account.setStatus(Status.Active.code());
         account.setUpdatedAt(LocalDateTime.now());
         account.setBalance(loan.getTotalAmount());
         accountService.save(account);

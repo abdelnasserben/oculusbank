@@ -4,7 +4,7 @@ import com.dabel.oculusbank.dto.ChequeDTO;
 import org.springframework.stereotype.Service;
 
 @Service
-public interface ChequeCruService {
+public interface ChequeCrudService {
 
     ChequeDTO save(ChequeDTO chequeDTO);
 

@@ -2,12 +2,14 @@ package com.dabel.oculusbank.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.Immutable;
 
 import java.time.LocalDateTime;
 
 @Data
 @Entity
 @Table(name = "v_loans")
+@Immutable
 public class LoanView {
 
     @Id
@@ -21,6 +23,7 @@ public class LoanView {
     private int duration;
     private double totalAmount;
     private double perMonthAmount;
+    private double remainingAmount;
     private String reason;
     private String failureReason;
     private String status;

@@ -7,13 +7,13 @@ import com.dabel.oculusbank.model.Trunk;
 import com.dabel.oculusbank.model.TrunkView;
 import com.dabel.oculusbank.repository.TrunkRepository;
 import com.dabel.oculusbank.repository.TrunkViewRepository;
-import com.dabel.oculusbank.service.core.account.TrunkCruService;
+import com.dabel.oculusbank.service.core.account.TrunkCrudService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class SampleTrunkService implements TrunkCruService {
+public class TrunkCrudServiceImpl implements TrunkCrudService {
 
     @Autowired
     TrunkRepository trunkRepository;

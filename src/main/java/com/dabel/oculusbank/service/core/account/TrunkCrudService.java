@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public interface TrunkCruService extends AccountReadService<TrunkDTO> {
+public interface TrunkCrudService extends AccountReadService<TrunkDTO> {
 
     TrunkDTO save(int accountId, int customerId, String membership);
 

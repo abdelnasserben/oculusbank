@@ -10,6 +10,7 @@ import com.dabel.oculusbank.constant.web.Countries;
 import com.dabel.oculusbank.constant.web.CurrentPageTitle;
 import com.dabel.oculusbank.constant.web.MessageTag;
 import com.dabel.oculusbank.dto.*;
+import com.dabel.oculusbank.service.LoanService;
 import com.dabel.oculusbank.service.delegate.*;
 import jakarta.persistence.EntityManager;
 import jakarta.validation.Valid;
@@ -40,6 +41,8 @@ public class CustomerController implements PageTitleConfig {
     DelegatePaymentService delegatePaymentService;
     @Autowired
     DelegateExchangeService delegateExchangeService;
+    @Autowired
+    LoanService loanService;
     @Autowired
     EntityManager entityManager;
 
@@ -122,6 +125,10 @@ public class CustomerController implements PageTitleConfig {
                 .limit(10)
                 .toList();
 
+        List<LoanDTO> customerLoans = loanService.findAllByCustomerIdentityNumber(customer.getIdentityNumber()).stream()
+                .filter(l -> l.getStatus().equals(Status.Active.name()))
+                .toList();
+
         setPageTitle(model, "Customer Details", "Customers");
         model.addAttribute("customer", customer);
         model.addAttribute("accounts", customerAccounts);
@@ -132,6 +139,7 @@ public class CustomerController implements PageTitleConfig {
         model.addAttribute("transactions", lastTenCustomerTransactions);
         model.addAttribute("payments", lastTenCustomerPayments);
         model.addAttribute("exchanges", lastTenCustomerExchanges);
+        model.addAttribute("loans", customerLoans);
 
         return "customers-details";
     }

@@ -8,7 +8,7 @@ import com.dabel.oculusbank.model.Vault;
 import com.dabel.oculusbank.model.VaultView;
 import com.dabel.oculusbank.repository.VaultRepository;
 import com.dabel.oculusbank.repository.VaultViewRepository;
-import com.dabel.oculusbank.service.core.account.VaultCruService;
+import com.dabel.oculusbank.service.core.account.VaultCrudService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class SampleVaultService implements VaultCruService {
+public class VaultCrudServiceImpl implements VaultCrudService {
 
     @Autowired
     VaultRepository vaultRepository;

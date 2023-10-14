@@ -7,14 +7,14 @@ import com.dabel.oculusbank.model.CardAppRequest;
 import com.dabel.oculusbank.model.CardAppRequestView;
 import com.dabel.oculusbank.repository.CardAppRequestRepository;
 import com.dabel.oculusbank.repository.CardAppRequestViewRepository;
-import com.dabel.oculusbank.service.core.card.CardApplicationCruService;
+import com.dabel.oculusbank.service.core.card.CardApplicationCrudService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class SampleCardApplicationService implements CardApplicationCruService {
+public class CardApplicationCrudServiceImpl implements CardApplicationCrudService {
 
     @Autowired
     CardAppRequestRepository cardAppRequestRepository;

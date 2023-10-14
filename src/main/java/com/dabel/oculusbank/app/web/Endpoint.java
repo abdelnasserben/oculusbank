@@ -40,4 +40,9 @@ public class Endpoint {
         String DEACTIVATE = ROOT + "/deactivate";
     }
 
+    public interface Loans {
+        String ROOT = "/loans";
+        String APPROVE = ROOT + Endpoint.APPROVE;
+        String REJECT = ROOT + Endpoint.REJECT;
+    }
 }

@@ -5,7 +5,7 @@ import com.dabel.oculusbank.service.support.account.AccountReadService;
 
 import java.util.List;
 
-public interface VaultCruService extends AccountReadService<VaultDTO> {
+public interface VaultCrudService extends AccountReadService<VaultDTO> {
 
     VaultDTO save(int accountId, int branchId);
 

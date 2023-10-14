@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public interface CustomerCruService {
+public interface CustomerCrudService {
 
     CustomerDTO save(CustomerDTO customerDTO);
 

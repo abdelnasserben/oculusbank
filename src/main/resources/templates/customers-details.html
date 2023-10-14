@@ -1198,7 +1198,7 @@
                         <!--begin::Toolbar-->
                         <div class="card-toolbar">
                             <a href="#" class="btn btn-sm btn-light-primary my-1">
-                                View More
+                                Action
                             </a>
                         </div>
                         <!--end::Toolbar-->
@@ -1223,44 +1223,25 @@
                                     </tr>
                                 </thead>
                                 <tbody class="fw-6 fw-bold text-gray-600">
-                                    <tr>
+                                    <td th:if="${#lists.isEmpty(loans)}" class="text-center" colspan="7">No data
+                                        avalaible</td>
+                                    <tr th:each="loan: ${loans}">
                                         <td>
-                                            <a href="#" class="text-hover-primary text-gray-600">14330</a>
+                                            <a th:href="@{/loans/{id}(id=${loan.loanId})}" th:text="${loan.loanId}"
+                                                class="text-hover-primary text-gray-600">14330</a>
                                         </td>
-                                        <td>Gold</td>
-                                        <td>0071001997</td>
-                                        <td>2 000 000 KMF</td>
-                                        <td>1 750 000 KMF</td>
+                                        <td th:text="${loan.loanType}">Gold</td>
+                                        <td th:text="${loan.accountNumber}">0071001997</td>
+                                        <td th:text="${loan.issuedAmount + ' KMF'}">500 0000 KMF</td>
+                                        <td th:text="${loan.totalAmount + ' KMF'}">500 0000 KMF</td>
                                         <td class="pe-0">
-                                            <div class="badge badge-light-danger">Failed</div>
+                                            <div th:text="${loan.status}" class="badge"
+                                                th:classappend="${loan.status} == 'Active' ? 'badge-light-success' : (${loan.status} == 'Pending' ? 'badge-light-warning' : 'badge-light-danger')">
+                                                Failed</div>
                                         </td>
-                                        <td>21/09/2023 15:56</td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="#" class="text-hover-primary text-gray-600">14330</a>
-                                        </td>
-                                        <td>Gold</td>
-                                        <td>0071001997</td>
-                                        <td>2 000 000 KMF</td>
-                                        <td>1 750 000 KMF</td>
-                                        <td class="pe-0">
-                                            <div class="badge badge-light-success">Approved</div>
-                                        </td>
-                                        <td>21/09/2023 15:56</td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="#" class="text-hover-primary text-gray-600">14330</a>
-                                        </td>
-                                        <td>Salary</td>
-                                        <td>0071001997</td>
-                                        <td>2 000 000 KMF</td>
-                                        <td>1 750 000 KMF</td>
-                                        <td class="pe-0">
-                                            <div class="badge badge-light-warning">Pending</div>
-                                        </td>
-                                        <td>21/09/2023 15:56</td>
+                                        <td th:text="${#temporals.format(loan.createdAt, 'yyyy-MM-dd HH:mm')}">
+                                            21/09/2023
+                                            15:56</td>
                                     </tr>
                                 </tbody>
                                 <!--end::Tbody-->
@@ -2012,8 +1993,8 @@
                     </div>
                     <div>
                         <label class="required form-label">Card Type</label>
-                        <select name="cardType" class="form-select" data-control="select2"
-                            data-hide-search="true" data-placeholder="Card type">
+                        <select name="cardType" class="form-select" data-control="select2" data-hide-search="true"
+                            data-placeholder="Card type">
                             <option value=""></option>
                             <option value="Visa">Visa</option>
                             <option value="Mastercard">Mastercard</option>

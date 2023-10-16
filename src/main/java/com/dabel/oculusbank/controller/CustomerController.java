@@ -4,7 +4,6 @@ import com.dabel.oculusbank.app.util.card.CardNumberFormatter;
 import com.dabel.oculusbank.app.web.Endpoint;
 import com.dabel.oculusbank.app.web.PageTitleConfig;
 import com.dabel.oculusbank.constant.AccountMemberShip;
-import com.dabel.oculusbank.constant.AccountProfile;
 import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.constant.web.Countries;
 import com.dabel.oculusbank.constant.web.CurrentPageTitle;
@@ -66,7 +65,7 @@ public class CustomerController implements PageTitleConfig {
     public String addNewCustomer(Model model, @Valid CustomerDTO customerDTO, BindingResult binding,
                                           @RequestParam(required = false) String accountName,
                                           @RequestParam(defaultValue = "Saving") String accountType,
-                                          @RequestParam(required = false) boolean accountProfile,
+                                          @RequestParam(required = false) String accountProfile,
                                           RedirectAttributes redirect) {
 
         if(binding.hasErrors()) {
@@ -77,9 +76,12 @@ public class CustomerController implements PageTitleConfig {
         }
 
         customerDTO.setBranchId(1); //We'll replace this automatically by user authenticated
-        String accountProfileValue = accountProfile ? AccountProfile.Associative.name() : AccountProfile.Personal.name();
-        String accountMembership = accountProfile ? AccountMemberShip.Associated.name() : AccountMemberShip.Owner.name();
-        delegateCustomerService.create(customerDTO, accountType, accountProfileValue, accountMembership);
+        String accountMembership = switch(accountProfile){
+            case "Associative" -> AccountMemberShip.Associated.name();
+            case "Joint" -> AccountMemberShip.Jointed.name();
+            default -> AccountMemberShip.Owner.name();
+        };
+        delegateCustomerService.create(customerDTO, accountType, accountProfile, accountMembership);
 
         redirect.addFlashAttribute(MessageTag.SUCCESS, "Customer added successfully !");
         return "redirect:" + Endpoint.Customers.ADD;

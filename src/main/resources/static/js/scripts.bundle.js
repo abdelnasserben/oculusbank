@@ -7501,6 +7501,8 @@ var KTOtherComponents = function () {
     // Define shared variables
     var flatpickr;
     var stepper;
+    var myDropzone;
+    var myHandleStatus;
 
     // Private functions
     const initFlatPickr = () => {
@@ -7513,7 +7515,7 @@ var KTOtherComponents = function () {
     }
 
     const initStepper = () => {
-        var element =  document.querySelector("#kt_stepper_example_basic");
+        var element = document.querySelector("#kt_stepper_example_basic");
         stepper = new KTStepper(element);
 
         // Handle next step
@@ -7527,6 +7529,52 @@ var KTOtherComponents = function () {
         });
     }
 
+    // Init DropzoneJS --- more info:
+    const initDropzone = () => {
+        myDropzone = new Dropzone("#kt_upload_more_media", {
+            url: "https://keenthemes.com/scripts/void.php", // Set the url for your upload script location
+            paramName: "file", // The name that will be used to transfer the file
+            maxFiles: 10,
+            maxFilesize: 10, // MB
+            addRemoveLinks: true,
+            accept: function (file, done) {
+                if (file.name == "wow.jpg") {
+                    done("Naha, you don't.");
+                } else {
+                    done();
+                }
+            }
+        });
+    }
+
+    // Customer status handler
+    const handleStatus = () => {
+        myHandleStatus = document.getElementById('kt_handle_status');
+        const target = document.getElementById('kt_handle_status');
+        const select = document.getElementById('kt_handle_status_select');
+        const statusClasses = ['bg-success', 'bg-warning'];
+
+        $(select).on('change', function (e) {
+            const value = e.target.value;
+
+            switch (value) {
+                case "active": {
+                    target.classList.remove(...statusClasses);
+                    target.classList.add('bg-success');
+                    break;
+                }
+                case "pending": {
+                    target.classList.remove(...statusClasses);
+                    target.classList.add('bg-warning');
+                    showDatepicker();
+                    break;
+                }
+                default:
+                    break;
+            }
+        });
+    }
+
 
     // Public methods
     return {
@@ -7536,10 +7584,17 @@ var KTOtherComponents = function () {
                 initFlatPickr();
             }
 
-            if(!stepper) {
+            if (!stepper) {
                 initStepper();
             }
 
+            if (!myDropzone) {
+                initDropzone();
+            }
+
+            if (!myHandleStatus) {
+                handleStatus();
+            }
         }
     };
 }();
@@ -7547,4 +7602,12 @@ var KTOtherComponents = function () {
 // On document ready
 KTUtil.onDOMContentLoaded(function () {
     KTOtherComponents.init();
+});
+
+
+//spring ajax
+var firstName = $("input[name = 'firstName']");
+var lastName = $("input[name = 'lastName']");
+$(firstName, lastName).change(function(){
+    $("input[name='accountName'").val(firstName.val() + " " + lastName.val());
 });

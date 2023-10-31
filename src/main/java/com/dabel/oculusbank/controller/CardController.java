@@ -2,6 +2,7 @@ package com.dabel.oculusbank.controller;
 
 import com.dabel.oculusbank.app.web.CardSubPageTitleConfig;
 import com.dabel.oculusbank.app.web.Endpoint;
+import com.dabel.oculusbank.app.web.View;
 import com.dabel.oculusbank.constant.web.MessageTag;
 import com.dabel.oculusbank.dto.CardDTO;
 import com.dabel.oculusbank.service.delegate.DelegateCardService;
@@ -20,26 +21,26 @@ public class CardController implements CardSubPageTitleConfig {
     @Autowired
     DelegateCardService delegateCardService;
 
-    @GetMapping(value = Endpoint.Cards.ROOT + "/{cardId}")
+    @GetMapping(value = Endpoint.Card.ROOT + "/{cardId}")
     public String cardDetails(@PathVariable int cardId, Model model) {
 
         CardDTO card = delegateCardService.finById(cardId);
         setPageTitle(model, "Card Details", null);
         model.addAttribute("card", card);
-        return "cards-details";
+        return View.Card.DETAILS;
     }
 
-    @GetMapping(value = Endpoint.Cards.ACTIVATE + "/{cardId}")
+    @GetMapping(value = Endpoint.Card.ACTIVATE + "/{cardId}")
     public String approveCard(@PathVariable int cardId, RedirectAttributes redirect) {
 
         delegateCardService.activate(cardId);
 
         redirect.addFlashAttribute(MessageTag.SUCCESS, "Card successfully activated !");
 
-        return "redirect:" + Endpoint.Cards.ROOT + "/" + cardId;
+        return "redirect:" + Endpoint.Card.ROOT + "/" + cardId;
     }
 
-    @PostMapping(value = Endpoint.Cards.DEACTIVATE + "/{cardId}")
+    @PostMapping(value = Endpoint.Card.DEACTIVATE + "/{cardId}")
     public String rejectCard(@PathVariable int cardId, @RequestParam String rejectReason, RedirectAttributes redirect) {
 
         if(rejectReason.isBlank())
@@ -49,7 +50,7 @@ public class CardController implements CardSubPageTitleConfig {
             delegateCardService.deactivate(cardId, rejectReason);
         }
 
-        return "redirect:" + Endpoint.Cards.ROOT + "/" + cardId;
+        return "redirect:" + Endpoint.Card.ROOT + "/" + cardId;
     }
 
 }

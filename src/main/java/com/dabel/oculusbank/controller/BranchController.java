@@ -1,6 +1,8 @@
 package com.dabel.oculusbank.controller;
 
+import com.dabel.oculusbank.app.web.Endpoint;
 import com.dabel.oculusbank.app.web.PageTitleConfig;
+import com.dabel.oculusbank.app.web.View;
 import com.dabel.oculusbank.constant.web.CurrentPageTitle;
 import com.dabel.oculusbank.constant.web.MessageTag;
 import com.dabel.oculusbank.dto.BranchDTO;
@@ -21,14 +23,14 @@ public class BranchController implements PageTitleConfig {
     @Autowired
     DelegateBranchService delegateBranchService;
 
-    @GetMapping("/branches")
+    @GetMapping(value = Endpoint.Branch.ROOT)
     public String branches(Model model, BranchDTO branchDTO) {
 
         setTitleAndAddListOfALlBranchesAttribute(model);
-        return "branches";
+        return View.Branch.ROOT;
     }
 
-    @PostMapping("/branches")
+    @PostMapping(value = Endpoint.Branch.ROOT)
     public String addNewBranch(Model model, @Valid BranchDTO branchDTO, BindingResult binding,
                                @RequestParam(required = false, defaultValue = "0") double assetKMF,
                                @RequestParam(required = false, defaultValue = "0") double assetEUR,
@@ -38,14 +40,14 @@ public class BranchController implements PageTitleConfig {
         if(binding.hasErrors() || assetKMF < 0 || assetEUR < 0 || assetUSD < 0) {
             setTitleAndAddListOfALlBranchesAttribute(model);
             model.addAttribute(MessageTag.ERROR, "Invalid information !");
-            return "branches";
+            return View.Branch.ROOT;
         }
 
         double[] vaultsAssets = new double[]{assetKMF, assetEUR, assetUSD};
         delegateBranchService.create(branchDTO, vaultsAssets);
         redirect.addFlashAttribute(MessageTag.SUCCESS, "New branch added successfully !");
 
-        return "redirect:/branches";
+        return "redirect:" + Endpoint.Branch.ROOT;
     }
 
     private void setTitleAndAddListOfALlBranchesAttribute(Model model) {

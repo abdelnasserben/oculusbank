@@ -2,6 +2,7 @@ package com.dabel.oculusbank.controller;
 
 import com.dabel.oculusbank.app.web.Endpoint;
 import com.dabel.oculusbank.app.web.PageTitleConfig;
+import com.dabel.oculusbank.app.web.View;
 import com.dabel.oculusbank.constant.web.CurrentPageTitle;
 import com.dabel.oculusbank.constant.web.MessageTag;
 import com.dabel.oculusbank.dto.LoanDTO;
@@ -29,50 +30,50 @@ public class LoanController implements PageTitleConfig {
     @Autowired
     EntityManager entityManager;
 
-    @GetMapping(value = Endpoint.Loans.ROOT)
+    @GetMapping(value = Endpoint.Loan.ROOT)
     public String loansListing(Model model, LoanDTO loanDTO) {
 
         setPageTitle(model, "Loans", null);
         model.addAttribute("loans", loanService.findAll());
-        return "loans";
+        return View.Loan.ROOT;
     }
 
-    @PostMapping(value = Endpoint.Loans.ROOT)
+    @PostMapping(value = Endpoint.Loan.ROOT)
     public String initLoan(Model model, @Valid LoanDTO loanDTO, BindingResult binding, RedirectAttributes redirect) {
 
         if(binding.hasErrors()) {
             setPageTitle(model, "Loans", null);
             model.addAttribute(MessageTag.ERROR, "Invalid information!");
-            return "loans";
+            return View.Loan.ROOT;
         }
 
         entityManager.clear();
         delegateLoanService.loan(loanDTO);
 
         redirect.addFlashAttribute(MessageTag.SUCCESS, "Loan successfully initiated.");
-        return "redirect:" + Endpoint.Loans.ROOT;
+        return "redirect:" + Endpoint.Loan.ROOT;
     }
 
-    @GetMapping(value = Endpoint.Loans.ROOT + "/{loanId}")
+    @GetMapping(value = Endpoint.Loan.ROOT + "/{loanId}")
     public String loanDetails(Model model, @PathVariable int loanId) {
 
         LoanDTO loanDTO = loanService.findLoanById(loanId);
         setPageTitle(model, "Loan Details", "Loans");
         model.addAttribute("loan", loanDTO);
-        return "loans-details";
+        return View.Loan.DETAILS;
     }
 
-    @GetMapping(value = Endpoint.Loans.APPROVE + "/{loanId}")
-    public String approveELoan(@PathVariable int loanId, RedirectAttributes redirect) {
+    @GetMapping(value = Endpoint.Loan.APPROVE + "/{loanId}")
+    public String approveLoan(@PathVariable int loanId, RedirectAttributes redirect) {
 
         delegateLoanService.approve(loanId);
         redirect.addFlashAttribute(MessageTag.SUCCESS, "Loan successfully approved!");
 
-        return "redirect:" + Endpoint.Loans.ROOT + "/" + loanId;
+        return "redirect:" + Endpoint.Loan.ROOT + "/" + loanId;
     }
 
-    @PostMapping(value = Endpoint.Loans.REJECT + "/{loanId}")
-    public String rejectExchange(@PathVariable int loanId, @RequestParam String rejectReason, RedirectAttributes redirect) {
+    @PostMapping(value = Endpoint.Loan.REJECT + "/{loanId}")
+    public String rejectLoan(@PathVariable int loanId, @RequestParam String rejectReason, RedirectAttributes redirect) {
 
         if(rejectReason.isBlank())
             redirect.addFlashAttribute(MessageTag.ERROR, "Reject reason is mandatory!");
@@ -81,7 +82,7 @@ public class LoanController implements PageTitleConfig {
             delegateLoanService.reject(loanId, rejectReason);
         }
 
-        return "redirect:" + Endpoint.Loans.ROOT + "/" + loanId;
+        return "redirect:" + Endpoint.Loan.ROOT + "/" + loanId;
     }
 
     @Override

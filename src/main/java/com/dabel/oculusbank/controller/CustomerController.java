@@ -45,7 +45,7 @@ public class CustomerController implements PageTitleConfig {
     @Autowired
     EntityManager entityManager;
 
-    @GetMapping(value = Endpoint.Customers.ROOT)
+    @GetMapping(value = Endpoint.Customer.ROOT)
     public String customers(Model model) {
 
         setPageTitle(model, "Customers", null);
@@ -53,7 +53,7 @@ public class CustomerController implements PageTitleConfig {
         return "customers";
     }
 
-    @GetMapping(value = Endpoint.Customers.ADD)
+    @GetMapping(value = Endpoint.Customer.ADD)
     public String addNewCustomer(Model model, CustomerDTO customerDTO) {
 
         setPageTitle(model, "Add Customer", "Customers");
@@ -61,7 +61,7 @@ public class CustomerController implements PageTitleConfig {
         return "customers-add";
     }
 
-    @PostMapping(value = Endpoint.Customers.ADD)
+    @PostMapping(value = Endpoint.Customer.ADD)
     public String addNewCustomer(Model model, @Valid CustomerDTO customerDTO, BindingResult binding,
                                           @RequestParam(required = false) String accountName,
                                           @RequestParam(defaultValue = "Saving") String accountType,
@@ -84,10 +84,10 @@ public class CustomerController implements PageTitleConfig {
         delegateCustomerService.create(customerDTO, accountType, accountProfile, accountMembership);
 
         redirect.addFlashAttribute(MessageTag.SUCCESS, "Customer added successfully !");
-        return "redirect:" + Endpoint.Customers.ADD;
+        return "redirect:" + Endpoint.Customer.ADD;
     }
 
-    @GetMapping(value = Endpoint.Customers.ROOT + "/{customerId}")
+    @GetMapping(value = Endpoint.Customer.ROOT + "/{customerId}")
     public String customerDetails(@PathVariable int customerId, Model model) {
 
         CustomerDTO customer = delegateCustomerService.findById(customerId);
@@ -146,7 +146,7 @@ public class CustomerController implements PageTitleConfig {
         return "customers-details";
     }
 
-    @PostMapping(value = Endpoint.Customers.ROOT + "/{customerId}")
+    @PostMapping(value = Endpoint.Customer.ROOT + "/{customerId}")
     public String updateCustomerGeneralInfo(Model model, @Valid CustomerDTO customer, BindingResult binding, RedirectAttributes redirect) {
 
         if(binding.hasErrors()) {
@@ -159,7 +159,7 @@ public class CustomerController implements PageTitleConfig {
 
         delegateCustomerService.update(customer);
         redirect.addFlashAttribute(MessageTag.SUCCESS, "Customer information updated successfully !");
-        return "redirect:" + Endpoint.Customers.ROOT + "/" + customer.getCustomerId();
+        return "redirect:" + Endpoint.Customer.ROOT + "/" + customer.getCustomerId();
     }
 
     @Override

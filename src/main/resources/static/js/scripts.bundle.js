@@ -7502,7 +7502,6 @@ var KTOtherComponents = function () {
     var flatpickr;
     var stepper;
     var myDropzone;
-    var myHandleStatus;
 
     // Private functions
     const initFlatPickr = () => {
@@ -7547,34 +7546,6 @@ var KTOtherComponents = function () {
         });
     }
 
-    // Customer status handler
-    const handleStatus = () => {
-        myHandleStatus = document.getElementById('kt_handle_status');
-        const target = document.getElementById('kt_handle_status');
-        const select = document.getElementById('kt_handle_status_select');
-        const statusClasses = ['bg-success', 'bg-warning'];
-
-        $(select).on('change', function (e) {
-            const value = e.target.value;
-
-            switch (value) {
-                case "active": {
-                    target.classList.remove(...statusClasses);
-                    target.classList.add('bg-success');
-                    break;
-                }
-                case "pending": {
-                    target.classList.remove(...statusClasses);
-                    target.classList.add('bg-warning');
-                    showDatepicker();
-                    break;
-                }
-                default:
-                    break;
-            }
-        });
-    }
-
 
     // Public methods
     return {
@@ -7592,9 +7563,6 @@ var KTOtherComponents = function () {
                 initDropzone();
             }
 
-            if (!myHandleStatus) {
-                handleStatus();
-            }
         }
     };
 }();
@@ -7608,6 +7576,6 @@ KTUtil.onDOMContentLoaded(function () {
 //spring ajax
 var firstName = $("input[name = 'firstName']");
 var lastName = $("input[name = 'lastName']");
-$(firstName, lastName).change(function(){
+$(firstName, lastName).change(function () {
     $("input[name='accountName'").val(firstName.val() + " " + lastName.val());
 });

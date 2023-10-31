@@ -26,7 +26,6 @@ public class LoanCrudServiceImpl implements LoanCrudService {
     @Autowired
     LoanViewRepository loanViewRepository;
 
-
     @Override
     public LoanDTO save(LoanDTO loanDTO) {
 

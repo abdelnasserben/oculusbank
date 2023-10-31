@@ -3,6 +3,7 @@ package com.dabel.oculusbank.controller;
 import com.dabel.oculusbank.app.util.card.CardExpirationDateSettlement;
 import com.dabel.oculusbank.app.web.CardSubPageTitleConfig;
 import com.dabel.oculusbank.app.web.Endpoint;
+import com.dabel.oculusbank.app.web.View;
 import com.dabel.oculusbank.constant.web.MessageTag;
 import com.dabel.oculusbank.dto.CardAppRequestDTO;
 import com.dabel.oculusbank.dto.CardDTO;
@@ -32,40 +33,40 @@ public class CardAppRequestController implements CardSubPageTitleConfig {
 
     private static final String USEFUL_TITLE = "Card Application Requests";
 
-    @GetMapping(value = Endpoint.Cards.APP_REQUEST)
+    @GetMapping(value = Endpoint.Card.APPLICATION)
     public String applicationRequests(Model model, CardAppRequestDTO cardAppRequestDTO) {
 
         setTitleAndAddListOfAllApplicationRequestsAttribute(model);
-        return "cards-applications";
+        return View.Card.APPLICATION;
     }
 
 
-    @PostMapping(value = Endpoint.Cards.APP_REQUEST)
+    @PostMapping(value = Endpoint.Card.APPLICATION)
     public String sendNewApplicationRequests(Model model, @Valid CardAppRequestDTO cardAppRequestDTO, BindingResult binding, RedirectAttributes redirect) {
 
         if(binding.hasErrors()) {
             setTitleAndAddListOfAllApplicationRequestsAttribute(model);
             model.addAttribute(MessageTag.ERROR, "Invalid request application information !");
-            return "cards-applications";
+            return View.Card.APPLICATION;
         }
 
         delegateCardAppRequestService.sendRequest(cardAppRequestDTO);
         redirect.addFlashAttribute(MessageTag.SUCCESS, "Card application sent successfully !");
 
-        return "redirect:" + Endpoint.Cards.APP_REQUEST;
+        return "redirect:" + Endpoint.Card.APPLICATION;
     }
 
-    @GetMapping(value = Endpoint.Cards.APP_REQUEST + "/{requestId}")
+    @GetMapping(value = Endpoint.Card.APPLICATION + "/{requestId}")
     public String applicationRequestsDetails(Model model, @PathVariable int requestId, CardDTO cardDTO) {
 
         CardAppRequestDTO requestDTO = delegateCardAppRequestService.findById(requestId);
 
         setPageTitle(model, "Request Details", " / Application Requests");
         model.addAttribute("requestDTO", requestDTO);
-        return "cards-applications-details";
+        return View.Card.APPLICATION_DETAILS;
     }
 
-    @PostMapping(value = Endpoint.Cards.APP_REQUEST_APPROVE + "/{requestId}")
+    @PostMapping(value = Endpoint.Card.APPLICATION_APPROVE + "/{requestId}")
     public String approveApplicationRequest(Model model, @PathVariable int requestId, @Valid CardDTO cardDTO, BindingResult binding,
                                             @RequestParam String cardExpiryMonth,
                                             @RequestParam String cardExpiryYear,
@@ -91,10 +92,10 @@ public class CardAppRequestController implements CardSubPageTitleConfig {
             redirect.addFlashAttribute(MessageTag.SUCCESS, "Application approved successfully !");
         }
 
-        return "redirect:" + Endpoint.Cards.APP_REQUEST + "/" + requestId;
+        return "redirect:" + Endpoint.Card.APPLICATION + "/" + requestId;
     }
 
-    @PostMapping(value = Endpoint.Cards.APP_REQUEST_REJECT + "/{requestId}")
+    @PostMapping(value = Endpoint.Card.APPLICATION_REJECT + "/{requestId}")
     public String rejectApplicationRequest(@PathVariable int requestId, @RequestParam String rejectReason, RedirectAttributes redirect) {
 
         if(rejectReason.isBlank())
@@ -104,7 +105,7 @@ public class CardAppRequestController implements CardSubPageTitleConfig {
             delegateCardAppRequestService.reject(requestId, rejectReason);
         }
 
-        return "redirect:" + Endpoint.Cards.APP_REQUEST + "/" + requestId;
+        return "redirect:" + Endpoint.Card.APPLICATION + "/" + requestId;
     }
 
     private void setTitleAndAddListOfAllApplicationRequestsAttribute(Model model) {

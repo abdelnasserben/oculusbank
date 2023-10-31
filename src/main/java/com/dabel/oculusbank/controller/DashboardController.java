@@ -1,6 +1,7 @@
 package com.dabel.oculusbank.controller;
 
 import com.dabel.oculusbank.app.web.PageTitleConfig;
+import com.dabel.oculusbank.app.web.View;
 import com.dabel.oculusbank.constant.web.CurrentPageTitle;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,7 +14,7 @@ public class DashboardController implements PageTitleConfig {
     public String dashboard(Model model) {
 
         setPageTitle(model, "Dashboard", null);
-        return "dashboard";
+        return View.Dashboard.ROOT;
     }
 
     @Override

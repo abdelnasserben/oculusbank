@@ -1,6 +1,7 @@
 package com.dabel.oculusbank.dto;
 
-import com.dabel.oculusbank.app.validation.Gender;
+import com.dabel.oculusbank.app.custom.validation.Country;
+import com.dabel.oculusbank.app.custom.validation.Gender;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -29,7 +30,9 @@ public class CustomerDTO extends  BasicDTO {
     private LocalDate identityExpiration;
     private LocalDate birthDate;
     private String birthPlace;
+    @Country
     private String nationality;
+    @Country
     private String residence;
     private String address;
     private String postCode;

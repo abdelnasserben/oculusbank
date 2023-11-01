@@ -10,9 +10,9 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = CardTypeValidator.class)
-public @interface CardType {
-    String message() default "gender must be Visa or Mastercard";
+@Constraint(validatedBy = CountryValidator.class)
+public @interface Country {
+    String message() default "unknown country";
 
     Class<?>[] groups() default {};
 

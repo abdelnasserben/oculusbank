@@ -1,8 +1,8 @@
 package com.dabel.oculusbank.service.delegate;
 
-import com.dabel.oculusbank.app.util.account.AccountChecker;
 import com.dabel.oculusbank.app.util.Fee;
 import com.dabel.oculusbank.app.util.OperationAcknowledgment;
+import com.dabel.oculusbank.app.util.account.AccountChecker;
 import com.dabel.oculusbank.constant.Fees;
 import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.dto.AccountDTO;

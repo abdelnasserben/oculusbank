@@ -1,6 +1,9 @@
 package com.dabel.oculusbank.constant;
 
-public enum Countries {
+import lombok.Getter;
+
+@Getter
+public enum Country {
     AF("Afghanistan"),
 
     AX("Aland Islands"),
@@ -451,11 +454,8 @@ public enum Countries {
 
     private final String name;
 
-    Countries(String name) {
+    Country(String name) {
         this.name = name;
     }
 
-    public String getName() {
-        return  name;
-    }
 }

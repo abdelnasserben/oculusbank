@@ -1,7 +1,7 @@
 package com.dabel.oculusbank.dto;
 
-import com.dabel.oculusbank.app.validation.Currency;
-import com.dabel.oculusbank.app.validation.TransactionType;
+import com.dabel.oculusbank.app.custom.validation.Currency;
+import com.dabel.oculusbank.app.custom.validation.TransactionType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;

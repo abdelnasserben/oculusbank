@@ -1,4 +1,4 @@
-package com.dabel.oculusbank.app.validation;
+package com.dabel.oculusbank.app.custom.validation;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

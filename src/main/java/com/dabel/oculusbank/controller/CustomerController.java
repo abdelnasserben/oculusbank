@@ -1,11 +1,11 @@
 package com.dabel.oculusbank.controller;
 
+import com.dabel.oculusbank.app.util.StatedObjectFormatter;
 import com.dabel.oculusbank.app.util.card.CardNumberFormatter;
 import com.dabel.oculusbank.app.web.Endpoint;
 import com.dabel.oculusbank.app.web.PageTitleConfig;
 import com.dabel.oculusbank.constant.AccountMemberShip;
 import com.dabel.oculusbank.constant.Status;
-import com.dabel.oculusbank.constant.web.Countries;
 import com.dabel.oculusbank.constant.web.CurrentPageTitle;
 import com.dabel.oculusbank.constant.web.MessageTag;
 import com.dabel.oculusbank.dto.*;
@@ -49,7 +49,7 @@ public class CustomerController implements PageTitleConfig {
     public String customers(Model model) {
 
         setPageTitle(model, "Customers", null);
-        model.addAttribute("customers", delegateCustomerService.findAll());
+        model.addAttribute("customers", StatedObjectFormatter.format(delegateCustomerService.findAll()));
         return "customers";
     }
 
@@ -57,7 +57,6 @@ public class CustomerController implements PageTitleConfig {
     public String addNewCustomer(Model model, CustomerDTO customerDTO) {
 
         setPageTitle(model, "Add Customer", "Customers");
-        model.addAttribute("countries", Countries.getNames());
         return "customers-add";
     }
 
@@ -70,7 +69,6 @@ public class CustomerController implements PageTitleConfig {
 
         if(binding.hasErrors()) {
             setPageTitle(model, "Add Customer", "Customers");
-            model.addAttribute("countries", Countries.getNames());
             model.addAttribute(MessageTag.ERROR, "Invalid information !");
             return "customers-add";
         }
@@ -132,11 +130,10 @@ public class CustomerController implements PageTitleConfig {
                 .toList();
 
         setPageTitle(model, "Customer Details", "Customers");
-        model.addAttribute("customer", customer);
+        model.addAttribute("customer", StatedObjectFormatter.format(customer));
         model.addAttribute("accounts", customerAccounts);
         model.addAttribute("totalBalance", totalBalance);
         model.addAttribute("cards", customerCards);
-        model.addAttribute("countries", Countries.getNames());
         model.addAttribute("notifyNoActiveCreditCards", notifyNoActiveCreditCards);
         model.addAttribute("transactions", lastTenCustomerTransactions);
         model.addAttribute("payments", lastTenCustomerPayments);
@@ -151,7 +148,6 @@ public class CustomerController implements PageTitleConfig {
 
         if(binding.hasErrors()) {
             setPageTitle(model, "Customer Details", "Customers");
-            model.addAttribute("countries", Countries.getNames());
             model.addAttribute("customer", customer);
             model.addAttribute(MessageTag.ERROR, "Invalid information !");
             return "customers-details";

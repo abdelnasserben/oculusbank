@@ -1,5 +1,6 @@
 package com.dabel.oculusbank.controller;
 
+import com.dabel.oculusbank.app.util.StatedObjectFormatter;
 import com.dabel.oculusbank.app.web.Endpoint;
 import com.dabel.oculusbank.app.web.PageTitleConfig;
 import com.dabel.oculusbank.app.web.View;
@@ -20,8 +21,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
-
 @Controller
 public class TransactionController implements PageTitleConfig {
 
@@ -31,10 +30,9 @@ public class TransactionController implements PageTitleConfig {
     @GetMapping(value = Endpoint.Transaction.ROOT)
     public String dashboard(Model model) {
 
-        List<TransactionDTO> transactions = delegateTransactionService.findAll();
-
         setPageTitle(model, "Transactions", null);
-        model.addAttribute("transactions", transactions);
+        model.addAttribute("transactions", StatedObjectFormatter.format(delegateTransactionService.findAll()));
+
         return View.Transaction.ROOT;
     }
 
@@ -72,7 +70,7 @@ public class TransactionController implements PageTitleConfig {
 
         TransactionDTO transactionDTO = delegateTransactionService.findById(transactionId);
 
-        model.addAttribute("transaction", transactionDTO);
+        model.addAttribute("transaction", StatedObjectFormatter.format(transactionDTO));
         setPageTitle(model, "Transaction Details", "Transactions");
         return View.Transaction.DETAILS;
     }

@@ -4,15 +4,15 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-
-import java.time.LocalDateTime;
 
 @Data
 @SuperBuilder
 @NoArgsConstructor
-public class LoanDTO {
+@EqualsAndHashCode(callSuper = false)
+public class LoanDTO extends BasicDTO {
 
     private int loanId;
     @NotBlank
@@ -31,11 +31,6 @@ public class LoanDTO {
     @NotBlank
     private String reason;
     private String failureReason;
-    private String status;
-    private String initiatedBy;
-    private String updatedBy;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
     private int borrowerId;
     private int customerId;
     private String firstName;

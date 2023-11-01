@@ -1,5 +1,6 @@
 package com.dabel.oculusbank.controller;
 
+import com.dabel.oculusbank.app.util.StatedObjectFormatter;
 import com.dabel.oculusbank.app.web.Endpoint;
 import com.dabel.oculusbank.app.web.TransactionSubPageTitleConfig;
 import com.dabel.oculusbank.app.web.View;
@@ -17,8 +18,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
-
 @Controller
 public class ExchangeController implements TransactionSubPageTitleConfig {
 
@@ -31,9 +30,7 @@ public class ExchangeController implements TransactionSubPageTitleConfig {
     public String exchangesListing(Model model) {
 
         setPageTitle(model, "Exchanges", null);
-
-        List<ExchangeDTO> exchanges = delegateExchangeService.findAll();
-        model.addAttribute("exchanges", exchanges);
+        model.addAttribute("exchanges", StatedObjectFormatter.format(delegateExchangeService.findAll()));
 
         return View.Exchange.ROOT;
     }
@@ -64,7 +61,7 @@ public class ExchangeController implements TransactionSubPageTitleConfig {
         ExchangeDTO exchange = delegateExchangeService.findById(exchangeId);
 
         setPageTitle(model, "Exchange Details", USEFUL_BREADCRUMB);
-        model.addAttribute("exchange", exchange);
+        model.addAttribute("exchange", StatedObjectFormatter.format(exchange));
         return View.Exchange.DETAILS;
     }
 

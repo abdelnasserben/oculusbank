@@ -1,22 +1,21 @@
-package com.dabel.oculusbank.dto;
+package com.dabel.oculusbank.model;
 
-import com.dabel.oculusbank.app.validation.CardType;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.persistence.*;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Immutable;
 
 import java.time.LocalDateTime;
 
 @Data
-@SuperBuilder
-@NoArgsConstructor
-public class CardAppRequestDTO {
+@Entity
+@Table(name = "v_card_applications")
+@Immutable
+public class CardApplicationView {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int requestId;
     private int accountId;
-    private int customerId;
-    @CardType
     private String cardType;
     private String status;
     private String failureReason;
@@ -25,10 +24,8 @@ public class CardAppRequestDTO {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private String accountName;
-    @NotBlank
     private String accountNumber;
     private String customerFirstName;
     private String customerLastName;
-    @NotBlank
     private String customerIdentityNumber;
 }

@@ -3,19 +3,19 @@ package com.dabel.oculusbank.dto;
 import com.dabel.oculusbank.app.validation.Gender;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Data
 @SuperBuilder
 @NoArgsConstructor
-public class CustomerDTO {
+@EqualsAndHashCode(callSuper = false)
+public class CustomerDTO extends  BasicDTO {
 
     private int customerId;
-    private int branchId;
     @NotBlank
     private String firstName;
     @NotBlank
@@ -39,7 +39,4 @@ public class CustomerDTO {
     private String profilePicture;
     private String signaturePicture;
     private String identityPicture;
-    private String status;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 }

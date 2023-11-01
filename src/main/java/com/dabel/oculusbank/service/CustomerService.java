@@ -1,6 +1,5 @@
 package com.dabel.oculusbank.service;
 
-import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.dto.CustomerDTO;
 import com.dabel.oculusbank.exception.CustomerNotFoundException;
 import com.dabel.oculusbank.mapper.CustomerMapper;
@@ -25,7 +24,7 @@ public class CustomerService {
     public List<CustomerDTO> findAll() {
 
         return customerRepository.findAll().stream()
-                .map(CustomerService::formatStatusToNameAndGetDTO)
+                .map(CustomerMapper::toDTO)
                 .toList();
     }
 
@@ -33,18 +32,13 @@ public class CustomerService {
         Customer customer = customerRepository.findByIdentityNumber(identityNumber)
                 .orElseThrow(CustomerNotFoundException::new);
 
-        return formatStatusToNameAndGetDTO(customer);
+        return CustomerMapper.toDTO(customer);
     }
 
     public CustomerDTO findById(int customerId) {
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(CustomerNotFoundException::new);
 
-        return formatStatusToNameAndGetDTO(customer);
-    }
-
-    private static CustomerDTO formatStatusToNameAndGetDTO(Customer customer) {
-        customer.setStatus(Status.nameOf(customer.getStatus()));
         return CustomerMapper.toDTO(customer);
     }
 }

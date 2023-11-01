@@ -1,6 +1,5 @@
 package com.dabel.oculusbank.service;
 
-import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.dto.LoanDTO;
 import com.dabel.oculusbank.exception.LoanNotFoundException;
 import com.dabel.oculusbank.mapper.LoanMapper;
@@ -45,23 +44,18 @@ public class LoanService {
     public LoanDTO findLoanById(int loanId) {
         LoanView loan = loanViewRepository.findById(loanId)
                 .orElseThrow(LoanNotFoundException::new);
-        return formatStatusToNameAndGetDTO(loan);
+        return LoanMapper.viewToDTO(loan);
     }
 
     public List<LoanDTO> findAll() {
         return loanViewRepository.findAll().stream()
-                .map(LoanService::formatStatusToNameAndGetDTO)
+                .map(LoanMapper::viewToDTO)
                 .collect(Collectors.toList());
     }
 
     public List<LoanDTO> findAllByCustomerIdentityNumber(String customerIdentityNumber) {
         return loanViewRepository.findAllByIdentityNumber(customerIdentityNumber).stream()
-                .map(LoanService::formatStatusToNameAndGetDTO)
+                .map(LoanMapper::viewToDTO)
                 .collect(Collectors.toList());
-    }
-
-    private static LoanDTO formatStatusToNameAndGetDTO(LoanView loan) {
-        loan.setStatus(Status.nameOf(loan.getStatus()));
-        return LoanMapper.viewToDTO(loan);
     }
 }

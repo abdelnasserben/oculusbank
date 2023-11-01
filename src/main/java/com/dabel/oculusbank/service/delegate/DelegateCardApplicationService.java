@@ -6,12 +6,12 @@ import com.dabel.oculusbank.app.util.OperationAcknowledgment;
 import com.dabel.oculusbank.constant.Fees;
 import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.dto.AccountDTO;
-import com.dabel.oculusbank.dto.CardAppRequestDTO;
+import com.dabel.oculusbank.dto.CardApplicationDTO;
 import com.dabel.oculusbank.dto.TrunkDTO;
 import com.dabel.oculusbank.exception.BalanceInsufficientException;
 import com.dabel.oculusbank.exception.IllegalOperationException;
 import com.dabel.oculusbank.service.AccountService;
-import com.dabel.oculusbank.service.CardAppRequestService;
+import com.dabel.oculusbank.service.CardApplicationService;
 import com.dabel.oculusbank.service.FeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,71 +20,71 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class DelegateCardAppRequestService implements OperationAcknowledgment<CardAppRequestDTO> {
+public class DelegateCardApplicationService implements OperationAcknowledgment<CardApplicationDTO> {
 
     @Autowired
-    CardAppRequestService cardAppRequestService;
+    CardApplicationService cardApplicationService;
     @Autowired
     AccountService accountService;
     @Autowired
     FeeService feeService;
 
-    public CardAppRequestDTO sendRequest(CardAppRequestDTO cardAppRequestDTO) {
+    public CardApplicationDTO sendRequest(CardApplicationDTO cardApplicationDTO) {
 
-        TrunkDTO account = accountService.findTrunkByNumberAndCustomerIdentity(cardAppRequestDTO.getAccountNumber(), cardAppRequestDTO.getCustomerIdentityNumber());
+        TrunkDTO account = accountService.findTrunkByNumberAndCustomerIdentity(cardApplicationDTO.getAccountNumber(), cardApplicationDTO.getCustomerIdentityNumber());
 
         if(!AccountChecker.isActive(account) || AccountChecker.isAssociative(account))
             throw new IllegalOperationException("The account is not eligible for this operation");
 
         if(account.getBalance() < Fees.CARD_APP_REQUEST) {
 
-            CardAppRequestDTO failedCardApp = CardAppRequestDTO.builder()
+            CardApplicationDTO failedCardApp = CardApplicationDTO.builder()
                     .accountId(account.getAccountId())
                     .customerId(account.getCustomerId())
-                    .cardType(cardAppRequestDTO.getCardType())
+                    .cardType(cardApplicationDTO.getCardType())
                     .status(Status.Failed.code())
                     .failureReason("Account balance is insufficient for card application request fees")
                     .build();
 
-            cardAppRequestService.save(failedCardApp);
+            cardApplicationService.save(failedCardApp);
             throw new BalanceInsufficientException("Account balance is insufficient for application fees");
         }
 
-        CardAppRequestDTO successCardApp = CardAppRequestDTO.builder()
+        CardApplicationDTO successCardApp = CardApplicationDTO.builder()
                 .accountId(account.getAccountId())
-                .cardType(cardAppRequestDTO.getCardType())
+                .cardType(cardApplicationDTO.getCardType())
                 .status(Status.Pending.code())
                 .build();
 
-        return cardAppRequestService.save(successCardApp);
+        return cardApplicationService.save(successCardApp);
     }
 
     @Override
-    public CardAppRequestDTO approve(int operationId) {
+    public CardApplicationDTO approve(int operationId) {
 
-        CardAppRequestDTO cardApp = cardAppRequestService.findById(operationId);
+        CardApplicationDTO cardApp = cardApplicationService.findById(operationId);
         cardApp.setStatus(Status.Approved.code());
         cardApp.setUpdatedAt(LocalDateTime.now());
 
         AccountDTO account = accountService.findByNumber(cardApp.getAccountNumber());
         feeService.apply(account, new Fee(Fees.CARD_APP_REQUEST, "Card application request"));
 
-        return cardAppRequestService.save(cardApp);
+        return cardApplicationService.save(cardApp);
     }
 
     @Override
-    public CardAppRequestDTO reject(int operationId, String remarks) {
-        CardAppRequestDTO cardApp = cardAppRequestService.findById(operationId);
+    public CardApplicationDTO reject(int operationId, String remarks) {
+        CardApplicationDTO cardApp = cardApplicationService.findById(operationId);
         cardApp.setStatus(Status.Rejected.code());
         cardApp.setFailureReason(remarks);
         cardApp.setUpdatedAt(LocalDateTime.now());
 
-        return cardAppRequestService.save(cardApp);
+        return cardApplicationService.save(cardApp);
     }
 
-    public List<CardAppRequestDTO> findAll() {
-        return cardAppRequestService.findAll();
+    public List<CardApplicationDTO> findAll() {
+        return cardApplicationService.findAll();
     }
 
-    public CardAppRequestDTO findById(int requestId) {return cardAppRequestService.findById(requestId);}
+    public CardApplicationDTO findById(int requestId) {return cardApplicationService.findById(requestId);}
 }

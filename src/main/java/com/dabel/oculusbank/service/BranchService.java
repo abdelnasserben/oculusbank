@@ -1,6 +1,5 @@
 package com.dabel.oculusbank.service;
 
-import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.dto.BranchDTO;
 import com.dabel.oculusbank.exception.BranchNotFoundException;
 import com.dabel.oculusbank.mapper.BranchMapper;
@@ -25,7 +24,7 @@ public class BranchService {
 
     public List<BranchDTO> findAll() {
         return branchRepository.findAll().stream()
-                .map(BranchService::formatStatusToNameAndGetDTO)
+                .map(BranchMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -33,11 +32,6 @@ public class BranchService {
         Branch branch = branchRepository.findById(branchId)
                 .orElseThrow(BranchNotFoundException::new);
 
-        return formatStatusToNameAndGetDTO(branch);
-    }
-
-    private static BranchDTO formatStatusToNameAndGetDTO(Branch branch) {
-        branch.setStatus(Status.nameOf(branch.getStatus()));
         return BranchMapper.toDTO(branch);
     }
 }

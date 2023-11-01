@@ -215,8 +215,8 @@
                                             <select th:field="*{nationality}" class="form-select" data-control="select2"
                                                 data-placeholder="Nationality" data-allow-clear="true">
                                                 <option value=""></option>
-                                                <option th:each="country: ${countries}" th:text="${country}"
-                                                    th:value="${country}">Comoros</option>
+                                                <option th:each="country: ${T(com.dabel.oculusbank.constant.Countries).values()}"
+                                                    th:text="${country.getName}" th:value="${country.getName}">Comoros</option>
                                             </select>
                                             <!--end::Input-->
                                         </div>
@@ -413,8 +413,8 @@
                                         <select th:field="*{residence}" class="form-select" data-control="select2"
                                             data-placeholder="Residence" data-allow-clear="true">
                                             <option value=""></option>
-                                            <option th:each="country: ${countries}" th:text="${country}"
-                                                th:value="${country}">Comoros</option>
+                                            <option th:each="country: ${T(com.dabel.oculusbank.constant.Countries).values()}"
+                                                th:text="${country.getName}" th:value="${country.getName}">Comoros</option>
                                         </select>
                                         <!--end::Input-->
                                         <!--end::Input-->

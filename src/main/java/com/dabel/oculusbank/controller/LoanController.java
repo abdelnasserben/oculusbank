@@ -1,5 +1,6 @@
 package com.dabel.oculusbank.controller;
 
+import com.dabel.oculusbank.app.util.StatedObjectFormatter;
 import com.dabel.oculusbank.app.web.Endpoint;
 import com.dabel.oculusbank.app.web.PageTitleConfig;
 import com.dabel.oculusbank.app.web.View;
@@ -34,7 +35,7 @@ public class LoanController implements PageTitleConfig {
     public String loansListing(Model model, LoanDTO loanDTO) {
 
         setPageTitle(model, "Loans", null);
-        model.addAttribute("loans", loanService.findAll());
+        model.addAttribute("loans", StatedObjectFormatter.format(loanService.findAll()));
         return View.Loan.ROOT;
     }
 
@@ -59,7 +60,7 @@ public class LoanController implements PageTitleConfig {
 
         LoanDTO loanDTO = loanService.findLoanById(loanId);
         setPageTitle(model, "Loan Details", "Loans");
-        model.addAttribute("loan", loanDTO);
+        model.addAttribute("loan", StatedObjectFormatter.format(loanDTO));
         return View.Loan.DETAILS;
     }
 

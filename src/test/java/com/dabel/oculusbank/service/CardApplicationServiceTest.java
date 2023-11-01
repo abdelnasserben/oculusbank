@@ -5,7 +5,7 @@ import com.dabel.oculusbank.constant.AccountType;
 import com.dabel.oculusbank.constant.CardType;
 import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.dto.AccountDTO;
-import com.dabel.oculusbank.dto.CardAppRequestDTO;
+import com.dabel.oculusbank.dto.CardApplicationDTO;
 import com.dabel.oculusbank.exception.CardAppRequestNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,10 +17,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 @SpringBootTest
-class CardAppRequestRequestServiceTest {
+class CardApplicationServiceTest {
 
     @Autowired
-    CardAppRequestService cardAppRequestService;
+    CardApplicationService cardApplicationService;
     @Autowired
     AccountService accountService;
     @Autowired
@@ -41,14 +41,14 @@ class CardAppRequestRequestServiceTest {
                 .status(Status.Pending.code())
                 .build());
 
-        CardAppRequestDTO cardAppRequestDTO = CardAppRequestDTO.builder()
+        CardApplicationDTO cardApplicationDTO = CardApplicationDTO.builder()
                 .cardType(CardType.Visa.name())
                 .accountId(savedAccount.getAccountId())
                 .status(Status.Pending.code())
                 .build();
 
         //WHEN
-        CardAppRequestDTO expected = cardAppRequestService.save(cardAppRequestDTO);
+        CardApplicationDTO expected = cardApplicationService.save(cardApplicationDTO);
 
         //THEN
         assertThat(expected.getRequestId()).isGreaterThan(0);
@@ -63,15 +63,15 @@ class CardAppRequestRequestServiceTest {
                 .accountType(AccountType.Saving.name())
                 .status(Status.Pending.code())
                 .build());
-        CardAppRequestDTO cardAppRequestDTO = CardAppRequestDTO.builder()
+        CardApplicationDTO cardApplicationDTO = CardApplicationDTO.builder()
                 .cardType(CardType.Visa.name())
                 .accountId(savedAccount.getAccountId())
                 .status(Status.Pending.code())
                 .build();
-        CardAppRequestDTO savedRequestApp = cardAppRequestService.save(cardAppRequestDTO);
+        CardApplicationDTO savedRequestApp = cardApplicationService.save(cardApplicationDTO);
 
         //WHEN
-        CardAppRequestDTO expected = cardAppRequestService.findById(savedRequestApp.getRequestId());
+        CardApplicationDTO expected = cardApplicationService.findById(savedRequestApp.getRequestId());
 
         //THEN
         assertThat(expected.getAccountNumber()).isEqualTo(savedAccount.getAccountNumber());
@@ -85,7 +85,7 @@ class CardAppRequestRequestServiceTest {
 
         //WHEN
         Exception expected = assertThrows(CardAppRequestNotFoundException.class,
-                () -> cardAppRequestService.findById(-1));
+                () -> cardApplicationService.findById(-1));
 
         //THEN
         assertThat(expected.getMessage()).isEqualTo("Card application request not found");

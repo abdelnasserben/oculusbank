@@ -1,7 +1,4 @@
-package com.dabel.oculusbank.constant.web;
-
-import java.util.Arrays;
-import java.util.List;
+package com.dabel.oculusbank.constant;
 
 public enum Countries {
     AF("Afghanistan"),
@@ -458,9 +455,7 @@ public enum Countries {
         this.name = name;
     }
 
-    public static List<String> getNames() {
-        return Arrays.stream(values())
-                .map(c -> c.name)
-                .toList();
+    public String getName() {
+        return  name;
     }
 }

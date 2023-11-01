@@ -1,0 +1,11 @@
+01 - * | make all DTO inherit BasicDTO class
+02 - delete payment class and table and combine all in transaction
+03 - correcting all necessary fields in table like "loans" etc...
+04 - * | disable status transformation in service classes and make it in controllers if it's necessary
+05 - correcting all tests
+06 - correcting all HTML pages to accept enums values as options like "currencies" etc...
+07 - review my book, to define correct functionalities like all account types "fees" etc...
+08 - implement security
+09 - correcting all views in database
+10 - reduce relation in delegate classes with adequate design pattern and delete this folder
+11 - correcting header navigation of sections

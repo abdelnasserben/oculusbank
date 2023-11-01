@@ -1,6 +1,6 @@
 package com.dabel.oculusbank.service.core.card;
 
-import com.dabel.oculusbank.dto.CardAppRequestDTO;
+import com.dabel.oculusbank.dto.CardApplicationDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -8,9 +8,9 @@ import java.util.List;
 @Service
 public interface CardApplicationCrudService {
 
-    CardAppRequestDTO save(CardAppRequestDTO cardAppRequestDTO);
+    CardApplicationDTO save(CardApplicationDTO cardApplicationDTO);
 
-    CardAppRequestDTO findById(int requestId);
+    CardApplicationDTO findById(int requestId);
 
-    List<CardAppRequestDTO> findAll();
+    List<CardApplicationDTO> findAll();
 }

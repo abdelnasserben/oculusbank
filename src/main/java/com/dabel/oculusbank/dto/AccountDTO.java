@@ -1,15 +1,15 @@
 package com.dabel.oculusbank.dto;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-
-import java.time.LocalDateTime;
 
 @Data
 @SuperBuilder
 @NoArgsConstructor
-public class AccountDTO {
+@EqualsAndHashCode(callSuper = false)
+public class AccountDTO extends BasicDTO {
 
     private int accountId;
     private String accountName;
@@ -18,7 +18,4 @@ public class AccountDTO {
     private String accountProfile;
     private double balance;
     private String currency;
-    private String status;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 }

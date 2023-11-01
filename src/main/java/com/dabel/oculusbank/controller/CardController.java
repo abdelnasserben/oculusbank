@@ -1,5 +1,6 @@
 package com.dabel.oculusbank.controller;
 
+import com.dabel.oculusbank.app.util.StatedObjectFormatter;
 import com.dabel.oculusbank.app.web.CardSubPageTitleConfig;
 import com.dabel.oculusbank.app.web.Endpoint;
 import com.dabel.oculusbank.app.web.View;
@@ -26,7 +27,7 @@ public class CardController implements CardSubPageTitleConfig {
 
         CardDTO card = delegateCardService.finById(cardId);
         setPageTitle(model, "Card Details", null);
-        model.addAttribute("card", card);
+        model.addAttribute("card", StatedObjectFormatter.format(card));
         return View.Card.DETAILS;
     }
 

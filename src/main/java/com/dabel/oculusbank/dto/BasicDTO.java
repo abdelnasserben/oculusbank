@@ -1,6 +1,5 @@
 package com.dabel.oculusbank.dto;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -12,13 +11,11 @@ import java.time.LocalDateTime;
 @SuperBuilder
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class BranchDTO extends BasicDTO {
+public class BasicDTO extends StatedObject {
 
     private int branchId;
-    @NotBlank
-    private String branchName;
-    @NotBlank
-    private String branchAddress;
+    private String initiatedBy;
+    private String updatedBy;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

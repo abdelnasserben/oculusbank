@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @Table(name = "card_applications")
-public class CardAppRequest {
+public class CardApplication {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

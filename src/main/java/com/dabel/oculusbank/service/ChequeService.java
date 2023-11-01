@@ -29,7 +29,6 @@ public class ChequeService {
     public ChequeDTO findByNumber(String chequeNumber) {
         ChequeView chequeView = chequeViewRepository.findByChequeNumber(chequeNumber).
                 orElseThrow(ChequeNotFountException::new);
-        chequeView.setStatus(Status.nameOf(chequeView.getStatus()));
         return ChequeMapper.viewToDTO(chequeView);
     }
 

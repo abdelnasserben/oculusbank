@@ -5,15 +5,15 @@ import com.dabel.oculusbank.app.validation.TransactionType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-
-import java.time.LocalDateTime;
 
 @Data
 @SuperBuilder
 @NoArgsConstructor
-public class TransactionDTO {
+@EqualsAndHashCode(callSuper = false)
+public class TransactionDTO extends BasicDTO {
 
     private int transactionId;
     @TransactionType
@@ -30,11 +30,6 @@ public class TransactionDTO {
     @NotBlank
     private String customerIdentity, customerFullName;
     private String failureReason;
-    private String status;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-    private String initiatedBy;
-    private String updatedBy;
     private String accountName;
     @NotBlank
     private String accountNumber;

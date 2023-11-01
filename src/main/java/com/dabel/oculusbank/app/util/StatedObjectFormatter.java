@@ -1,11 +1,11 @@
-package com.dabel.oculusbank.service.core;
+package com.dabel.oculusbank.app.util;
 
 import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.dto.StatedObject;
 
 import java.util.List;
 
-public class ObjectStatusFormatter {
+public class StatedObjectFormatter {
 
     public static <T extends StatedObject> T format(T t) {
         t.setStatus(Status.nameOf(t.getStatus()));
@@ -14,7 +14,7 @@ public class ObjectStatusFormatter {
 
     public static <T extends StatedObject>List<T> format(List<T> list) {
         return list.stream()
-                .peek(t -> Status.nameOf(t.getStatus()))
+                .peek(t -> t.setStatus(Status.nameOf(t.getStatus())))
                 .toList();
     }
 }

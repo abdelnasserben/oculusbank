@@ -4,15 +4,15 @@ import com.dabel.oculusbank.app.validation.Currency;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-
-import java.time.LocalDateTime;
 
 @Data
 @SuperBuilder
 @NoArgsConstructor
-public class ExchangeDTO {
+@EqualsAndHashCode(callSuper = false)
+public class ExchangeDTO extends BasicDTO {
 
     private int exchangeId;
     @NotBlank
@@ -29,9 +29,4 @@ public class ExchangeDTO {
     @NotBlank
     private String reason;
     private String failureReason;
-    private String status;
-    private String initiatedBy;
-    private String updatedBy;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 }

@@ -2,7 +2,6 @@ package com.dabel.oculusbank.service;
 
 import com.dabel.oculusbank.app.util.card.CardNumberFormatter;
 import com.dabel.oculusbank.constant.SourceType;
-import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.dto.TransactionDTO;
 import com.dabel.oculusbank.exception.TransactionNotFoundException;
 import com.dabel.oculusbank.mapper.TransactionMapper;
@@ -49,7 +48,6 @@ public class TransactionService {
     }
 
     private static TransactionDTO formatStatusToNameAndGetDTO(TransactionView transactionView) {
-        transactionView.setStatus(Status.nameOf(transactionView.getStatus()));
         if(!transactionView.getSourceType().equals(SourceType.Online.name()))
             transactionView.setSourceValue(CardNumberFormatter.hide(transactionView.getSourceValue()));
 

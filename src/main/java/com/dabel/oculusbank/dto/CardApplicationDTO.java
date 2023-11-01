@@ -2,35 +2,28 @@ package com.dabel.oculusbank.dto;
 
 import com.dabel.oculusbank.app.validation.CardType;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.validator.constraints.CreditCardNumber;
-
-import java.time.LocalDate;
 
 @Data
 @SuperBuilder
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class CardDTO extends BasicDTO {
+public class CardApplicationDTO extends BasicDTO {
 
-    private int cardId;
+    private int requestId;
     private int accountId;
+    private int customerId;
     @CardType
     private String cardType;
-    @CreditCardNumber
-    private String cardNumber;
-    @NotBlank
-    private String cardName;
-    private LocalDate expirationDate;
-    @Size(min = 3, max = 4)
-    private String cvc;
-    private int cvcChecked;
     private String failureReason;
     private String accountName;
     @NotBlank
     private String accountNumber;
+    private String customerFirstName;
+    private String customerLastName;
+    @NotBlank
+    private String customerIdentityNumber;
 }

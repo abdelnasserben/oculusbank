@@ -1,6 +1,5 @@
 package com.dabel.oculusbank.service;
 
-import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.dto.PaymentDTO;
 import com.dabel.oculusbank.exception.TransactionNotFoundException;
 import com.dabel.oculusbank.mapper.PaymentMapper;
@@ -29,24 +28,19 @@ public class PaymentService {
 
     public List<PaymentDTO> findAll() {
         return paymentViewRepository.findAll().stream()
-                .map(PaymentService::formatStatusToNameAndGetDTO)
+                .map(PaymentMapper::viewToDTO)
                 .collect(Collectors.toList());
     }
 
     public PaymentDTO findById(int paymentId) {
         PaymentView payment = paymentViewRepository.findById(paymentId)
                 .orElseThrow(() -> new TransactionNotFoundException("Payment not found"));
-        return formatStatusToNameAndGetDTO(payment);
+        return PaymentMapper.viewToDTO(payment);
     }
 
     public List<PaymentDTO> findAllByAccountId(int accountId) {
         return paymentViewRepository.findAllByDebitAccountIdOrCreditAccountId(accountId, accountId).stream()
-                .map(PaymentService::formatStatusToNameAndGetDTO)
+                .map(PaymentMapper::viewToDTO)
                 .collect(Collectors.toList());
-    }
-
-    private static PaymentDTO formatStatusToNameAndGetDTO(PaymentView payment) {
-        payment.setStatus(Status.nameOf(payment.getStatus()));
-        return PaymentMapper.viewToDTO(payment);
     }
 }

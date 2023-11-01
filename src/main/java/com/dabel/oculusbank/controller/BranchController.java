@@ -1,5 +1,6 @@
 package com.dabel.oculusbank.controller;
 
+import com.dabel.oculusbank.app.util.StatedObjectFormatter;
 import com.dabel.oculusbank.app.web.Endpoint;
 import com.dabel.oculusbank.app.web.PageTitleConfig;
 import com.dabel.oculusbank.app.web.View;
@@ -52,7 +53,7 @@ public class BranchController implements PageTitleConfig {
 
     private void setTitleAndAddListOfALlBranchesAttribute(Model model) {
         setPageTitle(model, "Branches", "Settings");
-        model.addAttribute("branches", delegateBranchService.findAll());
+        model.addAttribute("branches", StatedObjectFormatter.format(delegateBranchService.findAll()));
     }
 
     @Override

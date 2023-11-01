@@ -1,6 +1,5 @@
 package com.dabel.oculusbank.service;
 
-import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.dto.ExchangeDTO;
 import com.dabel.oculusbank.exception.TransactionNotFoundException;
 import com.dabel.oculusbank.mapper.ExchangeMapper;
@@ -25,7 +24,7 @@ public class ExchangeService {
 
     public List<ExchangeDTO> findAll() {
         return exchangeRepository.findAll().stream()
-                .map(ExchangeService::formatStatusToNameAndGetDTO)
+                .map(ExchangeMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -33,18 +32,13 @@ public class ExchangeService {
         Exchange exchange = exchangeRepository.findById(exchangeId)
                 .orElseThrow(() -> new TransactionNotFoundException("Exchange not found"));
 
-        return formatStatusToNameAndGetDTO(exchange);
+        return ExchangeMapper.toDTO(exchange);
     }
 
     public List<ExchangeDTO> findAllByCustomerIdentity(String customerIdentity) {
         return exchangeRepository.findAllByCustomerIdentity(customerIdentity).stream()
-                .map(ExchangeService::formatStatusToNameAndGetDTO)
+                .map(ExchangeMapper::toDTO)
                 .collect(Collectors.toList());
 
-    }
-
-    private static ExchangeDTO formatStatusToNameAndGetDTO(Exchange exchange) {
-        exchange.setStatus(Status.nameOf(exchange.getStatus()));
-        return ExchangeMapper.toDTO(exchange);
     }
 }

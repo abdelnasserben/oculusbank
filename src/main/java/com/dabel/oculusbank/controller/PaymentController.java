@@ -1,5 +1,6 @@
 package com.dabel.oculusbank.controller;
 
+import com.dabel.oculusbank.app.util.StatedObjectFormatter;
 import com.dabel.oculusbank.app.web.Endpoint;
 import com.dabel.oculusbank.app.web.TransactionSubPageTitleConfig;
 import com.dabel.oculusbank.app.web.View;
@@ -17,8 +18,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
-
 @Controller
 public class PaymentController implements TransactionSubPageTitleConfig {
 
@@ -31,9 +30,8 @@ public class PaymentController implements TransactionSubPageTitleConfig {
     public String paymentsListing(Model model) {
 
         setPageTitle(model, "Payments", null);
+        model.addAttribute("payments", StatedObjectFormatter.format(delegatePaymentService.findAll()));
 
-        List<PaymentDTO> payments = delegatePaymentService.findAll();
-        model.addAttribute("payments", payments);
         return View.Payment.ROOT;
     }
 
@@ -64,7 +62,7 @@ public class PaymentController implements TransactionSubPageTitleConfig {
         PaymentDTO payment = delegatePaymentService.findById(paymentId);
 
         setPageTitle(model, "Payment Details", USEFUL_BREADCRUMB);
-        model.addAttribute("payment", payment);
+        model.addAttribute("payment", StatedObjectFormatter.format(payment));
 
         return View.Payment.DETAILS;
     }

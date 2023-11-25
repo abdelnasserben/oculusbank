@@ -6,7 +6,7 @@ import com.dabel.oculusbank.app.web.Endpoint;
 import com.dabel.oculusbank.app.web.View;
 import com.dabel.oculusbank.constant.web.MessageTag;
 import com.dabel.oculusbank.dto.CardDTO;
-import com.dabel.oculusbank.service.delegate.DelegateCardService;
+import com.dabel.oculusbank.service.core.card.CardFacadeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,12 +20,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class CardController implements CardSubPageTitleConfig {
 
     @Autowired
-    DelegateCardService delegateCardService;
+    CardFacadeService cardFacadeService;
 
     @GetMapping(value = Endpoint.Card.ROOT + "/{cardId}")
     public String cardDetails(@PathVariable int cardId, Model model) {
 
-        CardDTO card = delegateCardService.finById(cardId);
+        CardDTO card = cardFacadeService.finById(cardId);
         setPageTitle(model, "Card Details", null);
         model.addAttribute("card", StatedObjectFormatter.format(card));
         return View.Card.DETAILS;
@@ -34,7 +34,7 @@ public class CardController implements CardSubPageTitleConfig {
     @GetMapping(value = Endpoint.Card.ACTIVATE + "/{cardId}")
     public String approveCard(@PathVariable int cardId, RedirectAttributes redirect) {
 
-        delegateCardService.activate(cardId);
+        cardFacadeService.activate(cardId);
 
         redirect.addFlashAttribute(MessageTag.SUCCESS, "Card successfully activated !");
 
@@ -48,7 +48,7 @@ public class CardController implements CardSubPageTitleConfig {
             redirect.addFlashAttribute(MessageTag.ERROR, "Deactivate reason is mandatory !");
         else {
             redirect.addFlashAttribute(MessageTag.SUCCESS, "Card successfully deactivated!");
-            delegateCardService.deactivate(cardId, rejectReason);
+            cardFacadeService.deactivate(cardId, rejectReason);
         }
 
         return "redirect:" + Endpoint.Card.ROOT + "/" + cardId;

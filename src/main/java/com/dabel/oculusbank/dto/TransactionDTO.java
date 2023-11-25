@@ -1,7 +1,7 @@
 package com.dabel.oculusbank.dto;
 
-import com.dabel.oculusbank.app.custom.validation.Currency;
-import com.dabel.oculusbank.app.custom.validation.TransactionType;
+import com.dabel.oculusbank.app.validation.Currency;
+import com.dabel.oculusbank.app.validation.TransactionType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
@@ -21,7 +21,7 @@ public class TransactionDTO extends BasicDTO {
     private int accountId;
     @Positive
     private double amount;
-   @Currency
+    @Currency
     private String currency;
     private String sourceType;
     private String sourceValue;

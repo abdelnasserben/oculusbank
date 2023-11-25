@@ -1,7 +1,7 @@
 package com.dabel.oculusbank.dto;
 
-import com.dabel.oculusbank.app.custom.validation.Country;
-import com.dabel.oculusbank.app.custom.validation.Gender;
+import com.dabel.oculusbank.app.validation.Country;
+import com.dabel.oculusbank.app.validation.Gender;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

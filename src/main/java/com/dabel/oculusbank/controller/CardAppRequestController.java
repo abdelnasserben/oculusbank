@@ -1,15 +1,14 @@
 package com.dabel.oculusbank.controller;
 
 import com.dabel.oculusbank.app.util.StatedObjectFormatter;
-import com.dabel.oculusbank.app.util.card.CardExpirationDateSettlement;
+import com.dabel.oculusbank.app.util.CardExpirationDateSettlement;
 import com.dabel.oculusbank.app.web.CardSubPageTitleConfig;
 import com.dabel.oculusbank.app.web.Endpoint;
 import com.dabel.oculusbank.app.web.View;
 import com.dabel.oculusbank.constant.web.MessageTag;
 import com.dabel.oculusbank.dto.CardApplicationDTO;
 import com.dabel.oculusbank.dto.CardDTO;
-import com.dabel.oculusbank.service.delegate.DelegateCardApplicationService;
-import com.dabel.oculusbank.service.delegate.DelegateCardService;
+import com.dabel.oculusbank.service.core.card.CardFacadeService;
 import jakarta.persistence.EntityManager;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +25,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class CardAppRequestController implements CardSubPageTitleConfig {
 
     @Autowired
-    DelegateCardService delegateCardService;
-    @Autowired
-    DelegateCardApplicationService delegateCardApplicationService;
+    CardFacadeService cardFacadeService;
     @Autowired
     EntityManager entityManager;
 
@@ -51,7 +48,7 @@ public class CardAppRequestController implements CardSubPageTitleConfig {
             return View.Card.APPLICATION;
         }
 
-        delegateCardApplicationService.sendRequest(cardApplicationDTO);
+        cardFacadeService.sendApplication(cardApplicationDTO);
         redirect.addFlashAttribute(MessageTag.SUCCESS, "Card application sent successfully !");
 
         return "redirect:" + Endpoint.Card.APPLICATION;
@@ -60,7 +57,7 @@ public class CardAppRequestController implements CardSubPageTitleConfig {
     @GetMapping(value = Endpoint.Card.APPLICATION + "/{requestId}")
     public String applicationRequestsDetails(Model model, @PathVariable int requestId, CardDTO cardDTO) {
 
-        CardApplicationDTO cardApplicationDTO = delegateCardApplicationService.findById(requestId);
+        CardApplicationDTO cardApplicationDTO = cardFacadeService.findApplicationById(requestId);
 
         setPageTitle(model, "Request Details", " / Application Requests");
         model.addAttribute("requestDTO", StatedObjectFormatter.format(cardApplicationDTO));
@@ -73,7 +70,7 @@ public class CardAppRequestController implements CardSubPageTitleConfig {
                                             @RequestParam String cardExpiryYear,
                                             RedirectAttributes redirect) {
 
-        CardApplicationDTO requestDTO = delegateCardApplicationService.findById(requestId);
+        CardApplicationDTO requestDTO = cardFacadeService.findApplicationById(requestId);
 
         if(binding.hasErrors() || !requestDTO.getCardType().equals(cardDTO.getCardType()) || !requestDTO.getAccountNumber().equals(cardDTO.getAccountNumber())
                 || !CardExpirationDateSettlement.isValidMonth(cardExpiryMonth) || !CardExpirationDateSettlement.isValidYear(cardExpiryYear))
@@ -86,10 +83,10 @@ public class CardAppRequestController implements CardSubPageTitleConfig {
             //TODO: save the card
             //we set the expiration date before saving the card
             cardDTO.setExpirationDate(CardExpirationDateSettlement.setDate(cardExpiryMonth, cardExpiryYear));
-            delegateCardService.add(cardDTO);
+            cardFacadeService.add(cardDTO);
 
             //TODO: approve the request application
-            delegateCardApplicationService.approve(requestId);
+            cardFacadeService.approve(requestId);
             redirect.addFlashAttribute(MessageTag.SUCCESS, "Application approved successfully !");
         }
 
@@ -103,7 +100,7 @@ public class CardAppRequestController implements CardSubPageTitleConfig {
             redirect.addFlashAttribute(MessageTag.ERROR, "Reject reason reason is mandatory !");
         else {
             redirect.addFlashAttribute(MessageTag.SUCCESS, "Application request successfully rejected!");
-            delegateCardApplicationService.reject(requestId, rejectReason);
+            cardFacadeService.reject(requestId, rejectReason);
         }
 
         return "redirect:" + Endpoint.Card.APPLICATION + "/" + requestId;
@@ -111,6 +108,6 @@ public class CardAppRequestController implements CardSubPageTitleConfig {
 
     private void setTitleAndAddListOfAllApplicationRequestsAttribute(Model model) {
         setPageTitle(model, USEFUL_TITLE, null);
-        model.addAttribute("cardApplications", StatedObjectFormatter.format(delegateCardApplicationService.findAll()));
+        model.addAttribute("cardApplications", StatedObjectFormatter.format(cardFacadeService.findAllApplications()));
     }
 }

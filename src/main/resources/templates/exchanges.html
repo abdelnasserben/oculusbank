@@ -84,8 +84,7 @@
                             <td th:text="${exchange.saleCurrency}">KMF</td>
                             <td th:text="${exchange.saleAmount}" class="text-danger">65000</td>
                             <td class="pe-0">
-                                <div th:text="${exchange.status}" class="badge"
-                                    th:classappend="${exchange.status} == 'Approved' ? 'badge-light-success' : (${exchange.status} == 'Pending' ? 'badge-light-warning' : 'badge-light-danger')">
+                                <div th:text="${exchange.status}" th:class="${'badge badge-light-' + @appExpUtils.statusColor(exchange.status)}">
                                     Failed</div>
                             </td>
                             <td th:text="${#temporals.format(exchange.createdAt, 'yyyy-MM-dd HH:mm')}">21/09/2023

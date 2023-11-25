@@ -1,7 +1,7 @@
 package com.dabel.oculusbank.service.support.card;
 
 import com.dabel.oculusbank.dto.CardApplicationDTO;
-import com.dabel.oculusbank.exception.CardAppRequestNotFoundException;
+import com.dabel.oculusbank.exception.CardAppNotFoundException;
 import com.dabel.oculusbank.mapper.CardApplicationMapper;
 import com.dabel.oculusbank.model.CardApplication;
 import com.dabel.oculusbank.model.CardApplicationView;
@@ -32,7 +32,7 @@ public class CardApplicationCrudServiceImpl implements CardApplicationCrudServic
     public CardApplicationDTO findById(int requestId) {
 
         CardApplicationView cardView = cardAppApplicationViewRepository.findById(requestId)
-                .orElseThrow(CardAppRequestNotFoundException::new);
+                .orElseThrow(CardAppNotFoundException::new);
         return CardApplicationMapper.viewToDTO(cardView);
     }
 

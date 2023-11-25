@@ -1,6 +1,6 @@
 package com.dabel.oculusbank.dto;
 
-import com.dabel.oculusbank.app.custom.validation.CardType;
+import com.dabel.oculusbank.app.validation.CardType;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

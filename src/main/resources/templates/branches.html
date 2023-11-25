@@ -87,7 +87,7 @@
                         <td th:text="${branch.branchName}">HQ</td>
                         <td th:text="${branch.branchAddress}">Ngazidja, Moroni Place de France</td>
                         <td class="pe-0">
-                            <div th:text="${branch.status}" class="badge" th:classappend="${branch.status} == 'Active' ? 'badge-light-success' : (${branch.status} == 'Pending' ? 'badge-light-warning' : 'badge-light-danger')">Failed</div>
+                            <div th:text="${branch.status}" th:class="${'badge badge-light-' + @appExpUtils.statusColor(branch.status)}">Failed</div>
                         </td>
                     </tr>
                     </tbody>

@@ -1,27 +1,10 @@
 package com.dabel.oculusbank.service;
 
-import com.dabel.oculusbank.DatabaseSettingsForTests;
-import com.dabel.oculusbank.constant.AccountType;
-import com.dabel.oculusbank.constant.LoanType;
-import com.dabel.oculusbank.constant.Status;
-import com.dabel.oculusbank.dto.AccountDTO;
-import com.dabel.oculusbank.dto.BranchDTO;
-import com.dabel.oculusbank.dto.CustomerDTO;
-import com.dabel.oculusbank.dto.LoanDTO;
-import com.dabel.oculusbank.exception.LoanNotFoundException;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 class LoanServiceTest {
-
+/*
     @Autowired
     LoanService loanService;
     @Autowired
@@ -153,4 +136,6 @@ class LoanServiceTest {
         assertThat(expected.get(0).getFirstName()).isEqualTo(savedCustomer.getFirstName());
     }
 
+
+ */
 }

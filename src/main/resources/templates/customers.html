@@ -82,7 +82,7 @@
                         <td th:text="${customer.phone}">+2694561212</td>
                         <td th:text="${customer.address}">Domoni Mbadjini</td>
                         <td>
-                            <div th:text="${customer.status}" class="badge" th:classappend="${customer.status} == 'Active' ? 'badge-light-success' : (${customer.status} == 'Pending' ? 'badge-light-warning' : 'badge-light-danger')">Active</div>
+                            <div th:text="${customer.status}" th:classappend="${'badge badge-light-' + @appExpUtils.statusColor(customer.status)}">Active</div>
                         </td>
                         <td th:text="${#temporals.format(customer.createdAt, 'yyyy-MM-dd HH:mm')}">14/12/2020 08:43</td>
                     </tr>

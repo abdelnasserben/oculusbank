@@ -1,17 +1,21 @@
 package com.dabel.oculusbank.controller;
 
 import com.dabel.oculusbank.app.util.StatedObjectFormatter;
-import com.dabel.oculusbank.app.util.card.CardNumberFormatter;
+import com.dabel.oculusbank.app.util.CardNumberFormatter;
 import com.dabel.oculusbank.app.web.Endpoint;
 import com.dabel.oculusbank.app.web.PageTitleConfig;
-import com.dabel.oculusbank.constant.AccountMemberShip;
+import com.dabel.oculusbank.constant.AccountMembership;
 import com.dabel.oculusbank.constant.Status;
 import com.dabel.oculusbank.constant.web.CurrentPageTitle;
 import com.dabel.oculusbank.constant.web.MessageTag;
 import com.dabel.oculusbank.dto.*;
-import com.dabel.oculusbank.service.LoanService;
-import com.dabel.oculusbank.service.delegate.*;
-import jakarta.persistence.EntityManager;
+import com.dabel.oculusbank.service.core.account.AccountFacadeService;
+import com.dabel.oculusbank.service.core.card.CardFacadeService;
+import com.dabel.oculusbank.service.core.customer.CustomerFacadeService;
+import com.dabel.oculusbank.service.core.exchange.ExchangeFacadeService;
+import com.dabel.oculusbank.service.core.loan.LoanFacadeService;
+import com.dabel.oculusbank.service.core.payment.PaymentFacadeService;
+import com.dabel.oculusbank.service.core.transaction.TransactionFacadeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -29,27 +33,25 @@ import java.util.List;
 public class CustomerController implements PageTitleConfig {
 
     @Autowired
-    DelegateCustomerService delegateCustomerService;
+    CustomerFacadeService customerFacadeService;
     @Autowired
-    DelegateAccountService delegateAccountService;
+    AccountFacadeService accountFacadeService;
     @Autowired
-    DelegateCardService delegateCardService;
+    CardFacadeService cardFacadeService;
     @Autowired
-    DelegateTransactionService delegateTransactionService;
+    TransactionFacadeService transactionFacadeService;
     @Autowired
-    DelegatePaymentService delegatePaymentService;
+    PaymentFacadeService paymentFacadeService;
     @Autowired
-    DelegateExchangeService delegateExchangeService;
+    ExchangeFacadeService exchangeFacadeService;
     @Autowired
-    LoanService loanService;
-    @Autowired
-    EntityManager entityManager;
+    LoanFacadeService loanFacadeService;
 
     @GetMapping(value = Endpoint.Customer.ROOT)
     public String customers(Model model) {
 
         setPageTitle(model, "Customers", null);
-        model.addAttribute("customers", StatedObjectFormatter.format(delegateCustomerService.findAll()));
+        model.addAttribute("customers", StatedObjectFormatter.format(customerFacadeService.findAll()));
         return "customers";
     }
 
@@ -75,11 +77,11 @@ public class CustomerController implements PageTitleConfig {
 
         customerDTO.setBranchId(1); //We'll replace this automatically by user authenticated
         String accountMembership = switch(accountProfile){
-            case "Associative" -> AccountMemberShip.Associated.name();
-            case "Joint" -> AccountMemberShip.Jointed.name();
-            default -> AccountMemberShip.Owner.name();
+            case "Associative" -> AccountMembership.ASSOCIATED.name();
+            case "Joint" -> AccountMembership.JOINTED.name();
+            default -> AccountMembership.OWNER.name();
         };
-        delegateCustomerService.create(customerDTO, accountType, accountProfile, accountMembership);
+        customerFacadeService.create(customerDTO, accountType, accountProfile, accountMembership);
 
         redirect.addFlashAttribute(MessageTag.SUCCESS, "Customer added successfully !");
         return "redirect:" + Endpoint.Customer.ADD;
@@ -88,57 +90,51 @@ public class CustomerController implements PageTitleConfig {
     @GetMapping(value = Endpoint.Customer.ROOT + "/{customerId}")
     public String customerDetails(@PathVariable int customerId, Model model) {
 
-        CustomerDTO customer = delegateCustomerService.findById(customerId);
+        CustomerDTO customer = customerFacadeService.findById(customerId);
 
-        List<TrunkDTO> customerAccounts = delegateAccountService.findCustomerAccountsByCustomerId(customerId);
+        List<TrunkDTO> customerAccounts = accountFacadeService.findAllTrunksByCustomerId(customerId);
         double totalBalance = customerAccounts.stream()
                         .mapToDouble(AccountDTO::getBalance)
                         .sum();
 
-        //clearing the entity manager empties its associated cache
-        // because the state held by the cache doesn't reflect what is in the database because
-        // in this case: accounts in cache are status active name but no the status code
-        entityManager.clear();
-
-        List<CardDTO> customerCards = delegateCardService.findAllByCustomerId(customerId)
+        List<CardDTO> customerCards = cardFacadeService.findAllByCustomerId(customerId)
                 .stream()
                 .peek(c -> c.setCardNumber(CardNumberFormatter.hide(c.getCardNumber())))
                 .toList();
         boolean notifyNoActiveCreditCards = customerCards.stream()
-                        .anyMatch(c -> c.getStatus().equals(Status.Active.name()));
+                        .anyMatch(c -> c.getStatus().equals(Status.ACTIVE.code()));
 
-        //clear cache again
-        entityManager.clear();
-
-        List<TransactionDTO> lastTenCustomerTransactions = delegateTransactionService.findAllByCustomerId(customerId).stream()
+        List<TransactionDTO> lastTenCustomerTransactions = transactionFacadeService.findAllByCustomerId(customerId).stream()
                 .limit(10)
                 .toList();
 
-        //clear cache again
-        entityManager.clear();
-
-        List<PaymentDTO> lastTenCustomerPayments = delegatePaymentService.findAllByCustomerId(customerId).stream()
+        List<PaymentDTO> lastTenCustomerPayments = paymentFacadeService.findAllByCustomerId(customerId).stream()
                 .limit(10)
                 .toList();
 
-        List<ExchangeDTO> lastTenCustomerExchanges = delegateExchangeService.findAllByCustomerIdentity(customer.getIdentityNumber()).stream()
+        List<ExchangeDTO> lastTenCustomerExchanges = exchangeFacadeService.findAllByCustomerIdentity(customer.getIdentityNumber()).stream()
                 .limit(10)
                 .toList();
 
-        List<LoanDTO> customerLoans = loanService.findAllByCustomerIdentityNumber(customer.getIdentityNumber()).stream()
-                .filter(l -> l.getStatus().equals(Status.Active.name()))
+        List<LoanDTO> customerLoans = loanFacadeService.findAllByCustomerIdentityNumber(customer.getIdentityNumber()).stream()
+                .filter(l -> l.getStatus().equals(Status.ACTIVE.code()))
                 .toList();
+
+        double totalLoan = customerLoans.stream()
+                        .mapToDouble(LoanDTO::getTotalAmount)
+                        .sum();
 
         setPageTitle(model, "Customer Details", "Customers");
         model.addAttribute("customer", StatedObjectFormatter.format(customer));
-        model.addAttribute("accounts", customerAccounts);
+        model.addAttribute("accounts", StatedObjectFormatter.format(customerAccounts));
         model.addAttribute("totalBalance", totalBalance);
-        model.addAttribute("cards", customerCards);
+        model.addAttribute("cards", StatedObjectFormatter.format(customerCards));
         model.addAttribute("notifyNoActiveCreditCards", notifyNoActiveCreditCards);
-        model.addAttribute("transactions", lastTenCustomerTransactions);
-        model.addAttribute("payments", lastTenCustomerPayments);
-        model.addAttribute("exchanges", lastTenCustomerExchanges);
-        model.addAttribute("loans", customerLoans);
+        model.addAttribute("transactions", StatedObjectFormatter.format(lastTenCustomerTransactions));
+        model.addAttribute("payments", StatedObjectFormatter.format(lastTenCustomerPayments));
+        model.addAttribute("exchanges", StatedObjectFormatter.format(lastTenCustomerExchanges));
+        model.addAttribute("loans", StatedObjectFormatter.format(customerLoans));
+        model.addAttribute("totalLoan", totalLoan);
 
         return "customers-details";
     }
@@ -153,7 +149,7 @@ public class CustomerController implements PageTitleConfig {
             return "customers-details";
         }
 
-        delegateCustomerService.update(customer);
+        customerFacadeService.update(customer);
         redirect.addFlashAttribute(MessageTag.SUCCESS, "Customer information updated successfully !");
         return "redirect:" + Endpoint.Customer.ROOT + "/" + customer.getCustomerId();
     }

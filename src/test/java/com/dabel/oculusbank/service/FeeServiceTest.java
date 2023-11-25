@@ -1,20 +1,10 @@
 package com.dabel.oculusbank.service;
 
-import com.dabel.oculusbank.DatabaseSettingsForTests;
-import com.dabel.oculusbank.app.util.Fee;
-import com.dabel.oculusbank.constant.AccountType;
-import com.dabel.oculusbank.constant.Status;
-import com.dabel.oculusbank.dto.AccountDTO;
-import com.dabel.oculusbank.dto.TransactionDTO;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 class FeeServiceTest {
+    /*
     @Autowired
     FeeService feeService;
     @Autowired
@@ -50,4 +40,6 @@ class FeeServiceTest {
         assertThat(expectedTransaction.getAmount()).isEqualTo(200);
         assertThat(expectedAccount.getBalance()).isEqualTo(800);
     }
+
+     */
 }

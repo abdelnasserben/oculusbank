@@ -198,8 +198,8 @@
                                                 data-control="select2" data-hide-search="true"
                                                 data-placeholder="Select an option">
                                                 <option value=""></option>
-                                                <option value="Male">Male</option>
-                                                <option value="Female">Female</option>
+                                                <option value="MALE">Male</option>
+                                                <option value="FEMALE">Female</option>
                                             </select>
                                             <div class="invalid-feedback" th:errors="*{gender}"></div>
                                             <!--end::Select2-->
@@ -212,12 +212,14 @@
                                             <!--end::Label-->
 
                                             <!--begin::Input-->
-                                            <select th:field="*{nationality}" class="form-select" data-control="select2"
+                                            <select th:field="*{nationality}" class="form-select mb-3" data-control="select2"
+                                                    th:classappend="${#fields.hasErrors('nationality')} ? 'is-invalid' : ''"
                                                 data-placeholder="Nationality" data-allow-clear="true">
                                                 <option value=""></option>
-                                                <option th:each="country: ${T(com.dabel.oculusbank.constant.Countries).values()}"
+                                                <option th:each="country: ${T(com.dabel.oculusbank.constant.Country).values()}"
                                                     th:text="${country.getName}" th:value="${country.getName}">Comoros</option>
                                             </select>
+                                            <div class="invalid-feedback" th:errors="*{nationality}"></div>
                                             <!--end::Input-->
                                         </div>
                                         <!--end::Input group-->
@@ -236,8 +238,8 @@
                                                 data-control="select2" data-hide-search="true"
                                                 data-placeholder="Select an option">
                                                 <option value=""></option>
-                                                <option value="Card" selected>Card</option>
-                                                <option value="Passport">Passport</option>
+                                                <option value="ID_CARD" selected>Card</option>
+                                                <option value="PASSPORT">Passport</option>
                                             </select>
                                             <!--end::Select2-->
                                         </div>
@@ -410,12 +412,14 @@
 
                                         <!--begin::Input-->
                                         <!--begin::Input-->
-                                        <select th:field="*{residence}" class="form-select" data-control="select2"
+                                        <select th:field="*{residence}" class="form-select mb-3" data-control="select2"
+                                                th:classappend="${#fields.hasErrors('residence')} ? 'is-invalid' : ''"
                                             data-placeholder="Residence" data-allow-clear="true">
                                             <option value=""></option>
-                                            <option th:each="country: ${T(com.dabel.oculusbank.constant.Countries).values()}"
+                                            <option th:each="country: ${T(com.dabel.oculusbank.constant.Country).values()}"
                                                 th:text="${country.getName}" th:value="${country.getName}">Comoros</option>
                                         </select>
+                                        <div class="invalid-feedback" th:errors="*{residence}"></div>
                                         <!--end::Input-->
                                         <!--end::Input-->
                                     </div>
@@ -506,7 +510,7 @@
                                                 <span
                                                     class="form-check form-check-custom form-check-solid form-check-lg">
                                                     <input class="form-check-input" type="radio" name="accountType"
-                                                        value="Saving" checked />
+                                                        value="SAVING" />
                                                 </span>
                                                 <!--end:Input-->
                                             </label>
@@ -556,7 +560,7 @@
                                                 <span
                                                     class="form-check form-check-custom form-check-solid form-check-lg">
                                                     <input class="form-check-input" type="radio" name="accountType"
-                                                        value="Business" />
+                                                        value="BUSINESS" />
                                                 </span>
                                                 <!--end:Input-->
                                             </label>
@@ -586,7 +590,7 @@
                                                     <span
                                                         class="form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1">
                                                         <input class="form-check-input" type="radio"
-                                                            name="accountProfile" value="Personal" checked="checked">
+                                                            name="accountProfile" value="PERSONAL" checked>
                                                     </span>
                                                     <!--end::Radio-->
 
@@ -611,7 +615,7 @@
                                                     <span
                                                         class="form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1">
                                                         <input class="form-check-input" type="radio"
-                                                            name="accountProfile" value="Joint">
+                                                            name="accountProfile" value="JOINT">
                                                     </span>
                                                     <!--end::Radio-->
 
@@ -635,7 +639,7 @@
                                                     <span
                                                         class="form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1">
                                                         <input class="form-check-input" type="radio"
-                                                            name="accountProfile" value="Associative">
+                                                            name="accountProfile" value="ASSOCIATIVE">
                                                     </span>
                                                     <!--end::Radio-->
 

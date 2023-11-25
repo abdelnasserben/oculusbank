@@ -7,5 +7,17 @@
 07 - review my book, to define correct functionalities like all account types "fees" etc...
 08 - implement security
 09 - correcting all views in database
-10 - reduce relation in delegate classes with adequate design pattern and delete this folder
+10 - * |reduce relation in delegate classes with adequate design pattern (facade pattern) and delete this folder
 11 - correcting header navigation of sections
+12 - * | review eric project
+13 - correcting transactionContext condition
+14 - * | make uppercase all enums
+15 - * | disabled all service tests
+16 - * | replace all services by crudService in core folder (tomorrow)
+17 - correct create and update methods of customer facade service (see on GITHUB)
+18 - update all equality in html pages of enum case sensitivity
+19 - correct all not found exception to one exception
+20 - make all status div in capitalize
+21 - show the possibility to reference clas by properties file
+
+RQ: exchange and payment are transactions

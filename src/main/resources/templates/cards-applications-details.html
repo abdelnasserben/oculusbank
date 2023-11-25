@@ -109,8 +109,7 @@
 
                             <!--begin::Col-->
                             <div class="col-lg-auto">
-                                <div th:text="${requestDTO.status}" class="badge"
-                                    th:classappend="${requestDTO.status} == 'Approved' ? 'badge-light-success' : (${requestDTO.status} == 'Pending' ? 'badge-light-warning' : 'badge-light-danger')">
+                                <div th:text="${requestDTO.status}" th:class="${'badge badge-light-' + @appExpUtils.statusColor(requestDTO.status)}">
                                     Active</div>
                             </div>
                             <!--end::Col-->
@@ -184,7 +183,7 @@
                         <!--end::Row-->
 
                         <!--begin::Row-->
-                        <div th:if="${#arrays.contains({'Rejected', 'Failed'}, requestDTO.status)}" class="row mb-4">
+                        <div th:if="${#arrays.contains({'REJECTED', 'FAILED'}, requestDTO.status)}" class="row mb-4">
                             <!--begin::Label-->
                             <label class="col-lg-3 fw-bold text-muted">Failed reason :</label>
                             <!--end::Label-->
@@ -200,7 +199,7 @@
 
                         <div class="separator separator-dashed mb-5"></div>
 
-                        <div th:unless="${requestDTO.status != 'Pending'}">
+                        <div th:unless="${requestDTO.status != 'PENDING'}">
                             <button type="button" class="btn btn-danger" data-bs-toggle="modal"
                                 data-bs-target="#kt_modal_reject_operation">
                                 Reject

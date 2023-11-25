@@ -84,8 +84,7 @@
                             <td th:text="${payment.currency}">KMF</td>
                             <td th:text="${payment.amount}">65000</td>
                             <td class="pe-0">
-                                <div th:text="${payment.status}" class="badge"
-                                    th:classappend="${payment.status} == 'Approved' ? 'badge-light-success' : (${payment.status} == 'Pending' ? 'badge-light-warning' : 'badge-light-danger')">
+                                <div th:text="${payment.status}" th:classappend="${'badge badge-light-' + @appExpUtils.statusColor(payment.status)}">
                                     Failed</div>
                             </td>
                             <td th:text="${#temporals.format(payment.createdAt, 'yyyy-MM-dd HH:mm')}">21/09/2023

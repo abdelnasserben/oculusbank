@@ -34,7 +34,10 @@ public class CustomerCrudServiceImpl implements CustomerCrudService {
 
     @Override
     public CustomerDTO findByIdentityNumber(String identityNumber) {
-        return null;
+        Customer customer = customerRepository.findByIdentityNumber(identityNumber)
+                .orElseThrow(CustomerNotFoundException::new);
+
+        return CustomerMapper.toDTO(customer);
     }
 
     @Override

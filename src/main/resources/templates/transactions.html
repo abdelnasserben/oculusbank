@@ -91,8 +91,7 @@
 
                             </td>
                             <td class="pe-0">
-                                <div th:text="${transaction.status}" class="badge"
-                                    th:classappend="${transaction.status} == 'Approved' ? 'badge-light-success' : (${transaction.status} == 'Pending' ? 'badge-light-warning' : 'badge-light-danger')">
+                                <div th:text="${transaction.status}" th:class="${'badge badge-light-' + @appExpUtils.statusColor(transaction.status)}">
                                     Failed</div>
                             </td>
                             <td th:text="${#temporals.format(transaction.createdAt, 'yyyy-MM-dd HH:mm')}">21/09/2023

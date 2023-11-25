@@ -1,0 +1,127 @@
+package com.dabel.oculusbank.service.delegate;
+
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class DelegateTransferServiceTest {
+
+    /*
+    @Autowired
+    DelegateExchangeService delegateExchangeService;
+    @Autowired
+    DatabaseSettingsForTests databaseSettingsForTests;
+
+    @BeforeEach
+    void init() {
+        databaseSettingsForTests.truncate();
+    }
+
+    @Test
+    void shouldExchangeEur2Kmf() {
+        //GIVEN
+        ExchangeDTO exchangeDTO = ExchangeDTO.builder()
+                .customerName("John Doe")
+                .customerIdentity("NBE454532")
+                .purchaseCurrency(Currency.EUR.name())
+                .saleCurrency(Currency.KMF.name())
+                .purchaseAmount(20)
+                .reason("Sample reason")
+                .build();
+
+        //WHEN
+        ExchangeDTO expected = delegateExchangeService.exchange(exchangeDTO);
+
+        //THEN
+        //1£ = 490.31KMF => 20£ = 9806.2KMF | Note that this is a purchase
+        assertThat(expected.getStatus()).isEqualTo(Status.Pending.code());
+        assertThat(expected.getSaleAmount()).isEqualTo(9806.2);
+    }
+
+    @Test
+    void shouldExchangeKmf2Usd() {
+        //GIVEN
+        ExchangeDTO exchangeDTO = ExchangeDTO.builder()
+                .customerName("John Doe")
+                .customerIdentity("NBE454532")
+                .purchaseCurrency(Currency.KMF.name())
+                .saleCurrency(Currency.USD.name())
+                .purchaseAmount(10000)
+                .reason("Sample reason")
+                .build();
+
+        //WHEN
+        ExchangeDTO expected = delegateExchangeService.exchange(exchangeDTO);
+
+        //THEN
+        //1$ = 462.12KMF => 10 000KMF = 21.63$ | note that this is a sale
+        assertThat(expected.getStatus()).isEqualTo(Status.Pending.code());
+        assertThat(expected.getSaleAmount()).isEqualTo(21.63);
+    }
+
+    @Test
+    void shouldApprovePendingSavedExchange() {
+        //GIVEN
+        ExchangeDTO exchangeDTO = ExchangeDTO.builder()
+                .customerName("John Doe")
+                .customerIdentity("NBE454532")
+                .purchaseCurrency(Currency.KMF.name())
+                .saleCurrency(Currency.USD.name())
+                .purchaseAmount(10000)
+                .reason("Sample reason")
+                .build();
+        ExchangeDTO savedExchange = delegateExchangeService.exchange(exchangeDTO);
+
+        //WHEN
+        ExchangeDTO expected = delegateExchangeService.approve(savedExchange.getExchangeId());
+
+        //THEN
+        //1$ = 462.12KMF => 10 000KMF = 21.63$ | note that this is a sale
+        assertThat(expected.getStatus()).isEqualTo(Status.Approved.code());
+        assertThat(expected.getSaleAmount()).isEqualTo(21.63);
+    }
+
+    @Test
+    void shouldRejectPendingSavedExchange() {
+        //GIVEN
+        ExchangeDTO exchangeDTO = ExchangeDTO.builder()
+                .customerName("John Doe")
+                .customerIdentity("NBE454532")
+                .purchaseCurrency(Currency.KMF.name())
+                .saleCurrency(Currency.USD.name())
+                .purchaseAmount(10000)
+                .reason("Sample reason")
+                .build();
+        ExchangeDTO savedExchange = delegateExchangeService.exchange(exchangeDTO);
+
+        //WHEN
+        ExchangeDTO expected = delegateExchangeService.reject(savedExchange.getExchangeId(), "Sample remark");
+
+        //THEN
+        //1$ = 462.12KMF => 10 000KMF = 21.63$ | note that this is a sale
+        assertThat(expected.getStatus()).isEqualTo(Status.Rejected.code());
+        assertThat(expected.getFailureReason()).isEqualTo("Sample remark");
+        assertThat(expected.getSaleAmount()).isEqualTo(21.63);
+    }
+
+    @Test
+    void shouldThrowAnIllegalOperationExceptionWhenTryMakeExchangeWithSameCurrencies() {
+        //GIVEN
+        ExchangeDTO exchangeDTO = ExchangeDTO.builder()
+                .customerName("John Doe")
+                .customerIdentity("NBE454532")
+                .purchaseCurrency(Currency.KMF.name())
+                .saleCurrency(Currency.KMF.name())
+                .purchaseAmount(20)
+                .reason("Sample reason")
+                .build();
+
+        //WHEN
+        Exception expected = assertThrows(IllegalOperationException.class,
+                () -> delegateExchangeService.exchange(exchangeDTO));
+
+        //THEN
+        assertThat(expected.getMessage()).isEqualTo("Currencies must be different");
+    }
+
+     */
+}

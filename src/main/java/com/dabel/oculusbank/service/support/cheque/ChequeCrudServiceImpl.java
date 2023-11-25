@@ -23,7 +23,7 @@ public class ChequeCrudServiceImpl implements ChequeCrudService {
     @Override
     public ChequeDTO save(ChequeDTO chequeDTO) {
 
-        chequeDTO.setStatus(Status.Active.code());
+        chequeDTO.setStatus(Status.ACTIVE.code());
         Cheque cheque = chequeRepository.save(ChequeMapper.toEntity(chequeDTO));
         return ChequeMapper.toDTO(cheque);
     }

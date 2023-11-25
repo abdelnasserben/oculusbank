@@ -1,7 +1,12 @@
 package com.dabel.oculusbank.constant;
 
 public enum Status {
-    Pending(0), Active(1), Failed(2), Approved(3), Rejected(4), Deactivated(5);
+    PENDING(0),
+    ACTIVE(1),
+    FAILED(2),
+    APPROVED(3),
+    REJECTED(4),
+    DEACTIVATED(5);
 
     private final int code;
     Status(int code) {
@@ -18,7 +23,7 @@ public enum Status {
             if(status.code == resolveCode)
                 return status.name();
         }
-        return Pending.name();
+        return PENDING.name();
     }
 
     public static String codeOf(String name) {
@@ -26,6 +31,6 @@ public enum Status {
             if(status.name().equals(name))
                 return status.code();
         }
-        return Pending.code();
+        return PENDING.code();
     }
 }

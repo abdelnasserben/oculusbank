@@ -12,7 +12,7 @@ public interface LoanCrudService {
 
     LoanDTO update(LoanDTO loanDTO);
 
-    LoanDTO findLoanById(int loanId);
+    LoanDTO findById(int loanId);
 
     List<LoanDTO> findAll();
 

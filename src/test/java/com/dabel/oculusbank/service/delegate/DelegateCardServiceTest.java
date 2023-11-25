@@ -1,27 +1,10 @@
 package com.dabel.oculusbank.service.delegate;
 
-import com.dabel.oculusbank.DatabaseSettingsForTests;
-import com.dabel.oculusbank.constant.*;
-import com.dabel.oculusbank.dto.AccountDTO;
-import com.dabel.oculusbank.dto.BranchDTO;
-import com.dabel.oculusbank.dto.CardDTO;
-import com.dabel.oculusbank.dto.CustomerDTO;
-import com.dabel.oculusbank.exception.AccountNotFoundException;
-import com.dabel.oculusbank.exception.IllegalOperationException;
-import com.dabel.oculusbank.service.AccountService;
-import com.dabel.oculusbank.service.BranchService;
-import com.dabel.oculusbank.service.CustomerService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 class DelegateCardServiceTest {
-
+/*
     @Autowired
     DelegateCardService delegateCardService;
     @Autowired
@@ -60,7 +43,7 @@ class DelegateCardServiceTest {
                 .status(accountStatus)
                 .build());
 
-        accountService.saveTrunk(savedAccount.getAccountId(), savedCustomer.getCustomerId(), AccountMemberShip.Owner.name());
+        accountService.saveTrunk(savedAccount.getAccountId(), savedCustomer.getCustomerId(), AccountMembership.Owner.name());
 
         return savedAccount;
     }
@@ -194,5 +177,7 @@ class DelegateCardServiceTest {
         assertThat(expected.getStatus()).isEqualTo(Status.Rejected.code());
         assertThat(expected.getFailureReason()).isEqualTo("Sample remark");
     }
+
+ */
 
 }

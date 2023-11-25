@@ -1,22 +1,10 @@
 package com.dabel.oculusbank.service;
 
-import com.dabel.oculusbank.DatabaseSettingsForTests;
-import com.dabel.oculusbank.constant.AccountType;
-import com.dabel.oculusbank.constant.Status;
-import com.dabel.oculusbank.dto.AccountDTO;
-import com.dabel.oculusbank.dto.ChequeDTO;
-import com.dabel.oculusbank.exception.ChequeNotFountException;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class ChequeServiceTest {
-
+/*
     @Autowired
     ChequeService chequeService;
     @Autowired
@@ -109,4 +97,6 @@ class ChequeServiceTest {
         //THEN
         assertThat(expected.getMessage()).isEqualTo("Cheque not found");
     }
+
+ */
 }

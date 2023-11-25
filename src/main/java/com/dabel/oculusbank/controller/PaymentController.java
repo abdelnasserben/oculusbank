@@ -6,7 +6,7 @@ import com.dabel.oculusbank.app.web.TransactionSubPageTitleConfig;
 import com.dabel.oculusbank.app.web.View;
 import com.dabel.oculusbank.constant.web.MessageTag;
 import com.dabel.oculusbank.dto.PaymentDTO;
-import com.dabel.oculusbank.service.delegate.DelegatePaymentService;
+import com.dabel.oculusbank.service.core.payment.PaymentFacadeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,13 +24,13 @@ public class PaymentController implements TransactionSubPageTitleConfig {
     private static final String USEFUL_BREADCRUMB = " / Payments";
 
     @Autowired
-    DelegatePaymentService delegatePaymentService;
+    PaymentFacadeService paymentFacadeService;
 
     @GetMapping(value = Endpoint.Payment.ROOT)
     public String paymentsListing(Model model) {
 
         setPageTitle(model, "Payments", null);
-        model.addAttribute("payments", StatedObjectFormatter.format(delegatePaymentService.findAll()));
+        model.addAttribute("payments", StatedObjectFormatter.format(paymentFacadeService.findAll()));
 
         return View.Payment.ROOT;
     }
@@ -50,7 +50,7 @@ public class PaymentController implements TransactionSubPageTitleConfig {
             return View.Payment.INIT;
         }
 
-        delegatePaymentService.pay(paymentDTO);
+        paymentFacadeService.pay(paymentDTO);
 
         redirect.addFlashAttribute(MessageTag.SUCCESS, "Payment successfully initiated");
         return "redirect:" + Endpoint.Payment.INIT;
@@ -59,7 +59,7 @@ public class PaymentController implements TransactionSubPageTitleConfig {
     @GetMapping(value = Endpoint.Payment.ROOT + "/{paymentId}")
     public String paymentDetails(@PathVariable int paymentId, Model model) {
 
-        PaymentDTO payment = delegatePaymentService.findById(paymentId);
+        PaymentDTO payment = paymentFacadeService.findById(paymentId);
 
         setPageTitle(model, "Payment Details", USEFUL_BREADCRUMB);
         model.addAttribute("payment", StatedObjectFormatter.format(payment));
@@ -70,7 +70,7 @@ public class PaymentController implements TransactionSubPageTitleConfig {
     @GetMapping(value = Endpoint.Payment.APPROVE + "/{paymentId}")
     public String approvePayment(@PathVariable int paymentId, RedirectAttributes redirect) {
 
-        delegatePaymentService.approve(paymentId);
+        paymentFacadeService.approve(paymentId);
         redirect.addFlashAttribute(MessageTag.SUCCESS, "Payment successfully approved!");
 
         return "redirect:" + Endpoint.Payment.ROOT + "/" + paymentId;
@@ -83,7 +83,7 @@ public class PaymentController implements TransactionSubPageTitleConfig {
             redirect.addFlashAttribute(MessageTag.ERROR, "Reject reason is mandatory!");
         else {
             redirect.addFlashAttribute(MessageTag.SUCCESS, "Payment successfully rejected!");
-            delegatePaymentService.reject(paymentId, rejectReason);
+            paymentFacadeService.reject(paymentId, rejectReason);
         }
 
         return "redirect:" + Endpoint.Payment.ROOT + "/" + paymentId;

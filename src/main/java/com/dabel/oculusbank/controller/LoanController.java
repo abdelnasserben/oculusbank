@@ -7,9 +7,7 @@ import com.dabel.oculusbank.app.web.View;
 import com.dabel.oculusbank.constant.web.CurrentPageTitle;
 import com.dabel.oculusbank.constant.web.MessageTag;
 import com.dabel.oculusbank.dto.LoanDTO;
-import com.dabel.oculusbank.service.LoanService;
-import com.dabel.oculusbank.service.delegate.DelegateLoanService;
-import jakarta.persistence.EntityManager;
+import com.dabel.oculusbank.service.core.loan.LoanFacadeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,17 +23,15 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class LoanController implements PageTitleConfig {
 
     @Autowired
-    DelegateLoanService delegateLoanService;
-    @Autowired
-    LoanService loanService;
-    @Autowired
-    EntityManager entityManager;
+    LoanFacadeService loanFacadeService;
+    /*@Autowired
+    LoanService loanService;*/
 
     @GetMapping(value = Endpoint.Loan.ROOT)
     public String loansListing(Model model, LoanDTO loanDTO) {
 
         setPageTitle(model, "Loans", null);
-        model.addAttribute("loans", StatedObjectFormatter.format(loanService.findAll()));
+        model.addAttribute("loans", StatedObjectFormatter.format(loanFacadeService.findAll()));
         return View.Loan.ROOT;
     }
 
@@ -48,8 +44,8 @@ public class LoanController implements PageTitleConfig {
             return View.Loan.ROOT;
         }
 
-        entityManager.clear();
-        delegateLoanService.loan(loanDTO);
+        //entityManager.clear();
+        loanFacadeService.loan(loanDTO);
 
         redirect.addFlashAttribute(MessageTag.SUCCESS, "Loan successfully initiated.");
         return "redirect:" + Endpoint.Loan.ROOT;
@@ -58,7 +54,7 @@ public class LoanController implements PageTitleConfig {
     @GetMapping(value = Endpoint.Loan.ROOT + "/{loanId}")
     public String loanDetails(Model model, @PathVariable int loanId) {
 
-        LoanDTO loanDTO = loanService.findLoanById(loanId);
+        LoanDTO loanDTO = loanFacadeService.findById(loanId);
         setPageTitle(model, "Loan Details", "Loans");
         model.addAttribute("loan", StatedObjectFormatter.format(loanDTO));
         return View.Loan.DETAILS;
@@ -67,7 +63,7 @@ public class LoanController implements PageTitleConfig {
     @GetMapping(value = Endpoint.Loan.APPROVE + "/{loanId}")
     public String approveLoan(@PathVariable int loanId, RedirectAttributes redirect) {
 
-        delegateLoanService.approve(loanId);
+        loanFacadeService.approve(loanId);
         redirect.addFlashAttribute(MessageTag.SUCCESS, "Loan successfully approved!");
 
         return "redirect:" + Endpoint.Loan.ROOT + "/" + loanId;
@@ -80,7 +76,7 @@ public class LoanController implements PageTitleConfig {
             redirect.addFlashAttribute(MessageTag.ERROR, "Reject reason is mandatory!");
         else {
             redirect.addFlashAttribute(MessageTag.SUCCESS, "Loan successfully rejected!");
-            delegateLoanService.reject(loanId, rejectReason);
+            loanFacadeService.reject(loanId, rejectReason);
         }
 
         return "redirect:" + Endpoint.Loan.ROOT + "/" + loanId;

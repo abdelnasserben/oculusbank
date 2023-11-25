@@ -7,7 +7,7 @@ import com.dabel.oculusbank.app.web.View;
 import com.dabel.oculusbank.constant.web.CurrentPageTitle;
 import com.dabel.oculusbank.constant.web.MessageTag;
 import com.dabel.oculusbank.dto.BranchDTO;
-import com.dabel.oculusbank.service.delegate.DelegateBranchService;
+import com.dabel.oculusbank.service.core.branch.BranchFacadeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,7 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class BranchController implements PageTitleConfig {
 
     @Autowired
-    DelegateBranchService delegateBranchService;
+    BranchFacadeService branchFacadeService;
 
     @GetMapping(value = Endpoint.Branch.ROOT)
     public String branches(Model model, BranchDTO branchDTO) {
@@ -45,7 +45,7 @@ public class BranchController implements PageTitleConfig {
         }
 
         double[] vaultsAssets = new double[]{assetKMF, assetEUR, assetUSD};
-        delegateBranchService.create(branchDTO, vaultsAssets);
+        branchFacadeService.create(branchDTO, vaultsAssets);
         redirect.addFlashAttribute(MessageTag.SUCCESS, "New branch added successfully !");
 
         return "redirect:" + Endpoint.Branch.ROOT;
@@ -53,7 +53,7 @@ public class BranchController implements PageTitleConfig {
 
     private void setTitleAndAddListOfALlBranchesAttribute(Model model) {
         setPageTitle(model, "Branches", "Settings");
-        model.addAttribute("branches", StatedObjectFormatter.format(delegateBranchService.findAll()));
+        model.addAttribute("branches", StatedObjectFormatter.format(branchFacadeService.findAll()));
     }
 
     @Override

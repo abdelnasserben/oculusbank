@@ -6,7 +6,7 @@ import com.dabel.oculusbank.app.web.TransactionSubPageTitleConfig;
 import com.dabel.oculusbank.app.web.View;
 import com.dabel.oculusbank.constant.web.MessageTag;
 import com.dabel.oculusbank.dto.ExchangeDTO;
-import com.dabel.oculusbank.service.delegate.DelegateExchangeService;
+import com.dabel.oculusbank.service.core.exchange.ExchangeFacadeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,13 +24,13 @@ public class ExchangeController implements TransactionSubPageTitleConfig {
     private static final String USEFUL_BREADCRUMB = " / Exchanges";
 
     @Autowired
-    DelegateExchangeService delegateExchangeService;
+    ExchangeFacadeService exchangeFacadeService;
 
     @GetMapping(value = Endpoint.Exchange.ROOT)
     public String exchangesListing(Model model) {
 
         setPageTitle(model, "Exchanges", null);
-        model.addAttribute("exchanges", StatedObjectFormatter.format(delegateExchangeService.findAll()));
+        model.addAttribute("exchanges", StatedObjectFormatter.format(exchangeFacadeService.findAll()));
 
         return View.Exchange.ROOT;
     }
@@ -49,7 +49,7 @@ public class ExchangeController implements TransactionSubPageTitleConfig {
             return View.Exchange.INIT;
         }
 
-        delegateExchangeService.exchange(exchangeDTO);
+        exchangeFacadeService.exchange(exchangeDTO);
 
         redirect.addFlashAttribute(MessageTag.SUCCESS, "Exchange successfully initiated");
         return "redirect:" + Endpoint.Exchange.INIT;
@@ -58,7 +58,7 @@ public class ExchangeController implements TransactionSubPageTitleConfig {
     @GetMapping(value = Endpoint.Exchange.ROOT + "/{exchangeId}")
     public String exchangeDetails(@PathVariable int exchangeId, Model model) {
 
-        ExchangeDTO exchange = delegateExchangeService.findById(exchangeId);
+        ExchangeDTO exchange = exchangeFacadeService.findById(exchangeId);
 
         setPageTitle(model, "Exchange Details", USEFUL_BREADCRUMB);
         model.addAttribute("exchange", StatedObjectFormatter.format(exchange));
@@ -68,7 +68,7 @@ public class ExchangeController implements TransactionSubPageTitleConfig {
     @GetMapping(value = Endpoint.Exchange.APPROVE + "/{exchangeId}")
     public String approveExchange(@PathVariable int exchangeId, RedirectAttributes redirect) {
 
-        delegateExchangeService.approve(exchangeId);
+        exchangeFacadeService.approve(exchangeId);
         redirect.addFlashAttribute(MessageTag.SUCCESS, "Exchange successfully approved!");
 
         return "redirect:" + Endpoint.Exchange.ROOT + "/" + exchangeId;
@@ -81,7 +81,7 @@ public class ExchangeController implements TransactionSubPageTitleConfig {
             redirect.addFlashAttribute(MessageTag.ERROR, "Reject reason is mandatory!");
         else {
             redirect.addFlashAttribute(MessageTag.SUCCESS, "Exchange successfully rejected!");
-            delegateExchangeService.reject(exchangeId, rejectReason);
+            exchangeFacadeService.reject(exchangeId, rejectReason);
         }
 
         return "redirect:" + Endpoint.Exchange.ROOT + "/" + exchangeId;

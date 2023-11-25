@@ -5,11 +5,10 @@ import com.dabel.oculusbank.app.web.Endpoint;
 import com.dabel.oculusbank.app.web.PageTitleConfig;
 import com.dabel.oculusbank.app.web.View;
 import com.dabel.oculusbank.constant.SourceType;
-import com.dabel.oculusbank.constant.TransactionType;
 import com.dabel.oculusbank.constant.web.CurrentPageTitle;
 import com.dabel.oculusbank.constant.web.MessageTag;
 import com.dabel.oculusbank.dto.TransactionDTO;
-import com.dabel.oculusbank.service.delegate.DelegateTransactionService;
+import com.dabel.oculusbank.service.core.transaction.TransactionFacadeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,13 +24,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class TransactionController implements PageTitleConfig {
 
     @Autowired
-    DelegateTransactionService delegateTransactionService;
+    TransactionFacadeService transactionFacadeService;
 
     @GetMapping(value = Endpoint.Transaction.ROOT)
-    public String dashboard(Model model) {
+    public String listingTransactions(Model model) {
 
         setPageTitle(model, "Transactions", null);
-        model.addAttribute("transactions", StatedObjectFormatter.format(delegateTransactionService.findAll()));
+        model.addAttribute("transactions", StatedObjectFormatter.format(transactionFacadeService.findAll()));
 
         return View.Transaction.ROOT;
     }
@@ -53,13 +52,10 @@ public class TransactionController implements PageTitleConfig {
         }
 
         //We're online so we set the source
-        transactionDTO.setSourceType(SourceType.Online.name());
+        transactionDTO.setSourceType(SourceType.ONLINE.name());
         transactionDTO.setSourceValue("Branch Moroni HQ"); //we'll update this by the current user branch
 
-        if(transactionDTO.getTransactionType().equals(TransactionType.Deposit.name()))
-            delegateTransactionService.deposit(transactionDTO);
-        else
-            delegateTransactionService.withdraw(transactionDTO);
+        transactionFacadeService.init(transactionDTO);
 
         redirect.addFlashAttribute(MessageTag.SUCCESS, transactionDTO.getTransactionType() + " successfully initiated.");
         return "redirect:" + Endpoint.Transaction.INIT;
@@ -68,7 +64,7 @@ public class TransactionController implements PageTitleConfig {
     @GetMapping(value = Endpoint.Transaction.ROOT + "/{transactionId}")
     public String transactionDetails(@PathVariable int transactionId, Model model) {
 
-        TransactionDTO transactionDTO = delegateTransactionService.findById(transactionId);
+        TransactionDTO transactionDTO = transactionFacadeService.findById(transactionId);
 
         model.addAttribute("transaction", StatedObjectFormatter.format(transactionDTO));
         setPageTitle(model, "Transaction Details", "Transactions");
@@ -78,7 +74,7 @@ public class TransactionController implements PageTitleConfig {
     @GetMapping(value = Endpoint.Transaction.APPROVE + "/{transactionId}")
     public String approveTransaction(@PathVariable int transactionId, RedirectAttributes redirect) {
 
-        delegateTransactionService.approve(transactionId);
+        transactionFacadeService.approve(transactionId);
         redirect.addFlashAttribute(MessageTag.SUCCESS, "Transaction successfully approved!");
 
         return "redirect:" + Endpoint.Transaction.ROOT + "/" + transactionId;
@@ -91,7 +87,7 @@ public class TransactionController implements PageTitleConfig {
             redirect.addFlashAttribute(MessageTag.ERROR, "Reject reason is mandatory!");
         else {
             redirect.addFlashAttribute(MessageTag.SUCCESS, "Transaction successfully rejected!");
-            delegateTransactionService.reject(transactionId, rejectReason);
+            transactionFacadeService.reject(transactionId, rejectReason);
         }
 
         return "redirect:" + Endpoint.Transaction.ROOT + "/" + transactionId;

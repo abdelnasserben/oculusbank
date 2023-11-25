@@ -1,5 +1,5 @@
 package com.dabel.oculusbank.constant;
 
 public enum IdentityType {
-    Card, Passport
+    ID_CARD, PASSPORT
 }

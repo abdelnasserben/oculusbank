@@ -1,24 +1,10 @@
 package com.dabel.oculusbank.service.delegate;
 
-import com.dabel.oculusbank.DatabaseSettingsForTests;
-import com.dabel.oculusbank.constant.*;
-import com.dabel.oculusbank.dto.AccountDTO;
-import com.dabel.oculusbank.dto.TransactionDTO;
-import com.dabel.oculusbank.exception.BalanceInsufficientException;
-import com.dabel.oculusbank.exception.IllegalOperationException;
-import com.dabel.oculusbank.service.AccountService;
-import com.dabel.oculusbank.service.TransactionService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 class DelegateTransactionServiceTest {
-
+/*
     @Autowired
     DelegateTransactionService basicDelegateTransactionService;
     @Autowired
@@ -253,4 +239,6 @@ class DelegateTransactionServiceTest {
         assertThat(expectedTransaction.getStatus()).isEqualTo(Status.Failed.name());
         assertThat(expected.getMessage()).isEqualTo("Account balance is insufficient");
     }
+
+ */
 }

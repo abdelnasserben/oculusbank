@@ -47,7 +47,7 @@ public class LoanCrudServiceImpl implements LoanCrudService {
     }
 
     @Override
-    public LoanDTO findLoanById(int loanId) {
+    public LoanDTO findById(int loanId) {
 
         LoanView loan = loanViewRepository.findById(loanId)
                 .orElseThrow(LoanNotFoundException::new);

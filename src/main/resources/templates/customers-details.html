@@ -201,8 +201,7 @@
                                                         fill="currentColor"></path>
                                                 </svg></span>
                                             <!--end::Svg Icon-->
-                                            <div class="fs-2 fw-bolder" data-kt-countup="true" data-kt-countup-value="0"
-                                                data-kt-countup-suffix=" KMF">0 KMF</div>
+                                            <div class="fs-2 fw-bolder" th:text="${totalLoan} + ' KMF'">0 KMF</div>
                                         </div>
                                         <!--end::Number-->
 
@@ -495,8 +494,7 @@
 
                                 <!--begin::Col-->
                                 <div class="col-lg-8 fv-row">
-                                    <span th:text="${customer.status}" class="badge"
-                                        th:classappend="${customer.status} == 'Active' ? 'badge-success' : (${customer.status} == 'Pending' ? 'badge-warning' : 'badge-danger')">Active</span>
+                                    <span th:text="${customer.status}" th:class="${'badge badge-light-' + @appExpUtils.statusColor(customer.status)}">Active</span>
                                 </div>
                                 <!--end::Col-->
                             </div>
@@ -747,8 +745,7 @@
                                         <td th:text="${account.accountProfile}">Personal</td>
                                         <td th:text="${account.membership}">Owner</td>
                                         <td class="pe-0">
-                                            <div th:text="${account.status}" class="badge"
-                                                th:classappend="${account.status} == 'Active' ? 'badge-light-success' : (${account.status} == 'Pending' ? 'badge-light-warning' : 'badge-light-danger')">
+                                            <div th:text="${account.status}" th:class="${'badge badge-light-' + @appExpUtils.statusColor(account.status)}">
                                                 Active</div>
                                         </td>
                                     </tr>
@@ -832,8 +829,7 @@
                                             <div class="d-flex align-items-center">
                                                 <div th:text="${card.cardType}" class="text-gray-800 fw-bolder">
                                                     Mastercard </div>
-                                                <div th:text="${card.status}" class="badge ms-5"
-                                                    th:classappend="${card.status} == 'Active' ? 'badge-light-success' : (${card.status} == 'Pending' ? 'badge-light-warning' : 'badge-light-danger')">
+                                                <div th:text="${card.status}" class="ms-5" th:classappend="${'badge badge-light-' + @appExpUtils.statusColor(card.status)}">
                                                     Active</div>
                                             </div>
                                             <div th:text="${'Expires ' + #strings.capitalize(#temporals.format(card.expirationDate, 'MMM yyyy'))}"
@@ -1012,8 +1008,7 @@
 
                                         </td>
                                         <td class="pe-0">
-                                            <div th:text="${transaction.status}" class="badge"
-                                                th:classappend="${transaction.status} == 'Approved' ? 'badge-light-success' : (${transaction.status} == 'Pending' ? 'badge-light-warning' : 'badge-light-danger')">
+                                            <div th:text="${transaction.status}" th:class="${'badge badge-light-' + @appExpUtils.statusColor(transaction.status)}">
                                                 Failed</div>
                                         </td>
                                         <td th:text="${#temporals.format(transaction.createdAt, 'yyyy-MM-dd HH:mm')}">
@@ -1087,8 +1082,7 @@
                                         <td th:text="${payment.currency}">KMF</td>
                                         <td th:text="${payment.amount}">65000</td>
                                         <td class="pe-0">
-                                            <div th:text="${payment.status}" class="badge"
-                                                th:classappend="${payment.status} == 'Approved' ? 'badge-light-success' : (${payment.status} == 'Pending' ? 'badge-light-warning' : 'badge-light-danger')">
+                                            <div th:text="${payment.status}" th:class="${'badge badge-light-' + @appExpUtils.statusColor(payment.status)}">
                                                 Failed</div>
                                         </td>
                                         <td th:text="${#temporals.format(payment.createdAt, 'yyyy-MM-dd HH:mm')}">
@@ -1162,8 +1156,7 @@
                                         <td th:text="${exchange.saleCurrency}">KMF</td>
                                         <td th:text="${exchange.saleAmount}" class="text-danger">65000</td>
                                         <td class="pe-0">
-                                            <div th:text="${exchange.status}" class="badge"
-                                                th:classappend="${exchange.status} == 'Approved' ? 'badge-light-success' : (${exchange.status} == 'Pending' ? 'badge-light-warning' : 'badge-light-danger')">
+                                            <div th:text="${exchange.status}" th:class="${'badge badge-light-' + @appExpUtils.statusColor(exchange.status)}">
                                                 Failed</div>
                                         </td>
                                         <td th:text="${#temporals.format(exchange.createdAt, 'yyyy-MM-dd HH:mm')}">
@@ -1235,9 +1228,8 @@
                                         <td th:text="${loan.issuedAmount + ' KMF'}">500 0000 KMF</td>
                                         <td th:text="${loan.totalAmount + ' KMF'}">500 0000 KMF</td>
                                         <td class="pe-0">
-                                            <div th:text="${loan.status}" class="badge"
-                                                th:classappend="${loan.status} == 'Active' ? 'badge-light-success' : (${loan.status} == 'Pending' ? 'badge-light-warning' : 'badge-light-danger')">
-                                                Failed</div>
+                                            <div th:text="${loan.status}"
+                                                th:class="${'badge badge-light-' + @appExpUtils.statusColor(loan.status)}">Failed</div>
                                         </td>
                                         <td th:text="${#temporals.format(loan.createdAt, 'yyyy-MM-dd HH:mm')}">
                                             21/09/2023
@@ -1439,8 +1431,8 @@
                                             data-control="select2" data-placeholder="Nationality"
                                             data-allow-clear="true">
 
-                                            <option th:each="country: ${countries}" th:text="${country}"
-                                                th:value="${country}" th:selected="${customer.nationality == country}">
+                                            <option th:each="country: ${T(com.dabel.oculusbank.constant.Country).values()}" 
+                                                th:text="${country.getName}" th:value="${country.getName}" th:selected="${customer.nationality == country.getName}">
                                                 Comoros</option>
                                         </select>
                                     </div>
@@ -1463,9 +1455,9 @@
                                             th:classappend="${#fields.hasErrors('gender')} ? 'is-invalid' : ''"
                                             data-control="select2" data-hide-search="true"
                                             data-placeholder="Select an option">
-                                            <option value="Male" th:selected="${customer.gender} == 'Male'">Male
+                                            <option value="MALE" th:selected="${customer.gender} == 'MALE'">Male
                                             </option>
-                                            <option value="Female" th:selected="${customer.gender} == 'Female'">Female
+                                            <option value="FEMALE" th:selected="${customer.gender} == 'FEMALE'">Female
                                             </option>
                                         </select>
                                         <div class="invalid-feedback" th:errors="*{gender}"></div>
@@ -1573,9 +1565,10 @@
                                                     data-control="select2" data-placeholder="Residence"
                                                     data-allow-clear="true">
 
-                                                    <option th:each="country: ${countries}" th:text="${country}"
-                                                        th:value="${country}"
-                                                        th:selected="${customer.nationality == country}">
+                                                    <option th:each="country: ${T(com.dabel.oculusbank.constant.Country).values()}" 
+                                                        th:text="${country.getName}"
+                                                        th:value="${country.getName}"
+                                                        th:selected="${customer.nationality == country.getName}">
                                                         Comoros</option>
                                                 </select>
                                             </div>

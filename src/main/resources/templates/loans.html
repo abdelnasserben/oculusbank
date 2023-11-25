@@ -93,8 +93,7 @@
                             <td th:text="${loan.issuedAmount + ' KMF'}">500 0000 KMF</td>
                             <td th:text="${loan.totalAmount + ' KMF'}">500 0000 KMF</td>
                             <td class="pe-0">
-                                <div th:text="${loan.status}" class="badge"
-                                    th:classappend="${loan.status} == 'Active' ? 'badge-light-success' : (${loan.status} == 'Pending' ? 'badge-light-warning' : 'badge-light-danger')">
+                                <div th:text="${loan.status}" th:class="${'badge badge-light-' + @appExpUtils.statusColor(loan.status)}">
                                     Failed</div>
                             </td>
                             <td th:text="${#temporals.format(loan.createdAt, 'yyyy-MM-dd HH:mm')}">21/09/2023
